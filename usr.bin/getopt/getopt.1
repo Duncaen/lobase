@@ -1,0 +1,120 @@
+.\"	$OpenBSD: getopt.1,v 1.18 2014/01/19 09:15:08 schwarze Exp $
+.\"
+.\" This material, written by Henry Spencer, was released by him
+.\" into the public domain and is thus not subject to any copyright.
+.\"
+.Dd $Mdocdate: January 19 2014 $
+.Dt GETOPT 1
+.Os
+.Sh NAME
+.Nm getopt
+.Nd parse command options
+.Sh SYNOPSIS
+.Nm
+.Ar optstring
+.Va $*
+.Sh DESCRIPTION
+.Nm
+is used to break up options in command lines for easy parsing by
+shell procedures, and to check for legal options.
+.Ar optstring
+is a string of recognized option letters (see
+.Xr getopt 3 ) ;
+if a letter is followed by a colon, the option
+is expected to have an argument which may or may not be
+separated from it by whitespace.
+However, if a letter is followed by two colons, the argument is optional
+and may not be separated by whitespace \- this is an extension not
+covered by POSIX.
+The special option
+.Sq --
+is used to delimit the end of the options.
+.Nm
+will place
+.Sq --
+in the arguments at the end of the options,
+or recognize it if used explicitly.
+The shell arguments
+.Pf ( Va $1 , $2 , ... )
+are reset so that each option is
+preceded by a
+.Sq -
+and in its own shell argument;
+each option argument is also in its own shell argument.
+.Sh EXAMPLES
+The following code fragment shows how one might process the arguments
+for a command that can take the options
+.Fl a
+and
+.Fl b ,
+and the option
+.Fl o ,
+which requires an argument.
+.Bd -literal -offset indent
+args=`getopt abo: $*`
+if [ $? -ne 0 ]
+then
+	echo 'Usage: ...'
+	exit 2
+fi
+set -- $args
+while [ $# -ne 0 ]
+do
+	case "$1"
+	in
+		-a|-b)
+			flag="$1"; shift;;
+		-o)
+			oarg="$2"; shift; shift;;
+		--)
+			shift; break;;
+	esac
+done
+.Ed
+.Pp
+This code will accept any of the following as equivalent:
+.Bd -literal -offset indent
+cmd -aoarg file file
+cmd -a -o arg file file
+cmd -oarg -a file file
+cmd -a -oarg -- file file
+.Ed
+.Sh DIAGNOSTICS
+.Nm
+prints an error message on the standard error output when it
+encounters an option letter not included in
+.Ar optstring .
+.Sh SEE ALSO
+.Xr sh 1 ,
+.Xr getopt 3
+.Sh HISTORY
+Written by Henry Spencer, working from a Bell Labs manual page.
+Behavior believed identical to the Bell version.
+.Sh CAVEATS
+Note that the construction
+.Sy set -- `getopt optstring $*`
+is not recommended, as the exit value from
+.Sy set
+will prevent the exit value from
+.Nm
+from being determined.
+.Sh BUGS
+Whatever
+.Xr getopt 3
+has.
+.Pp
+Arguments containing whitespace or embedded shell metacharacters
+generally will not survive intact; this looks easy to fix but isn't.
+.Pp
+The error message for an invalid option is identified as coming
+from
+.Nm
+rather than from the shell procedure containing the invocation
+of
+.Nm getopt ;
+this again is hard to fix.
+.Pp
+The precise best way to use the
+.Sy set
+command to set the arguments without disrupting the value(s) of
+shell options varies from one shell version to another.

@@ -1,0 +1,84 @@
+<$root/src/mkconf
+
+LIB=libopenbsd
+
+HASH_HELPER=\
+	hash/md5hl.c\
+	hash/rmd160hl.c\
+	hash/sha1hl.c\
+	hash/sha224hl.c\
+	hash/sha256hl.c\
+	hash/sha384hl.c\
+	hash/sha512hl.c\
+
+OFILES=\
+	base64.$O\
+	closefrom.$O\
+	errc.$O\
+	warnc.$O\
+	execvpe.$O\
+	explicit_bzero.$O\
+	fts.$O\
+	fgetwln.$O\
+	getentropy_linux.$O\
+	heapsort.$O\
+	merge.$O\
+	pledge-noop.$O\
+	progname.$O\
+	qsort.$O\
+	radixsort.$O\
+	random.$O\
+	readpassphrase.$O\
+	reallocarray.$O\
+	setmode.$O\
+	setproctitle.$O\
+	strlcat.$O\
+	strlcpy.$O\
+	strtoimax.$O\
+	strtonum.$O\
+	strtoumax.$O\
+	verrc.$O\
+	vwarnc.$O\
+	vis.$O\
+	unvis.$O\
+	pwcache.$O\
+	pw_dup.$O\
+	getbsize.$O\
+	fmt_scaled.$O\
+	strmode.$O\
+	crypt/arc4random.$O\
+	crypt/arc4random_uniform.$O\
+	crypt/chacha.$O\
+	hash/md5.$O\
+	hash/rmd160.$O\
+	hash/sha1.$O\
+	hash/sha2.$O\
+	${HASH_HELPER:%.c=%.$O}\
+
+CPPFLAGS=\
+	-include openbsd.h\
+	-D_PATH_TTY='"/dev/tty"'\
+
+CLEANFILES=\
+	crypt/*.[$O]\
+	hash/*.[$O]\
+	$HASH_HELPER\
+
+<$root/src/mklib
+
+hash/%hl.$O: hash/%hl.c
+
+hash/md5hl.c: hash/helper.c
+	sed -e 's/hashinc/md5.h/g' -e 's/HASH/MD5/g' $prereq > $target
+
+hash/rmd160hl.c: hash/helper.c
+	sed -e 's/hashinc/rmd160.h/g' -e 's/HASH/RMD160/g' $prereq > $target
+
+hash/sha1hl.c: hash/helper.c
+	sed -e 's/hashinc/sha1.h/g' -e 's/HASH/SHA1/g' $prereq > $target
+
+hash/sha([0-9][0-9][0-9])hl.c:R: hash/helper.c
+	sed -e 's/hashinc/sha2.h/g' \
+	    -e "s/HASH/SHA$stem1/g" \
+	    -e 's/SHA[0-9][0-9][0-9]_CTX/SHA2_CTX/g' \
+	    $prereq > $target

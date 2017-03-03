@@ -1,0 +1,282 @@
+.\"	$OpenBSD: jot.1,v 1.21 2016/07/17 04:15:25 tb Exp $
+.\"	$NetBSD: jot.1,v 1.2 1994/11/14 20:27:36 jtc Exp $
+.\"
+.\" Copyright (c) 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)jot.1	8.1 (Berkeley) 6/6/93
+.\"
+.Dd $Mdocdate: July 17 2016 $
+.Dt JOT 1
+.Os
+.Sh NAME
+.Nm jot
+.Nd print sequential or random data
+.Sh SYNOPSIS
+.Nm jot
+.Bk -words
+.Op Fl cnr
+.Op Fl b Ar word
+.Op Fl p Ar precision
+.Op Fl s Ar string
+.Op Fl w Ar word
+.Oo Ar reps Oo Ar begin Oo Ar end
+.Oo Ar s Oc Oc Oc Oc
+.Ek
+.Sh DESCRIPTION
+.Nm
+is used to print out increasing, decreasing, random,
+or redundant data, usually numbers, one per line.
+.Pp
+The options are as follows:
+.Bl -tag -width "-p precision"
+.It Fl b Ar word
+Just print
+.Ar word
+repetitively.
+.It Fl c
+This is an abbreviation for
+.Fl w Ic %c .
+.It Fl n
+Do not print the final newline normally appended to the output.
+.It Fl p Ar precision
+Print only as many digits or characters of the data
+as indicated by the integer
+.Ar precision .
+In the absence of
+.Fl p ,
+the precision is the greater of the numbers
+.Ar begin
+and
+.Ar end .
+The
+.Fl p
+option is overridden by whatever appears in a
+.Xr printf 3
+conversion following
+.Fl w .
+.It Fl r
+Generate random data.
+By default,
+.Nm
+generates sequential data.
+.It Fl s Ar string
+Print data separated by
+.Ar string .
+Normally, newlines separate data.
+.It Fl w Ar word
+Print
+.Ar word
+with the generated data appended to it.
+Octal, hexadecimal, exponential, ASCII, zero-padded,
+and right-adjusted representations
+are possible by using the appropriate
+.Xr printf 3
+conversion specification inside
+.Ar word ,
+in which case the data is inserted rather than appended.
+.El
+.Pp
+The last four arguments indicate, respectively,
+the maximum number of data, the lower bound, the upper bound,
+and the step size.
+While at least one of them must appear,
+any of the other three may be omitted, and
+will be considered as such if given as
+.Ql - .
+Any three of these arguments determines the fourth.
+If four are specified and the given and computed values of
+.Ar reps
+conflict, the lower value is used.
+If fewer than three are specified, defaults are assigned
+left to right, except for
+.Ar s ,
+which assumes its default unless both
+.Ar begin
+and
+.Ar end
+are given.
+.Pp
+Defaults for the four arguments are, respectively,
+100, 1, 100, and 1.
+.Ar reps
+is expected to be an unsigned integer,
+and if given as zero is taken to be infinite.
+.Ar begin
+and
+.Ar end
+may be given as real numbers or as characters
+representing the corresponding value in ASCII.
+The last argument must be a real number.
+.Pp
+Random numbers are obtained through
+.Xr arc4random 3 .
+Historical versions of
+.Nm
+used
+.Ar s
+to seed the random number generator.
+This is no longer supported.
+The name
+.Nm
+derives in part from
+.Dq iota ,
+a function in APL.
+.Ss Rounding and truncation
+The
+.Nm
+utility uses double precision floating point arithmetic internally.
+Before printing a number, it is converted depending on the output
+format used.
+.Pp
+If no output format is specified or the output format is a
+floating point format
+.Po
+.Sq f ,
+.Sq e ,
+.Sq g ,
+.Sq E ,
+or
+.Sq G
+.Pc ,
+the value is rounded using the
+.Xr printf 3
+function, taking into account the requested precision.
+.Pp
+If the output format is an integer format
+.Po
+.Sq c ,
+.Sq d ,
+.Sq o ,
+.Sq x ,
+.Sq u ,
+.Sq D ,
+.Sq O ,
+.Sq X ,
+.Sq U ,
+or
+.Sq i
+.Pc ,
+the value is converted to an integer value by truncation.
+.Pp
+As an illustration, consider the following command:
+.Bd -literal -offset indent
+$ jot 6 1 10 0.5
+1
+2
+2
+2
+3
+4
+.Ed
+.Pp
+By requesting an explicit precision of 1, the values generated before rounding
+can be seen.
+The .5 values are rounded down if the integer part is even,
+up otherwise.
+.Bd -literal -offset indent
+$ jot -p 1 6 1 10 0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+.Ed
+.Pp
+By offsetting the values slightly, the values generated by the following
+command are always rounded down:
+.Bd -literal -offset indent
+$ jot -p 0 6 .9999999999 10 0.5
+1
+1
+2
+2
+3
+3
+.Ed
+.Pp
+Another way of achieving the same result is to force truncation by
+specifying an integer format:
+.Bd -literal -offset indent
+$ jot -w %d 6 1 10 0.5
+.Ed
+.Sh EXAMPLES
+Print 21 evenly spaced numbers increasing from \-1 to 1:
+.Pp
+.Dl $ jot 21 \-1 1.00
+.Pp
+Generate the ASCII character set:
+.Pp
+.Dl $ jot \-c 128 0
+.Pp
+Generate the strings xaa through xaz:
+.Pp
+.Dl $ jot \-w xa%c 26 a
+.Pp
+Generate 20 random 8-letter strings:
+.Pp
+.Dl "$ jot \-r \-c 160 a z | rs \-g0 0 8"
+.Pp
+Infinitely many
+.Xr yes 1 Ns 's
+may be obtained through:
+.Pp
+.Dl $ jot \-b yes 0
+.Pp
+Thirty
+.Xr ed 1
+substitution commands applying to lines 2, 7, 12, etc. is the result of:
+.Pp
+.Dl $ jot \-w %ds/old/new/ 30 2 \- 5
+.Pp
+Create a file containing exactly 1024 bytes:
+.Pp
+.Dl $ jot \-b x 512 > block
+.Pp
+To set tabs four spaces apart starting
+from column 10 and ending in column 132, use:
+.Pp
+.Dl $ expand \-`jot \-s, \- 10 132 4`
+.Pp
+To print all lines 80 characters or longer:
+.Pp
+.Dl $ grep `jot \-s \&"\&" \-b . 80`
+.Sh SEE ALSO
+.Xr ed 1 ,
+.Xr expand 1 ,
+.Xr rs 1 ,
+.Xr yes 1 ,
+.Xr arc4random 3 ,
+.Xr printf 3
+.Sh HISTORY
+The
+.Nm
+utility first appeared in
+.Bx 4.2 .
+.Sh AUTHORS
+.An John A. Kunze

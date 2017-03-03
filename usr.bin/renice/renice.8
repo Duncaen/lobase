@@ -1,0 +1,144 @@
+.\"	$OpenBSD: renice.8,v 1.25 2015/05/15 19:34:31 jmc Exp $
+.\"
+.\" Copyright (c) 1983, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     from: @(#)renice.8	8.1 (Berkeley) 6/9/93
+.\"
+.Dd $Mdocdate: May 15 2015 $
+.Dt RENICE 8
+.Os
+.Sh NAME
+.Nm renice
+.Nd alter priority of running processes
+.Sh SYNOPSIS
+.Nm renice
+.Oo Fl n Oc Ar increment
+.Op Fl gpu
+.Ar id
+.Sh DESCRIPTION
+.Nm
+alters the scheduling priority of one or more running processes with ID
+.Ar id .
+Processes may be selected by
+process ID,
+process group ID,
+and
+user name or ID.
+If none of the
+.Fl gpu
+options are specified,
+the default is to select by process ID.
+Multiple processes can be specified in a space separated list.
+.Pp
+Users other than the superuser may only alter the priority of
+processes they own,
+and can only monotonically increase their
+.Dq nice value
+within the range 0 to
+.Dv PRIO_MAX
+(20),
+which  prevents overriding administrative fiats.
+The superuser
+may alter the priority of any process
+and set the priority to any value in the range
+.Dv PRIO_MIN
+(\-20)
+to
+.Dv PRIO_MAX .
+.Pp
+Useful priorities are:
+20 (the affected processes will run only when nothing else
+in the system wants to),
+0 (the
+.Dq base
+scheduling priority),
+anything negative (to make things go very fast).
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl g
+Alter the scheduling priority of all processes in process group
+.Ar id .
+.It Fl n Ar increment
+A positive or negative decimal integer used to modify the
+scheduling priority.
+For compatibility with historic versions of this utility,
+if
+.Fl n
+is omitted and
+.Ar increment
+is the first argument to
+.Nm ,
+then
+.Ar increment
+is taken as an absolute priority rather than an increment.
+.It Fl p
+Alter the scheduling priority of process
+.Ar id .
+.It Fl u
+Alter the scheduling priority of all processes belonging to user
+.Ar id ,
+which may be a user name or ID.
+.El
+.Sh FILES
+.Bl -tag -width /etc/passwd -compact
+.It Pa /etc/passwd
+for mapping user names to user IDs
+.El
+.Sh EXIT STATUS
+.Ex -std renice
+.Sh EXAMPLES
+The following example
+changes the priority of process IDs 987 and 32,
+and all processes owned by users daemon and root:
+.Bd -literal -offset indent
+# renice -n +1 987 -u daemon root -p 32
+.Ed
+.Sh SEE ALSO
+.Xr nice 1 ,
+.Xr getpriority 2 ,
+.Xr setpriority 2
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification,
+except the way in which processes are specified differs.
+.Pp
+The historical behavior of passing
+.Ar increment
+as an absolute priority is supported for backwards compatibility.
+.Sh HISTORY
+The
+.Nm
+command appeared in
+.Bx 4.0 .
+.Sh BUGS
+Non-superusers cannot increase scheduling priorities of their own processes,
+even if they were the ones that decreased the priorities in the first place.

@@ -1,0 +1,141 @@
+.\"	$OpenBSD: col.1,v 1.14 2015/09/14 20:06:58 schwarze Exp $
+.\"	$NetBSD: col.1,v 1.4 1995/03/26 05:25:52 glass Exp $
+.\"
+.\" Copyright (c) 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Michael Rendell.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)col.1	8.1 (Berkeley) 6/29/93
+.\"
+.Dd $Mdocdate: September 14 2015 $
+.Dt COL 1
+.Os
+.Sh NAME
+.Nm col
+.Nd filter reverse line feeds and backspaces from input
+.Sh SYNOPSIS
+.Nm col
+.Op Fl bfhx
+.Op Fl l Ar num
+.Sh DESCRIPTION
+.Nm
+filters out reverse (and half-reverse) line feeds so that the output is
+in the correct order with only forward and half-forward line
+feeds, and replaces whitespace characters with tabs where possible.
+.Pp
+.Nm
+reads from the standard input and writes to the standard output.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl b
+Do not output any backspaces, printing only the last character
+written to each column position.
+This can be useful in processing the output of
+.Xr mandoc 1 .
+.It Fl f
+Forward half-line feeds are permitted
+.Pf ( Dq fine
+mode).
+Normally characters printed on a half-line boundary are printed
+on the following line.
+.It Fl h
+Compress spaces into tabs.
+This is the default behavior.
+.It Fl l Ar num
+Buffer at least
+.Ar num
+lines in memory.
+By default, 128 lines are buffered.
+.It Fl x
+Output multiple spaces instead of tabs.
+.El
+.Pp
+In the input stream,
+.Nm
+understands both the escape sequences of the form escape-digit
+mandated by
+.St -susv2
+and the traditional
+.Bx
+format escape-control-character.
+The control sequences for carriage motion and their ASCII values
+are as follows:
+.Pp
+.Bl -tag -width "escape-backspace" -compact
+.It escape\-bell
+Reverse line feed (27 then 7).
+.It escape\-digit\-7
+Reverse line feed (27 then 55).
+.It escape\-backspace
+Half reverse line feed (27 then 8).
+.It escape\-digit\-8
+Half reverse line feed (27 then 56).
+.It escape\-tab
+Half forward line feed (27 then 9).
+.It escape\-digit\-9
+Half forward line feed (27 then 57).
+In
+.Fl f
+mode, this sequence may also occur in the output stream.
+.It backspace
+Moves back one column (8); ignored in the first column.
+.It carriage return
+(13)
+.It newline
+Forward line feed (10); also does carriage return.
+.It shift in
+Shift to normal character set (15).
+.It shift out
+Shift to alternate character set (14).
+.It space
+Moves forward one column (32).
+.It tab
+Moves forward to next tab stop (9).
+.It vertical tab
+Reverse line feed (11).
+.El
+.Pp
+All unrecognized control characters and escape sequences are
+discarded.
+.Pp
+.Nm
+keeps track of the character set as characters are read and makes
+sure the character set is correct when they are output.
+.Pp
+If the input attempts to back up to the last flushed line,
+.Nm
+will display a warning message.
+.Sh SEE ALSO
+.Xr expand 1
+.Sh HISTORY
+A
+.Nm
+command appeared in
+.At v6 .

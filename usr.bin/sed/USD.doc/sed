@@ -1,0 +1,1125 @@
+.\"	$OpenBSD: sed,v 1.4 2004/04/06 10:00:32 jmc Exp $
+.\"
+.\" Copyright (C) Caldera International Inc.  2001-2002.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code and documentation must retain the above
+.\"    copyright notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed or owned by Caldera
+.\"	International, Inc.
+.\" 4. Neither the name of Caldera International, Inc. nor the names of other
+.\"    contributors may be used to endorse or promote products derived from
+.\"    this software without specific prior written permission.
+.\"
+.\" USE OF THE SOFTWARE PROVIDED FOR UNDER THIS LICENSE BY CALDERA
+.\" INTERNATIONAL, INC. AND CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+.\" OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+.\" IN NO EVENT SHALL CALDERA INTERNATIONAL, INC. BE LIABLE FOR ANY DIRECT,
+.\" INDIRECT INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+.\" (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+.\" SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+.\" STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+.\" IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+.\" POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\"	@(#)sed	8.2 (Berkeley) 6/1/94
+.\"
+.if n \{\
+.po 5n
+.ll 70n
+.\}
+.EH 'USD:15-%''SED \(em A Non-interactive Text Editor'
+.OH 'SED \(em A Non-interactive Text Editor''USD:15-%'
+.hw de-limit
+.hw de-limit-ing
+.\".RP
+.\" ....TM 78-1270-1 39199 39199-11
+.ND August 15, 1978
+.TL
+SED \(em A Non-interactive Text Editor
+.AU "MH 2C-555" 3302
+Lee E. McMahon
+.AI
+.\" .MH
+.\" .OK
+\"Context search
+\"Editing
+.AB
+.I Sed
+is a non-interactive context editor
+that runs on the
+.UX
+operating system.
+.LP
+.I Sed
+is
+designed to be especially useful in
+three cases:
+.LP
+1)
+To edit files too large for comfortable
+interactive editing;
+.br
+2)
+To edit any size file when the sequence
+of editing commands is too complicated to be comfortably
+typed in interactive mode;
+.br
+3)
+To perform multiple `global' editing functions
+efficiently in one pass through the input.
+.LP
+This memorandum constitutes a manual for users of
+.ul
+sed.
+.AE
+.\" .CS 10 0 10 0 0 1
+.SH
+Introduction
+.LP
+.I Sed
+is a non-interactive context editor designed to be especially useful in
+three cases:
+.RS
+.LP
+1)
+To edit files too large for comfortable
+interactive editing;
+.br
+2)
+To edit any size file when the sequence
+of editing commands is too complicated to be comfortably
+typed in interactive mode;
+.br
+3)
+To perform multiple `global' editing functions
+efficiently in one pass through the input.
+.RE
+.LP
+Since only a few lines of the input reside in core
+at one time, and no temporary files are used,
+the effective size of file that can be edited is limited only
+by the requirement that the input and output fit simultaneously
+into available secondary storage.
+.LP
+Complicated editing scripts can be created separately and given
+to 
+.I sed
+as a command file.
+For complex edits, this saves considerable typing, and its
+attendant errors.
+.I Sed
+running from a command file is much more efficient than any interactive
+editor known to the author, even if that editor
+can be driven by a pre-written script.
+.LP
+The principal loss of functions compared to an interactive editor
+are lack of relative addressing (because of the line-at-a-time
+operation), and lack of immediate verification that a command has
+done what was intended.
+.LP
+.I Sed
+is a lineal descendant of the UNIX editor,
+.I ed .
+Because of the differences between interactive and non-interactive
+operation, considerable changes have been made between
+.I ed
+and
+.I sed ;
+even confirmed users of
+.I ed
+will frequently be surprised (and probably chagrined),
+if they rashly use 
+.I sed
+without reading Sections 2 and 3 of this document.
+The most striking family resemblance between the two
+editors is in the class of patterns (`regular expressions') they
+recognize;
+the code for matching patterns is copied almost
+verbatim from the code for
+.I ed ,
+and the description of regular expressions in Section 2
+is copied almost verbatim from the UNIX Programmer's
+Manual[1].
+(Both code and description were written by Dennis M. Ritchie.)
+.SH
+1. Overall Operation
+.LP
+.I Sed
+by default copies the standard input to the standard output,
+perhaps performing one or more editing commands on each
+line before writing it to the output.
+This behavior may be modified by flags on the command line;
+see Section 1.1 below.
+.LP
+The general format of an editing command is:
+.LP
+.RS
+[address1,address2][function][arguments]
+.RE
+.LP
+One or both addresses may be omitted; the format of addresses is
+given in Section 2.
+Any number of blanks or tabs may separate the addresses
+from the function.
+The function must be present; the available commands are discussed
+in Section 3.
+The arguments may be required or optional, according to which function
+is given; again, they are discussed in Section 3 under each individual
+function.
+.LP
+Tab characters and spaces at the beginning of lines are ignored.
+.SH
+1.1. Command-line Flags
+.LP
+Four flags are recognized on the command line:
+.LP
+.RS
+.B -a :
+tells
+.I sed
+to delay opening files created by the
+.I w
+function until it is applied to a line of input;
+.br
+.B -e :
+tells
+.I sed
+to take the next argument as an editing command;
+.br
+.B -f :
+tells
+.I sed
+to take the next argument as a file name;
+the file should contain editing commands, one to a line.
+.br
+.B -n :
+tells
+.I sed
+not to copy all lines, but only those specified by
+.I p
+functions or
+.I p
+flags after 
+.I s
+functions (see Section 3.3);
+.RE
+.SH
+1.2. Order of Application of Editing Commands
+.LP
+Before any editing is done (in fact, before any input file is
+even opened), all the editing commands are compiled into
+a form which will be moderately efficient during
+the execution phase (when the commands are actually applied to
+lines of the input file).
+The commands are compiled in the order in which they are
+encountered; this is generally the order in which they will
+be attempted at execution time.
+The commands are applied one at a time; the input to each command
+is the output of all preceding commands.
+.LP
+The default linear order of application of editing commands can
+be changed by the flow-of-control commands,
+.I t
+and
+.I b
+(see Section 3).
+Even when the order of application is changed
+by these commands, it is still true that the input line to any
+command is the output of any previously applied command.
+.SH
+1.3.  Pattern-space
+.LP
+The range of pattern matches is called the pattern space.
+Ordinarily, the pattern space is one line of the input text,
+but more than one line can be read into the pattern space
+by using the
+.I N
+command (Section 3.6.).
+.SH
+1.4. Examples
+.LP
+Examples are scattered throughout the text.
+Except where otherwise noted,
+the examples all assume the following input text:
+.LP
+.DS I
+In Xanadu did Kubla Khan
+A stately pleasure dome decree:
+Where Alph, the sacred river, ran
+Through caverns measureless to man
+Down to a sunless sea.
+.DE
+.LP
+(In no case is the output of the 
+.I sed
+commands to be considered an improvement
+on Coleridge.)
+.SH
+Example:
+.LP
+The command
+.LP
+.RS
+2q
+.RE
+.LP
+will quit after copying the first two lines of the input.
+The output will be:
+.LP
+.DS I
+In Xanadu did Kubla Khan
+A stately pleasure dome decree:
+.DE
+.SH
+2. ADDRESSES: Selecting lines for editing
+.LP
+Lines in the input file(s) to which editing commands are
+to be applied can be selected by addresses.
+Addresses may be either line numbers or context addresses.
+.LP
+The application of a group of commands can be controlled by
+one address (or address-pair) by grouping
+the commands with curly braces (`{ }')(Sec. 3.6.).
+.SH
+2.1. Line-number Addresses
+.LP
+A line number is a decimal integer.
+As each line is read from the input, a line-number counter
+is incremented;
+a line-number address matches (selects) the input
+line which causes the internal counter to equal the
+address line-number.
+The counter runs cumulatively through multiple input files;
+it is not reset when a new input file is opened.
+.LP
+As a special case, the character
+$
+matches the last line of the last input file.
+.SH
+2.2. Context Addresses
+.LP
+A context address is a pattern (`regular expression') enclosed in slashes (`/').
+The regular expressions recognized by
+.I sed
+are constructed as follows:
+.LP
+.RS
+1)
+An ordinary character (not one of those discussed below)
+is a regular expression, and matches that character.
+.br
+2)
+A circumflex `^' at the beginning of a regular expression
+matches the null character at the beginning of a line.
+.br
+3)
+A dollar-sign `$' at the end of a regular expression
+matches the null character at the end of a line.
+.br
+4)
+The characters `\en' match an imbedded newline character,
+but not the newline at the end of the pattern space.
+.br
+5)
+A period `.' matches any character except the terminal newline
+of the pattern space.
+.br
+6)
+A regular expression followed by an asterisk `*' matches any
+number (including 0) of adjacent occurrences of the regular
+expression it follows.
+.br
+7)
+A string of characters in square brackets `[ ]' matches any character
+in the string, and no others.
+If, however, the first character of the string is circumflex `^',
+the regular expression matches any character
+.ul
+except
+the characters in the string and the terminal newline of the pattern space.
+.br
+8)
+A concatenation of regular expressions is a regular expression
+which matches the concatenation of strings matched by the
+components of the regular expression.
+.br
+9)
+A regular expression between the sequences `\e(' and `\e)' is
+identical in effect to the unadorned regular expression, but has
+side-effects which are described under the
+.ul
+s
+command below and specification 10) immediately below.
+.br
+10)
+The expression
+.I `\|\ed'
+means the same string of characters matched
+by an expression enclosed in `\e(' and `\e)'
+earlier in the same pattern.
+Here
+.I d
+is a single digit;
+the string specified is that beginning with the
+\fId\|\fRth
+occurrence of `\e(' counting from the left.
+For example, the expression
+`^\e(.*\e)\e1' matches a line beginning with
+two repeated occurrences of the same string.
+.br
+11)
+The null regular expression standing alone (e.g., `//') is
+equivalent to the  last regular expression compiled.
+.RE
+.LP
+To use one of the special characters (^ $ . * [ ] \e /) as a literal
+(to match an occurrence of itself in the input), precede the
+special character by a backslash `\e'.
+.LP
+For a context address to `match' the input requires that
+the whole pattern within the address match some
+portion of the pattern space.
+.SH
+2.3. Number of Addresses
+.LP
+The commands in the next section can have 0, 1, or 2 addresses.
+Under each command the maximum number of allowed addresses is
+given.
+For a command to have more addresses than the maximum allowed
+is considered an error.
+.LP
+If a command has no addresses, it is applied to every line
+in the input.
+.LP
+If a command has one address, it is applied to all
+lines which match that address.
+.LP
+If a command has two addresses, it is applied to the first
+line which matches the first address, and to all subsequent lines
+until (and including) the first subsequent line which matches
+the second address.
+Then an attempt is made on subsequent lines to again match the first
+address, and the process is repeated.
+.LP
+Two addresses are separated by a comma.
+.SH
+Examples:
+.LP
+.DS I
+/an/		matches lines 1, 3, 4 in our sample text
+/an.*an/	matches line 1
+/^an/		matches no lines
+/./		matches all lines
+/\e./		matches line 5
+/r*an/		matches lines 1,3, 4 (number = zero!)
+/\e(an\e).*\e1/	matches line 1
+.DE
+.SH
+3. FUNCTIONS
+.LP
+All functions are named by a single character.
+In the following summary, the maximum number of allowable addresses
+is given enclosed in parentheses, then the single character
+function name, possible arguments enclosed in angles (< >),
+an expanded English translation of the single-character name,
+and finally a description of what each function does.
+The angles around the arguments are
+.I not
+part of the argument, and should not be typed
+in actual editing commands.
+.SH
+3.1. Whole-line Oriented Functions
+.LP
+(2)d -- delete lines
+.LP
+.RS
+The
+.I d
+function deletes from the file (does not write to the output)
+all those lines matched by its address(es).
+.LP
+It also has the side effect that no further commands are attempted
+on the corpse of a deleted line;
+as soon as the
+.I d
+function is executed, a new line is read from the input, and
+the list of editing commands is re-started from the beginning
+on the new line.
+.RE
+.LP
+(2)n -- next line
+.RS
+.LP
+The
+.I n
+function reads the next line from the input, replacing
+the current line.
+The current line is written to the output if it should
+be.
+The list of editing commands is continued 
+following the 
+.I n
+command.
+.RE
+.LP
+(1)a\e
+<text> -- append lines
+.RS
+.LP
+The
+.I a
+function causes the argument <text> to be written to the
+output after the line matched by its address.
+The
+.I a
+command is inherently multi-line;
+.I a
+must appear at the end of a line, and <text> may contain
+any number of lines.
+To preserve the one-command-to-a-line fiction,
+the interior newlines must be hidden by a
+backslash character (`\e') immediately preceding the
+newline.
+The <text> argument is terminated by the first unhidden
+newline (the first one not immediately preceded
+by backslash).
+.LP
+Once an
+.I a
+function is successfully executed, <text> will be
+written to the output regardless of what later commands do to
+the line which triggered it.
+The triggering line may be 
+deleted entirely; <text> will still be written to the output.
+.LP
+The <text> is not scanned for address matches, and no editing
+commands are attempted on it.
+It does not cause any change in the line-number counter.
+.RE
+.LP
+(1)i\e
+<text> -- insert lines
+.RS
+.LP
+The
+.I i
+function  behaves identically to the
+.I a
+function, except that <text> is written to the output
+.I before
+the matched line.
+All other comments about the
+.I a
+function apply to the
+.I i
+function as well.
+.RE
+.LP
+(2)c\e
+<text> -- change lines
+.RS
+.LP
+The
+.I c
+function deletes the lines selected by its address(es),
+and replaces them with the lines in <text>.
+Like
+.I a
+and
+.I i ,
+.I c
+must be followed by a newline hidden by a backslash;
+and interior new lines in <text> must be hidden by
+backslashes.
+.LP
+The
+.I c
+command may have two addresses, and therefore select a range
+of lines.
+If it does, all the lines in the range are deleted, but only
+one copy of <text> is written to the output,
+.I not
+one copy per line deleted.
+As with
+.I a
+and
+.I i ,
+<text> is not scanned for address matches, and no
+editing commands are attempted on it.
+It does not change the  line-number counter.
+.LP
+After a line has been deleted by a
+.I c
+function, no further commands are attempted on the corpse.
+.LP
+If text is appended after a line by
+.I a
+or
+.I r
+functions, and the line is subsequently changed, the text
+inserted by the
+.I c
+function will be placed
+.I before
+the text of the
+.I a
+or
+.I r
+functions.
+(The
+.I r
+function is described in Section 3.4.)
+.LP
+.RS
+.I Note :
+Within the text put in the output by these functions,
+leading blanks and tabs will disappear, as always in 
+.I sed
+commands.
+To get leading blanks and tabs into the output, precede the first
+desired blank or tab by a backslash; the backslash will not
+appear in the output.
+.RE
+.RE
+.SH
+Example:
+.LP
+The list of editing commands:
+.LP
+.DS I
+n
+a\e
+XXXX
+d
+.DE
+.LP
+applied to our standard input, produces:
+.LP
+.DS I
+In Xanadu did Kubhla Khan
+XXXX
+Where Alph, the sacred river, ran
+XXXX
+Down to a sunless sea.
+.DE
+.LP
+In this particular case,
+the same effect would be produced by either
+of the two following command lists:
+.LP
+.DS I
+n		n
+i\e		c\e
+XXXX	XXXX
+d
+.DE
+.SH
+3.2. Substitute Function
+.LP
+One very important function changes parts of lines selected by
+a context search within the line.
+.LP
+(2)s<pattern><replacement><flags> -- substitute
+.RS
+.LP
+The
+.I s
+function replaces
+.I part
+of a line (selected by <pattern>) with <replacement>.
+It can best be read:
+.RS
+.LP
+Substitute for <pattern>, <replacement>
+.RE
+.LP
+The <pattern> argument contains a pattern,
+exactly like the patterns in addresses (see 2.2 above).
+The only difference between <pattern> and a context address is
+that the context address must be delimited by slash (`/') characters;
+<pattern> may be delimited by any character other than space or
+newline.
+.LP
+By default, only the first string matched by <pattern> is replaced,
+but see the
+.I g
+flag below.
+.LP
+The
+<replacement> argument begins immediately after the
+second delimiting character of <pattern>, and must be followed
+immediately by another instance of the delimiting character.
+(Thus there are exactly 
+.I three
+instances of the delimiting character.)
+.LP
+The <replacement> is not a pattern,
+and the characters which are special in patterns
+do not have special meaning in <replacement>.
+Instead, other characters are special:
+.RS
+.IP &
+is replaced by the string matched by <pattern>
+.IP \ed
+(where
+.I d
+is a single digit) is replaced by the \fId\fRth substring
+matched by parts of <pattern> enclosed in `\e(' and `\e)'.
+If nested substrings occur in <pattern>, the \fId\fRth
+is determined by counting opening delimiters (`\e(').
+.RE
+.LP
+As in patterns, special characters may be made
+literal by preceding them with backslash (`\e').
+.LP
+The <flags> argument may contain the following flags:
+.RS
+.IP g
+substitute <replacement> for all (non-overlapping)
+instances of <pattern> in the line.
+After a successful substitution, the scan for the next
+instance of <pattern> begins just after the end of the
+inserted characters; characters put into the line from
+<replacement> are not rescanned.
+.IP p
+print the line if a successful replacement was done.
+The
+.I p
+flag causes the line to be written to the output if and only
+if a substitution was actually made by the
+.I s
+function.
+Notice that if several
+.I s
+functions, each followed by a
+.I p
+flag, successfully substitute in the same input line,
+multiple copies of the line will be written to the
+output: one for each successful substitution.
+.IP "w <filename>"
+write the line to a file if a successful replacement was done.
+The
+.I w
+flag causes lines which are actually substituted by the
+.I s
+function to be written to a file named by <filename>.
+If <filename> exists before
+.I sed
+is run, it is overwritten;
+if not, it is created.
+The possibilities of multiple, somewhat different copies of
+one input line being written are the same as for 
+.I p.
+A maximum of 10 different file names may be mentioned after
+.I w
+flags and
+.I w
+functions (see below), combined.
+.RE
+.RE
+.SH
+Examples:
+.LP
+The following command, applied to our standard input,
+.LP
+.RS
+s/to/by/w changes
+.RE
+.LP
+produces, on the standard output:
+.LP
+.DS I
+In Xanadu did Kubhla Khan
+A stately pleasure dome decree:
+Where Alph, the sacred river, ran
+Through caverns measureless by man
+Down by a sunless sea.
+.DE
+.LP
+and, on the file `changes':
+.LP
+.DS I
+Through caverns measureless by man
+Down by a sunless sea.
+.DE
+.LP
+If the nocopy option is in effect, the command:
+.LP
+.RS
+s/[.,;?:]/*P&*/gp
+.RE
+.LP
+produces:
+.LP
+.DS I
+A stately pleasure dome decree*P:*
+Where Alph*P,* the sacred river*P,* ran
+Down to a sunless sea*P.*
+.DE
+.LP
+Finally, to illustrate the effect of the
+.I g
+flag,
+the command:
+.LP
+.RS
+/X/s/an/AN/p
+.RE
+.LP
+produces (assuming nocopy mode):
+.LP
+.DS I
+In XANadu did Kubhla Khan
+.DE
+.LP
+and the command:
+.LP
+.RS
+/X/s/an/AN/gp
+.RE
+.LP
+produces:
+.LP
+.DS I
+In XANadu did Kubhla KhAN
+.DE
+.SH
+3.3. Input-output Functions
+.LP
+(2)p -- print
+.RS
+.LP
+The print function writes the addressed lines to the standard output file.
+They are written at the time the
+.I p
+function is encountered, regardless of what succeeding
+editing commands may do to the lines.
+.RE
+.LP
+(2)w <filename> -- write on <filename>
+.RS
+.LP
+The write function writes the addressed lines to the file named
+by <filename>.
+If the file previously existed, it is overwritten; if not, it is created.
+The lines are written exactly as they exist when the write function
+is encountered for each line, regardless of what subsequent
+editing commands may do to them.
+.LP
+A maximum of ten different files may be mentioned in write
+functions and
+.I w
+flags after
+.I s
+functions, combined.
+.RE
+.LP
+(1)r <filename> -- read the contents of a file
+.RS
+.LP
+The read function reads the contents of <filename>, and appends
+them after the line matched by the address.
+The file is read and appended regardless of what subsequent
+editing commands do to the line which matched its address.
+If
+.I r
+and
+.I a
+functions are executed on the same line,
+the text from the 
+.I a
+functions and the
+.I r
+functions is written to the output in the order that
+the functions are executed.
+If a file mentioned by a
+.I r
+function cannot be opened, it is considered a null file,
+not an error, and no diagnostic is given.
+.LP
+NOTE:
+Since there is a limit to the number of files that can be opened
+simultaneously, care should be taken that no more than ten
+files be mentioned in
+.I w
+functions or flags; that number is reduced by one if any
+.I r
+functions are present.
+(Only one read file is open at one time.)
+.RE
+.SH
+Examples
+.LP
+Assume that the file `note1'
+has the following contents:
+.LP
+.DS I
+Note:  Kubla Khan (more properly Kublai Khan; 1216-1294)
+was the grandson and most eminent successor of Genghiz
+(Chingiz) Khan, and founder of the Mongol dynasty in China.
+.DE
+.LP
+Then the following command:
+.LP
+.RS
+/Kubla/r note1
+.RE
+.LP
+produces:
+.LP
+.DS I
+In Xanadu did Kubla Khan
+Note:  Kubla Khan (more properly Kublai Khan; 1216-1294)
+was the grandson and most eminent successor of Genghiz
+(Chingiz) Khan, and founder of the Mongol dynasty in China.
+A stately pleasure dome decree:
+Where Alph, the sacred river, ran
+Through caverns measureless to man
+Down to a sunless sea.
+.DE
+.SH
+3.4.
+Multiple Input-line Functions
+.LP
+Three functions, all spelled with capital letters, deal
+specially with pattern spaces containing imbedded newlines;
+they are intended principally to provide pattern matches across
+lines in the input.
+.LP
+(2)N -- Next line
+.RS
+.LP
+The next input line is appended to the current line in the
+pattern space; the two input lines are separated by an imbedded
+newline.
+Pattern matches may extend across the imbedded newline(s).
+.RE
+.LP
+(2)D -- Delete first part of the pattern space
+.RS
+.LP
+Delete up to and including the first newline character
+in the current pattern space.
+If the pattern space becomes empty (the only newline
+was the terminal newline),
+read another line from the input.
+In any case, begin the list of editing commands again
+from its beginning.
+.RE
+.LP
+(2)P -- Print first part of the pattern space
+.RS
+.LP
+Print up to and including the first newline in the pattern space.
+.LP
+The 
+.I P
+and
+.I D
+functions are equivalent to their lower-case counterparts
+if there are no imbedded newlines in the pattern space.
+.RE
+.SH
+3.5.  Hold and Get Functions
+.LP
+Four functions save and retrieve part of the input for possible later
+use.
+.LP
+(2)h -- hold pattern space
+.RS
+.LP
+The
+.I h
+functions copies the contents of the pattern space
+into a hold area (destroying the previous contents of the
+hold area).
+.RE
+.LP
+(2)H -- Hold pattern space
+.RS
+.LP
+The
+.I H
+function appends the contents of the pattern space
+to the contents of the hold area; the former and new contents
+are separated by a newline.
+.RE
+.LP
+(2)g -- get contents of hold area
+.RS
+.LP
+The
+.I g
+function copies the contents of the hold area into
+the pattern space (destroying the previous contents of the
+pattern space).
+.RE
+.LP
+(2)G -- Get contents of hold area
+.RS
+.LP
+The
+.I G
+function appends the contents of the hold area to the
+contents of the pattern space; the former and new contents are separated by
+a newline.
+.RE
+.LP
+(2)x -- exchange
+.RS
+The exchange command interchanges the contents
+of the pattern space and the hold area.
+.RE
+.SH
+Example
+.LP
+The commands
+.LP
+.DS I
+1h
+1s/ did.*//
+1x
+G
+s/\en/  :/
+.DE
+.LP
+applied to our standard example, produce:
+.LP
+.DS I
+In Xanadu did Kubla Khan  :In Xanadu
+A stately pleasure dome decree:  :In Xanadu
+Where Alph, the sacred river, ran  :In Xanadu
+Through caverns measureless to man  :In Xanadu
+Down to a sunless sea.  :In Xanadu
+.DE
+.SH
+3.6.  Flow-of-Control Functions
+.LP
+These functions do no editing on the input
+lines, but control the application of functions
+to the lines selected by the address part.
+.LP
+(2)! -- Don't
+.RS
+.LP
+The
+.I Don't
+command causes the next command
+(written on the same line), to be applied to all and only those input lines
+.I not
+selected by the address part.
+.RE
+.LP
+(2){ -- Grouping
+.RS
+.LP
+The grouping command `{' causes the
+next set of commands to be applied
+(or not applied) as a block to the
+input lines selected by the addresses
+of the grouping command.
+The first of the commands under control of the grouping
+may appear on the same line as the
+`{' or on the next line.
+.LP
+The group of commands is terminated by a
+matching `}' standing on a line by itself.
+.LP
+Groups can be nested.
+.RE
+.LP
+(0):<label> -- place a label
+.RS
+.LP
+The label function marks a place in the list
+of editing commands which may be referred to by
+.I b
+and
+.I t
+functions.
+The <label> may be any sequence of eight or fewer characters;
+if two different colon functions have identical labels,
+a compile time diagnostic will be generated, and
+no execution attempted.
+.RE
+.LP
+(2)b<label> -- branch to label
+.RS
+.LP
+The branch function causes  the sequence of editing commands being
+applied to the current input line to be restarted immediately
+after the place where a colon function with the same <label>
+was encountered.
+If no colon function with the same label can be found after
+all the editing commands have been compiled, a compile time diagnostic
+is produced, and no execution is attempted.
+.LP
+A
+.I b
+function with no <label> is taken to be a branch to the end of the
+list of editing commands;
+whatever should be done with the current input line is done, and
+another input line is read; the list of editing commands is restarted from the
+beginning on the new line.
+.RE
+.LP
+(2)t<label> -- test substitutions
+.RS
+.LP
+The
+.I t
+function tests whether 
+.I any
+successful substitutions have been made on the current input
+line;
+if so, it branches to <label>;
+if not, it does nothing.
+The flag which indicates that a successful substitution has
+been executed is reset by:
+.LP
+.IP 1)
+reading a new input line, or
+.br
+.IP 2)
+executing a
+.I t
+function.
+.RE
+.SH
+3.7. Miscellaneous Functions
+.LP
+(1)= -- equals
+.RS
+.LP
+The = function writes to the standard output the line number of the
+line matched by its address.
+.RE
+.LP
+(1)q -- quit
+.RS
+.LP
+The
+.I q
+function causes the current line to be written to the
+output (if it should be), any appended or read text to be written, and
+execution to be terminated.
+.RE
+.SH
+.SH
+Reference
+.IP [1]
+Ken Thompson and Dennis M. Ritchie,
+.ul
+The UNIX Programmer's Manual.
+Bell Laboratories, 1978.
