@@ -1,8 +1,5 @@
-SUBDIRS = bin sbin usr.bin usr.sbin
-
+SUBDIR = bin sbin usr.bin usr.sbin
 BROKEN =
-
-include ../mk/subdirs.mk
-
-$(BROKEN):
-	true
+depend:
+.PHONY: depend
+include bsd.subdir.mk

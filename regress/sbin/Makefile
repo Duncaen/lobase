@@ -1,8 +1,3 @@
-SUBDIRS =
-
+SUBDIR =
 BROKEN =
-
-include ../../mk/subdirs.mk
-
-$(BROKEN):
-	true
+include bsd.subdir.mk

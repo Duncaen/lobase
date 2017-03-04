@@ -4,7 +4,8 @@ include ../../../config.mk
 .OBJDIR = $(shell pwd)
 .DEFAULT_GOAL :=
 
-all: regress
+all: depend regress
+depend:
 
 regress:
 ifneq (,$(REGESS_TARGETS))

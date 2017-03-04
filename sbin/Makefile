@@ -1,3 +1,3 @@
-SUBDIRS = mknod
+SUBDIR = mknod
 
-include ../mk/subdirs.mk
+include bsd.subdir.mk

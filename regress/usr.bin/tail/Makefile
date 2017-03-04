@@ -6,14 +6,10 @@ REGRESS_TARGETS+= forward-blocks-rprint forward-chars-rprint forward-lines-rprin
 REGRESS_TARGETS+= reverse-blocks-rprint reverse-chars-rprint reverse-lines-rprint
 REGRESS_ROOT_TARGETS = follow-newsyslog
 
-.for t in ${REGRESS_ROOT_TARGETS}
-${t}:
-	${SUDO} sh ${.CURDIR}/${t}.sh
-.endfor
+$(REGRESS_ROOT_TARGETS):
+	$(SUDO) $(SHELL) $@.sh
 
-.for t in ${REGRESS_TARGETS}
-${t}:
-	sh ${.CURDIR}/${t}.sh
-.endfor
+$(REGRESS_TARGETS):
+	$(SHELL) $@.sh
 
 include bsd.regress.mk

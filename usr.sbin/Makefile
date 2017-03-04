@@ -1,2 +1,3 @@
-SUBDIRS = mtree rdate
-include ../mk/subdirs.mk
+SUBDIR = mtree rdate
+
+include bsd.subdir.mk
