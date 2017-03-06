@@ -30,6 +30,7 @@
 
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -265,7 +266,7 @@ srandom_deterministic(unsigned int x)
  * Returns a pointer to the old state.
  */
 char *
-initstate(u_int seed, char *arg_state, size_t n)
+initstate(unsigned int seed, char *arg_state, size_t n)
 {
 	char *ostate = (char *)(&state[-1]);
 
