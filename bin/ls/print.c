@@ -47,6 +47,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <util.h>
 #include <limits.h>
 
 #include "ls.h"
