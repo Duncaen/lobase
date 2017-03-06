@@ -14,8 +14,10 @@ Installation
 Dependencies
 ------------
 
+	- libedit
 	- libevent
 	- libressl
+	- ncurses
 	- zlib
 
 Broken
