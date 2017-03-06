@@ -14,11 +14,12 @@ Installation
 Dependencies
 ------------
 
-	- libedit
-	- libevent
+	- libedit (bc)
+	- libevent (cu)
 	- libressl
-	- ncurses
-	- zlib
+		- libcrypto (bc,dc)
+	- ncurses (bc)
+	- zlib (grep)
 
 Broken
 ------
