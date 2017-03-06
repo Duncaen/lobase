@@ -14,4 +14,9 @@ ifneq (,$(REGRESS_TARGETS))
 	done
 endif
 
+clean:
+ifneq (,$(CLEANFILES))
+	rm -f $(CLEANFILES)
+endif
+
 .PHONY: all clean regress depend
