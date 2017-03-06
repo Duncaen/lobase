@@ -12,6 +12,9 @@
  * incompatible with the protocol description in the RFC file, it must be
  * called by a name other than "ssh" or "Secure Shell".
  */
+#if defined(__linux__) && !defined(_GNU_SOURCE)
+#define _GNU_SOURCE /* for vasprintf */
+#endif
 
 #include <err.h>
 #include <stdarg.h>
