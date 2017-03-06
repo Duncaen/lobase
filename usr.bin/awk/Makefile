@@ -9,9 +9,13 @@ CFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
 HOSTCFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
 CPPFLAGS+=-D_GNU_SOURCE
 
-ytab.c ytab.h: awkgram.y
+lex.o b.o main.o tran.o run.o parse.o lib.o : ytab.h
+
+ytab.c: awkgram.y
 	${YACC} -d ${.CURDIR}/awkgram.y
 	mv y.tab.c ytab.c
+
+ytab.h: ytab.c
 	mv y.tab.h ytab.h
 
 proctab.c: maketab
