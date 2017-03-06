@@ -39,7 +39,6 @@ AC_FUNC_CHOWN
 AC_FUNC_FORK
 AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
 AC_FUNC_MMAP
-AC_FUNC_WAIT3
 AC_CHECK_FUNCS([strlcpy strlcat dl_iterate_phdr getentropy strptime issetugid fgetln])
 
 # AC_SUBST(HAVE_STRLCAT, "$have_strlcat")
@@ -53,6 +52,7 @@ AS_IF([test "x$ac_cv_func_strlcpy" = "xyes"],[AC_SUBST(HAVE_STRLCPY, 1)],[])
 AS_IF([test "x$ac_cv_func_getentropy" = "xyes"],[AC_SUBST(HAVE_GETENTROPY, 1)],[])
 
 AC_DEFINE_UNQUOTED([_PATH_TTY], ["/dev/tty"], [Path to tty.])
+AC_DEFINE_UNQUOTED([_PATH_UUCPLOCK], ["/var/spool/lock"], [Serial device lock file path.])
 
 AC_CONFIG_FILES([config.mk libopenbsd/config.mk])
 AC_OUTPUT
