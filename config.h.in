@@ -10,6 +10,9 @@
 /* Define to 1 if you have the `dl_iterate_phdr' function. */
 #undef HAVE_DL_ITERATE_PHDR
 
+/* Define to 1 if you have the `explicit_bzero' function. */
+#undef HAVE_EXPLICIT_BZERO
+
 /* Define to 1 if you have the `fgetln' function. */
 #undef HAVE_FGETLN
 
@@ -45,6 +48,9 @@
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
+
+/* Define to 1 if you have the `reallocarray' function. */
+#undef HAVE_REALLOCARRAY
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H

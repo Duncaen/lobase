@@ -18,36 +18,36 @@ SRCS = base64.c closefrom.c \
 SRCS += gen/errc.c gen/fts.c gen/warnc.c gen/verrc.c gen/vwarnc.c gen/setmode.c\
 SRCS += stdio/fgetwln.c
 
-ifndef HAVE_EXPLICIT_BZERO
+ifneq (1,$(HAVE_EXPLICIT_BZERO))
 	SRCS += string/explicit_bzero.c
 endif
 
-ifndef HAVE_REALLOCARRAY
+ifndef (1,$(HAVE_REALLOCARRAY))
 	SRCS += stdlib/reallocarray.c
 endif
 
-ifndef HAVE_STRLCPY
+ifndef (1,$(HAVE_STRLCPY))
 	SRCS += string/strlcpy.c
 endif
 
-ifndef HAVE_STRLCAT
+ifndef (1,$(HAVE_STRLCAT))
 	SRCS += string/strlcat.c
 endif
 
-ifndef HAVE_ISSETUGID
+ifndef (1,$(HAVE_ISSETUGID))
 	SRCS += issetugid.c
 endif
 
-ifndef HAVE_FGETLN
+ifndef (1,$(HAVE_FGETLN))
 	SRCS += stdio/fgetln.c
 endif
 
-ifndef HAVE_GETENTROPY
+ifndef (1,$(HAVE_GETENTROPY))
 	SRCS += getentropy_linux.c
 getentropy_linux.o : CPPFLAGS += -D_GNU_SOURCE
 endif
 
-ifndef HAVE_GETDTABLECOUNT
+ifndef (1,$(HAVE_GETDTABLECOUNT))
 	SRCS += sys/getdtablecount.c
 endif
 
