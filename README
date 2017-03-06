@@ -39,6 +39,8 @@ TODO
 	- build shared libraries?
 
 - libopenbsd
+	- move into lib/ directory
+	- use the same directory structure as src/lib/libc to make diffs/merges simpler
 	- import libc/regexp?
 	- add getmntinfo(3) and getfsstat(2)
 
