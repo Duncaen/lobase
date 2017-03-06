@@ -30,7 +30,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE
+#if defined(__linux__)
+# if !defined(_GNU_SOURCE)
+#  define _GNU_SOURCE
+# endif
+# if !defined(_XOPEN_SOURCE)
+#  define _XOPEN_SOURCE
+# endif
+#endif
 
 #include <sys/types.h>
 #include <sys/stat.h>

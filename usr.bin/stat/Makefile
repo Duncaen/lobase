@@ -2,6 +2,5 @@
 #	$NetBSD: Makefile,v 1.7 2003/07/25 03:21:17 atatat Exp $
 
 PROG=	stat
-CPPFLAGS+=-D_XOPEN_SOURCE -D_GNU_SOURCE
 
 include bsd.prog.mk
