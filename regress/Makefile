@@ -1,5 +1,5 @@
 SUBDIR = bin sbin usr.bin usr.sbin
-BROKEN =
+SKIPDIR =
 depend:
 .PHONY: depend
 include bsd.subdir.mk

@@ -1,3 +1,3 @@
 SUBDIR = cat chmod ln md5 pax test
-BROKEN =
+SKIPDIR =
 include bsd.subdir.mk

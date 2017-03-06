@@ -5,5 +5,5 @@ SUBDIR = apply awk basename dc bc biff cal calendar cmp colrm col column comm \
 	 nl nohup paste patch printenv printf readlink renice rev rs sed shar \
 	 sort split stat tee time touch tr true tsort tty uname unexpand uniq unvis \
 	 uudecode uuencode vis wc what which xinstall hexdump cu newsyslog
-BROKEN = sed file cu
+SKIPDIR = sed file cu
 include bsd.subdir.mk

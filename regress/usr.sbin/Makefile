@@ -1,3 +1,3 @@
 SUBDIR =
-BROKEN =
+SKIPDIR =
 include bsd.subdir.mk
