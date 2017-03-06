@@ -1,4 +1,4 @@
-include ../../config.mk
+include config.mk
 
 .CURDIR = .
 CLEANFILES += $(PROG) *.o
@@ -56,9 +56,9 @@ install: proginstall install_links
 
 proginstall:
 ifneq (,$(PROG))
-	@test -d "$(DESTDIR)$(BINDIR)" || \
+	test -d "$(DESTDIR)$(BINDIR)" || \
 		$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
-	@$(INSTALL) $(PROG) $(DESTDIR)$(BINDIR)/$(PROG_NAME)
+	$(INSTALL) $(PROG) $(DESTDIR)$(BINDIR)/$(PROG_NAME)
 endif
 
 install_links:

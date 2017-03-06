@@ -1,10 +1,10 @@
 SUBDIR_TARGETS = all clean install depend regress
-SRCDIR = $(shell pwd)
 
 $(SUBDIR_TARGETS): $(SUBDIR)
 
 $(SUBDIR):
-	cd $@ && $(MAKE) $(filter-out $@,$(MAKECMDGOALS))
+	@cd $@ && $(MAKE) -I$(TOPDIR) -I$(TOPDIR)/mk \
+		$(filter-out $@,$(MAKECMDGOALS))
 
 $(BROKEN):
 	@echo "skipping $@"

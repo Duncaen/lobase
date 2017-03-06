@@ -1,6 +1,6 @@
-MAKEFLAGS += -I$(shell pwd)/mk
+export TOPDIR := $(shell pwd)
 
-SUBDIR = libopenbsd bin sbin usr.bin usr.sbin
+SUBDIR = libopenbsd lib bin sbin usr.bin usr.sbin
 
 ifeq (clean,$(filter clean,$(MAKECMDGOALS)))
 SUBDIR += regress
@@ -12,10 +12,10 @@ insteall:
 
 regression-tests:
 	@echo "Running regression tests..." \
-	&& export PATH=$$PWD/dest/bin/:$$PATH SHELL=/bin/oksh \
+	&& export PATH=$$PWD/dest/bin/:$$PATH \
 	&& cd regress \
-	&& $(MAKE) depend \
-	&& exec $(MAKE) regress
+	&& $(MAKE) -I$(TOPDIR) -I$(TOPDIR)/mk depend \
+	&& exec $(MAKE) -I$(TOPDIR) -I$(TOPDIR)/mk SHELL=/bin/oksh regress
 
 .PHONY: all clean install regression-tests
 

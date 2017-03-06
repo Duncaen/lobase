@@ -57,13 +57,14 @@ __unused static const char rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26
  * Close all file descriptors greater than or equal to lowfd.
  */
 #ifdef HAVE_FCNTL_CLOSEM
-void
+int
 closefrom(int lowfd)
 {
-    (void) fcntl(lowfd, F_CLOSEM, 0);
+	(void) fcntl(lowfd, F_CLOSEM, 0);
+	return 0;
 }
 #else
-void
+int
 closefrom(int lowfd)
 {
     long fd, maxfd;
@@ -102,6 +103,7 @@ closefrom(int lowfd)
 	for (fd = lowfd; fd < maxfd; fd++)
 	    (void) close((int) fd);
     }
+	return 0;
 }
 #endif /* !HAVE_FCNTL_CLOSEM */
 #endif /* HAVE_CLOSEFROM */
