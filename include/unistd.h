@@ -43,6 +43,7 @@
 
 int	 execvpe(const char *, char *const *, char *const *);
 int	 closefrom(int);
+int	 getdtablecount(void);
 int	 getentropy(void *, size_t);
 mode_t	 getmode(const void *, mode_t);
 int	 getresgid(gid_t *, gid_t *, gid_t *);
