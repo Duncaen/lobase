@@ -2,16 +2,18 @@
 
 PROG=		bc
 SRCS=		bc.y scan.l tty.c dc.c bcode.c inout.c mem.c stack.c
-CPPFLAGS+=	-D_GNU_SOURCE -I. -I${.CURDIR}
+CPPFLAGS+=	-I. -I${.CURDIR}
 CFLAGS+=	-Wall -Wno-unused
 YFLAGS+=
 LDADD+=		-ledit -lcurses -lcrypto
 DPADD+=		${LIBEDIT} ${LIBCURSES} ${LIBCRYPTO}
 
-.PATH+=		${.CURDIR}/../dc
+VPATH+=		${.CURDIR}/../dc
 
-#beforeinstall:
-#	install -c -o ${BINOWN} -g ${BINGRP} -m 444 ${.CURDIR}/bc.library \
-#	    ${DESTDIR}/usr/share/misc
+beforeinstall:
+	install -c -o ${BINOWN} -g ${BINGRP} -m 444 ${.CURDIR}/bc.library \
+	    ${DESTDIR}/usr/share/misc
+
+scan.o : y.tab.h
 
 include bsd.prog.mk
