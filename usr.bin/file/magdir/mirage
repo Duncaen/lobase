@@ -1,0 +1,8 @@
+#	$OpenBSD: mirage,v 1.2 2004/06/03 03:14:20 tedu Exp $
+
+#------------------------------------------------------------------------------
+# mirage:  file(1) magic for Mirage executables
+#
+# XXX - byte order?
+#
+0	long	31415		Mirage Assembler m.out executable

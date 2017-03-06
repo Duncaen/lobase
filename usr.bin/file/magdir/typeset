@@ -1,0 +1,8 @@
+#	$OpenBSD: typeset,v 1.2 2004/06/03 03:14:20 tedu Exp $
+
+#------------------------------------------------------------------------------
+# typeset:  file(1) magic for other typesetting
+#
+0	string		Interpress/Xerox	Xerox InterPress data
+>16	string		/			(version
+>>17	string		>\0			%s)

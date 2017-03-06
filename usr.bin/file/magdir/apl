@@ -1,0 +1,7 @@
+#	$OpenBSD: apl,v 1.2 2004/06/03 03:14:19 tedu Exp $
+
+#------------------------------------------------------------------------------
+# apl:  file(1) magic for APL (see also "pdp" and "vax" for other APL
+#       workspaces)
+#
+0	long		0100554		APL workspace (Ken's original?)

@@ -1,0 +1,7 @@
+
+#------------------------------------------------------------------------------
+# Localstuff:  file(1) magic for locally observed files
+#
+#	$OpenBSD: Localstuff,v 1.5 2008/05/08 01:40:57 chl Exp $
+# Add any locally observed files here.  Remember:
+# text if readable, executable if runnable binary, data if unreadable.

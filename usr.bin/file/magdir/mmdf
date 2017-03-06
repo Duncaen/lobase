@@ -1,0 +1,6 @@
+#	$OpenBSD: mmdf,v 1.2 2004/06/03 03:14:20 tedu Exp $
+
+#------------------------------------------------------------------------------
+# mmdf:  file(1) magic for MMDF mail files
+#
+0	string	\001\001\001\001	MMDF mailbox

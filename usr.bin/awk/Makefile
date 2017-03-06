@@ -7,6 +7,7 @@ DPADD=	${LIBM}
 CLEANFILES+=proctab.c maketab ytab.c ytab.h
 CFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
 HOSTCFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
+CPPFLAGS+=-D_GNU_SOURCE
 
 ytab.c ytab.h: awkgram.y
 	${YACC} -d ${.CURDIR}/awkgram.y

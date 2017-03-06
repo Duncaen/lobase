@@ -1,0 +1,9 @@
+#	$OpenBSD: interleaf,v 1.3 2004/06/03 03:14:20 tedu Exp $
+
+#------------------------------------------------------------------------------
+# interleaf:  file(1) magic for InterLeaf TPS:
+#
+0	string		=\210OPS	Interleaf saved data
+0	string		=<!OPS		Interleaf document text
+>5	string		,\ Version\ =	\b, version
+>>17	string		>\0		%.3s

@@ -1,0 +1,7 @@
+# Magic
+#	$OpenBSD: Header,v 1.6 2008/05/08 01:40:56 chl Exp $
+
+# Magic data for file(1) command.
+# Machine-generated from src/usr.bin/file/magdir/*; edit there only!
+# Format is described in magic(files), where:
+# files is 5 on V7 and BSD, 4 on SV, and ?? in the SVID.

@@ -1,0 +1,7 @@
+#	$OpenBSD: 386bsd,v 1.2 2004/06/03 03:14:19 tedu Exp $
+
+#------------------------------------------------------------------------------
+# 386bsd:  file(1) magic for 386BSD objects
+#
+0	lelong			000000413	386BSD demand paged executable
+>16	lelong			>0		not stripped

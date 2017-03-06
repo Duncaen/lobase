@@ -1,0 +1,13 @@
+#	$OpenBSD: mercurial,v 1.2 2009/04/26 14:17:45 chl Exp $
+
+#------------------------------------------------------------------------------
+# mercurial:  file(1) magic for Mercurial changeset bundles
+# http://www.selenic.com/mercurial/wiki/
+#
+# Jesse Glick (jesse.glick@sun.com)
+#
+
+0	string		HG10		Mercurial changeset bundle
+>4	string		UN		(uncompressed)
+>4	string		GZ		(gzip compressed)
+>4	string		BZ		(bzip2 compressed)

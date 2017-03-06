@@ -1,0 +1,9 @@
+#	$OpenBSD: mozilla,v 1.2 2009/04/26 14:17:45 chl Exp $
+
+#------------------------------------------------------------------------------
+# mozilla:  file(1) magic for Mozilla XUL fastload files 
+# (XUL.mfasl and XPC.mfasl)
+# URL:	http://www.mozilla.org/
+# From:	Josh Triplett <josh@freedesktop.org>
+
+0	string	XPCOM\nMozFASL\r\n\x1A		Mozilla XUL fastload data
