@@ -52,6 +52,12 @@ int sradixsort(const unsigned char **, int, const unsigned char *, unsigned);
 double strtod(const char *__restrict, char **__restrict);
 long long strtonum(const char *, long long, long long, const char **);
 long double strtold(const char *__restrict, char **__restrict);
+long random(void);
+void srandom(unsigned int);
+void srandom_deterministic(unsigned int);
+void srandomdev(void);
+char *initstate(unsigned int, char *, size_t);
+char *setstate(char *);
 
 #endif /* _COMPAT_STDLIB_H_ */
 
