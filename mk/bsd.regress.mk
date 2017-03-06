@@ -1,5 +1,3 @@
-include ../../../config.mk
-
 .CURDIR = .
 .OBJDIR = $(shell pwd)
 .DEFAULT_GOAL :=
@@ -20,3 +18,6 @@ ifneq (,$(CLEANFILES))
 endif
 
 .PHONY: all clean regress depend
+
+.SUFFIXES:
+include config.mk

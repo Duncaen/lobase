@@ -1,28 +1,23 @@
-include config.mk
-
 STATICLIB = lib$(LIB).a
+LIBDIR=/lib
+BINOWN=root
+BINGRP=root
+LIBOWN=$(BINOWN)
+LIBGRP=$(BINGRP)
 
 .CURDIR = .
-CLEANFILES += $(STATICLIB) *.o
 
-CPPFLAGS += -I$(TOPDIR)/libopenbsd -include openbsd.h -I$(TOPDIR) -include config.h
+CPPFLAGS += -I$(TOPDIR)/lib/libopenbsd -include openbsd.h -I$(TOPDIR)/include \
+						-I$(TOPDIR) -include config.h
 LDFLAGS += $(LDADD)
-
-#find_src = $(wildcard $(src) $(.PATH:%=%/$(src)))
-#SRCS := $(foreach src,$(SRCS),$(find_src))
-ifneq (,$(.PATH))
-	VPATH := $(.PATH)
-endif
 
 CFILES = $(filter %.c,$(SRCS))
 YFILES = $(filter %.y,$(SRCS))
 LFILES = $(filter %.l,$(SRCS))
 
-OBJS = $(YFILES:.y=.o) $(LFILES:.l=.o) $(CFILES:.c=.o)
-
-ifneq (,$(findstring $(.DEFAULT_GOAL),install beforeinstall afterinstall))
-	.DEFAULT_GOAL :=
-endif
+OBJS += $(YFILES:.y=.o)
+OBJS += $(LFILES:.l=.o)
+OBJS += $(CFILES:.c=.o)
 
 .DEFAULT_GOAL :=
 
@@ -34,11 +29,6 @@ else
 $(STATICLIB) : % : %.o
 endif
 
-$(STATICLIB) : ../../libopenbsd/libopenbsd.a
-
-../../libopenbsd/libopenbsd.a:
-	$(MAKE) -C ../../libopenbsd libopenbsd.a
-
 y.tab.h y.tab.c:
 	$(YACC) -d $<
 
@@ -46,19 +36,40 @@ y.tab.h y.tab.c:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c y.tab.c -o $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(STATICLIB):
-	$(AR) rc $@ $^
+	rm -f $@
+	$(AR) rc $@ $(OBJS)
+	$(RANLIB) $@
 
-clean:
+clean: _SUBDIRUSE
+	rm -f $(STATICLIB) $(OBJS)
+ifdef CLEANFILES
 	rm -f $(CLEANFILES)
+endif
 
-install: libinstall
+cleandir: _SUBDIRUSE clean
 
-libinstall:
+beforeinstall:
+
+realinstall:
 	test -d "$(DESTDIR)$(LIBDIR)" || \
 		$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)
-	$(INSTALL) $(STATICLIB) $(DESTDIR)$(LIBDIR)/$(STATICLIB)
+	$(INSTALL) -m 600 $(STATICLIB) \
+		$(DESTDIR)$(LIBDIR)
 
-.PHONY: all clean install libinstall
+install: maninstall _SUBDIRUSE
+maninstall: afterinstall
+afterinstall: realinstall
+realinstall: beforeinstall
+
+
+.PHONY: all clean cleandir install libinstall
+
+ifndef NOMAN
+include bsd.man.mk
+endif
+
+include bsd.subdir.mk
+include config.mk

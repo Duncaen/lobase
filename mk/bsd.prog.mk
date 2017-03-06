@@ -3,14 +3,15 @@ include config.mk
 .CURDIR = .
 CLEANFILES += $(PROG) *.o
 
-CPPFLAGS += -I../../libopenbsd -include openbsd.h -I../.. -include config.h
-LDFLAGS += $(LDADD)
+CPPFLAGS += -I$(TOPDIR)/lib/libopenbsd -include openbsd.h -I$(TOPDIR) -include config.h
 
-#find_src = $(wildcard $(src) $(.PATH:%=%/$(src)))
-#SRCS := $(foreach src,$(SRCS),$(find_src))
-ifneq (,$(.PATH))
-	VPATH := $(.PATH)
+LIBC ?= $(TOPDIR)/lib/libopenbsd/libopenbsd.a
+LIBUTIL ?= $(TOPDIR)/lib/libutil/libutil.a
+
+ifeq (-lutil,$(filter -lutil,$(LDADD)))
+	LDFLAGS+= -L$(TOPDIR)/lib/libutil
 endif
+LDFLAGS += -L$(TOPDIR)/lib/libopenbsd $(LDADD) -lopenbsd
 
 CFILES = $(filter %.c,$(SRCS))
 YFILES = $(filter %.y,$(SRCS))
@@ -32,13 +33,8 @@ else
 $(PROG) : % : %.o
 endif
 
-$(PROG) : ../../libopenbsd/libopenbsd.a
-
-../../libopenbsd/libopenbsd.a:
-	$(MAKE) -C ../../libopenbsd libopenbsd.a
-
 y.tab.h y.tab.c:
-	$(YACC) -d $<
+	$(YACC) -d $(YFILES)
 
 %.o: %.y y.tab.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c y.tab.c -o $@
@@ -47,10 +43,10 @@ y.tab.h y.tab.c:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 $(PROG):
-	$(CC) $^ ../../libopenbsd/libopenbsd.a -o $@ $(LDFLAGS)
+	$(CC) $^ -o $@ $(LDFLAGS)
 
 clean:
-	rm -f $(CLEANFILES)
+	rm -f $(CLEANFILES) y.tab.h y.tab.c
 
 install: proginstall install_links
 
