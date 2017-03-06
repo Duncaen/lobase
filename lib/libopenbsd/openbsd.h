@@ -51,6 +51,9 @@
 #define DEF_STRONG(x)
 #endif
 
+#if !defined(PROTO_NORMAL)
+#define PROTO_NORMAL(x)
+#endif
 
 /* sys/sys/param.h */
 /*
