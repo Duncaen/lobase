@@ -32,7 +32,6 @@ prepfile: clean
 	@mkdir -p regress
 	@touch regress/file
 	@chmod 000 regress/file
-	stat -f '%p' regress/file
 	@[ `stat -f '%p' regress/file` == '100000' ]
 
 chmod_prepsymlink: prepfile

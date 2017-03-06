@@ -139,7 +139,11 @@ done:
 	 * We alter the symlink itself if doing -h or -RP, or
 	 * if doing -RH and the symlink wasn't a command line arg.
 	 */
+#if !defined(__OpenBSD__)
+	atflags = 0;
+#else
 	atflags = AT_SYMLINK_NOFOLLOW;
+#endif
 
 	fts_options = FTS_PHYSICAL;
 	if (Rflag) {
@@ -154,10 +158,10 @@ done:
 			atflags = 0;
 		}
 	} else if (!hflag) {
-#if !defined(__OpenBSD__)
-		fts_options = FTS_LOGICAL;
-#endif
 		atflags = 0;
+#if !defined(__OpenBSD__)
+	fts_options = FTS_LOGICAL;
+#endif
 	}
 
 #if 0
@@ -250,6 +254,7 @@ done:
 			continue;
 		case FTS_SL:			/* Ignore. */
 		case FTS_SLNONE:
+#if defined(__OpenBSD__)
 			/*
 			 * The only symlinks that end up here are ones that
 			 * don't point to anything or that loop and ones
@@ -257,18 +262,16 @@ done:
 			 */
 			if (!hflag && (fts_options & FTS_LOGICAL))
 				continue;
-#if !defined(__OpenBSD__)
+#else
 			/* linux doesnt support symlink permissions */
-			if (atflags) {
-				warnx("skipping link");
-				continue;
-			}
+			continue;
 #endif
 			break;
 		default:
 			break;
 		}
 
+#if defined(__OpenBSD__)
 		/*
 		 * For -RH, the decision of how to handle symlinks depends
 		 * on the level: follow it iff it's a command line arg.
@@ -277,6 +280,7 @@ done:
 			atflags = p->fts_level == FTS_ROOTLEVEL ? 0 : 
 			    AT_SYMLINK_NOFOLLOW;
 		}
+#endif
 
 		if (ischmod) {
 			if (!fchmodat(AT_FDCWD, p->fts_accpath, oct ? omode :
