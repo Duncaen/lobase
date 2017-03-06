@@ -1,0 +1,174 @@
+lobase
+======
+
+lobase is a port of the OpenBSD userland to Linux.
+
+Installation
+------------
+
+	$ autoreconf -fi
+	$ ./configure
+	$ make
+	# make install
+
+Dependencies
+------------
+
+	- libevent
+	- libressl
+	- zlib
+
+Broken
+------
+
+- cu	should be simple to fix
+- df	needs getmntinfo(2) see TODO
+- file
+- grep	maybe, builds fine basic features work, -e might be broken with musl
+- sed	REG_STARTEND, see NetBSDs sed
+
+TODO
+----
+
+- mk/bsd.prog.mk
+	- install man pages
+	- add DPADD support
+
+- mk/bsd.lib.mk
+	- install headers
+	- build shared libraries?
+
+- libopenbsd
+	- import libc/regexp?
+	- add getmntinfo(3) and getfsstat(2)
+
+- usr.bin/tail
+	- import, rewrite -F or add a shim for kqueue?
+
+- */*/Makefile
+	- I added -D_GNU_SOURCE and/or -D_XOPEN_SOURCE to some of the makefiles
+	  to shut up warnings, would be nice to move those into the right files.
+
+lib
+---
+
+	libutil - OpenBSDs libutil, but only contains necessary parts
+	libopenbsd - Parts of OpenBSDs libc
+
+bin
+---
+
+	cat
+	chmod	Some differences, OpenBSD has permissions for symlinks, Linux not.
+	cp
+	date
+	dd
+	df
+	domainname
+	echo
+	ed
+	expr
+	hostname
+	kill
+	ln
+	ls
+	md5
+	mkdir
+	mv
+	pax
+	pwd
+	rm
+	rmdir
+	sleep
+	stty
+	sync
+	test
+
+sbin
+----
+
+	mknod
+
+usr.bin
+-------
+
+	apply
+	awk
+	basename
+	bc
+	biff
+	cal
+	calendar
+	cmp
+	col
+	colrm
+	column
+	comm
+	cu
+	cut
+	dc
+	diff
+	diff3
+	dirname
+	du
+	env
+	expand
+	false
+	file
+	fmt
+	fold
+	getopt
+	grep
+	head
+	hexdump
+	id
+	indent
+	join
+	jot
+	lam
+	lndir
+	logger
+	logname
+	look
+	mktemp
+	newsyslog
+	nice
+	nl
+	nohup
+	paste
+	patch
+	printenv
+	printf
+	readlink
+	renice
+	rev
+	rs
+	sed
+	shar
+	sort
+	split
+	stat
+	tee
+	time
+	touch
+	tr
+	true
+	tsort
+	tty
+	uname
+	unexpand
+	uniq
+	unvis
+	uudecode
+	uuencode
+	vis
+	wc
+	what
+	which
+	xinstall
+
+usr.sbin
+--------
+
+	mtree
+	rdate
