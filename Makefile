@@ -1,6 +1,6 @@
 export TOPDIR := $(shell pwd)
 
-SUBDIR = libopenbsd lib bin sbin usr.bin usr.sbin
+SUBDIR = lib bin sbin usr.bin usr.sbin
 
 ifeq (clean,$(filter clean,$(MAKECMDGOALS)))
 SUBDIR += regress

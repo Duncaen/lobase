@@ -1,4 +1,4 @@
-/*	$OpenBSD: reallocarray.c,v 1.1 2014/05/08 21:43:49 deraadt Exp $	*/
+/*	$OpenBSD: reallocarray.c,v 1.3 2015/09/13 08:31:47 guenther Exp $	*/
 /*
  * Copyright (c) 2008 Otto Moerbeek <otto@drijf.net>
  *
@@ -36,3 +36,4 @@ reallocarray(void *optr, size_t nmemb, size_t size)
 	}
 	return realloc(optr, size * nmemb);
 }
+DEF_WEAK(reallocarray);
