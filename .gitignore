@@ -1,2 +1,10 @@
-*.[ao]
+*.a
+*.o
+*.so
+*.so.*
 config.mk
+config.h
+config.log
+config.status
+autom4te.cache
+config.h.in~
