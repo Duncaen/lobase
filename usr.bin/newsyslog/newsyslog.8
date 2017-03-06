@@ -1,0 +1,441 @@
+.\"	$OpenBSD: newsyslog.8,v 1.53 2015/11/14 01:22:04 jmc Exp $
+.\"
+.\" Copyright (c) 1997, Jason Downs.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR(S) ``AS IS'' AND ANY EXPRESS
+.\" OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+.\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+.\" DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY DIRECT,
+.\" INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+.\" (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+.\" SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+.\" CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\" This file contains changes from the Open Software Foundation.
+.\"
+.\"	from: @(#)newsyslog.8
+.\"
+.\" Copyright 1988, 1989 by the Massachusetts Institute of Technology
+.\"
+.\" Permission to use, copy, modify, and distribute this software
+.\" and its documentation for any purpose and without fee is
+.\" hereby granted, provided that the above copyright notice
+.\" appear in all copies and that both that copyright notice and
+.\" this permission notice appear in supporting documentation,
+.\" and that the names of M.I.T. and the M.I.T. S.I.P.B. not be
+.\" used in advertising or publicity pertaining to distribution
+.\" of the software without specific, written prior permission.
+.\" M.I.T. and the M.I.T. S.I.P.B. make no representations about
+.\" the suitability of this software for any purpose.  It is
+.\" provided "as is" without express or implied warranty.
+.\"
+.Dd $Mdocdate: November 14 2015 $
+.Dt NEWSYSLOG 8
+.Os
+.Sh NAME
+.Nm newsyslog ,
+.Nm newsyslog.conf
+.Nd rotate log files
+.Sh SYNOPSIS
+.Nm newsyslog
+.Op Fl Fmnrv
+.Op Fl a Ar directory
+.Op Fl f Ar config_file
+.Op Ar log ...
+.Sh DESCRIPTION
+The
+.Nm
+utility rotates log files when they exceed a configurable size or age.
+The
+.Ar log
+file is renamed to
+.Pa log.0
+and an empty file is created in its place.
+An archive of older logs may be kept:
+in order of increasing age, these files are named
+.Pa log.1 ,
+.Pa log.2 ,
+and so on.
+When their number exceeds a given limit, the oldest is removed.
+The archived logs may also be compressed.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl a Ar directory
+Specify a
+.Ar directory
+into which archived log files will be written.
+If
+.Ar directory
+is a relative path, it is appended to the parent directory
+of each log and the archived log is stored in the result.
+If an absolute path is given, all archived logs are stored in the given
+.Ar directory .
+If
+.Ar directory
+does not exist for a specified log, it is ignored for that entry and
+the log is rotated as if the
+.Fl a
+option was not specified.
+.It Fl F
+Force
+.Nm
+to trim logs regardless of the size and/or age requirements specified in
+.Pa /etc/newsyslog.conf .
+This option may be combined with the
+.Fl n
+or
+.Fl v
+flags to aid in debugging problems with
+.Pa /etc/newsyslog.conf .
+.It Fl f Ar config_file
+Use
+.Ar config_file
+instead of
+.Pa /etc/newsyslog.conf
+for the configuration file.
+.It Fl m
+Monitoring mode; only entries marked with an
+.Sq M
+in flags are processed.
+For each log file being monitored, any log output since the last time
+.Nm
+was run with the
+.Fl m
+flag is mailed to the user listed in the monitor notification section.
+.It Fl n
+Do not trim the logs, but instead print out what would be done if this option
+were not specified.
+.It Fl r
+Removes the restriction that
+.Nm
+must be running as root.
+Note that in this mode
+.Nm
+will not be able to send a
+.Dv SIGHUP
+signal to
+.Xr syslogd 8 .
+.It Fl v
+Place
+.Nm newsyslog
+in verbose mode.
+In this mode it will print out each log and its
+reasons for either trimming that log or skipping it.
+.El
+.Pp
+In the default system configuration,
+.Nm
+is run by
+.Xr cron 8 ,
+but it may also be run manually.
+If one or more
+.Ar log
+files are specified on the command line, only the specified files are
+rotated.
+Note that each
+.Ar log
+specified must have an entry in
+.Pa /etc/newsyslog.conf .
+.Pp
+A log can be archived because of two reasons:
+The log file can have
+grown bigger than a preset size in kilobytes, or a preset number of
+hours may have elapsed since the last log archive.
+The granularity of
+.Nm
+is dependent on how often it is scheduled to run in
+.Xr cron 8 .
+Since the program is quite fast, it may be scheduled to run every hour
+without any ill effects.
+.Pp
+When starting up,
+.Nm
+reads in a configuration file to determine which logs should be looked
+at.
+By default, this configuration file is
+.Pa /etc/newsyslog.conf .
+Each line of the file contains information about a particular log file
+that should be handled by
+.Nm newsyslog .
+Each line has five mandatory fields and up to three optional fields, with
+whitespace separating each field.
+Blank lines or lines beginning with a hash mark
+.Pq Ql #
+are ignored.
+The fields of the configuration file are as
+follows:
+.Bl -tag -width XXXXXXXXXXXXXXXX
+.It Ar logfile_name
+The full pathname of the system log file to be archived.
+.It Ar owner:group
+This optional field specifies the owner and group for the archive file.
+The
+.Ql \&:
+is essential, even if the
+.Ar owner
+or
+.Ar group
+field is left blank.
+The fields may be numeric, or a name which is looked up
+in the system password and group databases.
+For backwards compatibility, a
+.Ql \&.
+may be used instead of a
+.Ql \&: .
+If either
+.Ar owner
+or
+.Ar group
+is not specified, the owner and/or group of the existing log file is used.
+.It Ar mode
+File mode (in octal) to use for created log files and archives.
+.It Ar count
+The number of archives to be kept besides the log file itself.
+.It Ar size
+When the size of the log file (in kilobytes) reaches this point, the log
+file is trimmed as described above.
+If this field is replaced by an
+.Ql * ,
+or set to
+.Ql 0 ,
+then the size of
+the log file is not taken into account when determining when to trim the
+log file.
+By default, files smaller than 256 bytes are not rotated unless the
+.Sq B
+(binary) flag is set or the
+.Fl F
+option is specified.
+This prevents
+.Nm
+from rotating files consisting solely of a message indicating
+that the log file has been turned over.
+.It Ar when
+The
+.Ar when
+field can consist of an interval, a specific time, or both.
+If the
+.Ar when
+field consists of an asterisk
+.Pq Ql \&* ,
+log rotation will depend only on the contents of the
+.Ar size
+field.
+Otherwise, the
+.Ar when
+field consists of an optional interval in hours, possibly followed
+by an
+.So Li \&@ Sc Ns -sign
+and a time in a restricted
+.St -iso8601
+format or by a
+.So Li \&$ Sc Ns -sign
+and a time specification for logfile rotation at a fixed time once
+per day, per week or per month.
+.Pp
+If a time is specified, the log file will only be trimmed if
+.Nm
+is run within one hour of the specified time.
+If an interval is specified, the log file will be trimmed if that
+many hours have passed since the last rotation.
+When both a time and an interval are specified, both conditions
+must be satisfied for the rotation to take place.
+.Pp
+There is no provision for the specification of a time zone.
+There is little point in specifying an explicit minutes or seconds
+component in the current implementation, since the only comparison is
+.Sq within the hour .
+.Pp
+.Sy ISO 8601 restricted time format:
+The lead-in character for a restricted
+.St -iso8601
+time is an
+.So Li \&@ Sc Ns -sign .
+The particular format of the time in restricted
+.St -iso8601
+is:
+.Sm off
+.Oo Oo Oo Oo Oo
+.Va \&cc Oc
+.Va \&yy Oc
+.Va \&mm Oc
+.Va \&dd Oc
+.Oo Va \&T
+.Oo Va \&HH
+.Oo Va \&MM
+.Oo Va \&SS
+.Oc Oc Oc Oc Oc .
+.Sm on
+Optional date fields default to the appropriate component of the
+current date; optional time fields default to midnight.
+For example, if today is January 22, 1999, the following date specifications
+are all equivalent:
+.Pp
+.Bl -item -compact -offset indent
+.It
+.Ql 19990122T000000
+.It
+.Ql 990122T000000
+.It
+.Ql 0122T000000
+.It
+.Ql 22T000000
+.It
+.Ql T000000
+.It
+.Ql T0000
+.It
+.Ql T00
+.It
+.Ql 22T
+.It
+.Ql \&T
+.It
+.Ql \&
+.El
+.Pp
+.Sy Day, week and month time format:
+The lead-in character for day, week and month specification is a
+dollar sign
+.Pq $ .
+The particular format of day, week and month specification is:
+.Op Li D Ns Ar HH ,
+.Op Li W Ns Ar w Ns Op Li D Ns Ar HH ,
+and
+.Op Li M Ns Ar dd Ns Op Li D Ns Ar HH ,
+respectively.
+Optional time fields default to midnight.
+The ranges for day and hour specifications are:
+.Pp
+.Bl -tag -width Ds -compact -offset indent
+.It Ar HH
+hours, range 0 ... 23
+.It Ar w
+day of week, range 0 ... 6, 0 = Sunday
+.It Ar dd
+day of month, range 1 ... 31, or the letter
+.Em L
+or
+.Em l
+to specify the last day of the month.
+.El
+.Pp
+.Sy Some examples:
+.Bl -tag -width Ds -compact -offset indent
+.It Li $D0
+rotate every night at midnight
+(same as
+.Li @T00 )
+.It Li $D23
+rotate every day at 23:00 hr
+(same as
+.Li @T23 )
+.It Li $W0D23
+rotate every week on Sunday at 23:00 hr
+.It Li $W5D16
+rotate every week on Friday at 16:00 hr
+.It Li $M1D0
+rotate on the first day of every month at midnight
+(i.e., the start of the day; same as
+.Li @01T00 )
+.It Li $M5D6
+rotate on every 5th day of the month at 6:00 hr
+(same as
+.Li @05T06 )
+.El
+.It Ar flags
+The optional
+.Ar flags
+field specifies if the archives should have any special processing
+done to the archived log files.
+The
+.Sq Z
+flag will make the archive
+files compressed to save space using
+.Xr gzip 1
+or
+.Xr compress 1 ,
+depending on compilation options.
+The
+.Sq B
+flag means that the file is a
+binary file, and so the ASCII message which
+.Nm
+inserts to indicate the fact that the logs have been turned over
+should not be included.
+The
+.Sq M
+flag marks this entry as a monitored
+log file.
+The
+.Sq F
+flag specifies that symbolic links should be followed.
+.It Ar monitor
+Specify the username (or email address) that should receive notification
+messages if this is a monitored log file.
+Notification messages are sent as email; the operator
+deserves what they get if they mark the mail
+log file as monitored.
+This field is only valid when the
+.Sq M
+flag is set.
+.It Ar pid_file
+This optional field specifies a file containing the PID of a process to send a
+signal (usually
+.Dv SIGHUP )
+to instead of
+.Pa /var/run/syslog.pid .
+.It Ar signal
+Specify the signal to send to the process instead of
+.Dv SIGHUP .
+Signal names
+must start with
+.Dq SIG
+and be the signal name, not the number, e.g.,
+.Dv SIGUSR1 .
+.It Ar command
+This optional field specifies a command to run instead of sending a signal
+to the process.
+The command must be enclosed in double quotes
+.Pq Ql \&" .
+The empty string,
+.Ql \&"\&" ,
+can be used to prevent
+.Nm
+from sending a signal or running a command.
+You cannot specify both a command and a PID file.
+.Em NOTE:
+If you specify a command to be run,
+.Nm
+will not send a
+.Dv SIGHUP to
+.Xr syslogd 8 .
+.El
+.Sh FILES
+.Bl -tag -width /etc/newsyslog.conf
+.It Pa /etc/newsyslog.conf
+default configuration file
+.El
+.Sh SEE ALSO
+.Xr compress 1 ,
+.Xr gzip 1 ,
+.Xr syslog 3 ,
+.Xr syslogd 8
+.Sh AUTHORS
+.An Theodore Ts'o ,
+MIT Project Athena
+.br
+Copyright 1987, Massachusetts Institute of Technology
