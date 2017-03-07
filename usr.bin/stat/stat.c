@@ -795,6 +795,7 @@ format1(const struct stat *st,
 		if (ofmt == 0)
 			ofmt = FMTF_UNSIGNED;
 		break;
+#endif
 	case SHOW_symlink:
 		small = 0;
 		data = 0;
@@ -814,7 +815,6 @@ format1(const struct stat *st,
 		if (ofmt == 0)
 			ofmt = FMTF_STRING;
 		break;
-#endif
 	case SHOW_filetype:
 		small = 0;
 		data = 0;
