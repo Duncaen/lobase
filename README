@@ -26,7 +26,6 @@ Broken
 ------
 
 - cu		should be simple to fix
-- df		needs getmntinfo(2) see TODO
 - file
 - grep		maybe, builds fine basic features work, -e might be broken with musl
 - sed		REG_STARTEND, see NetBSDs sed
@@ -45,7 +44,6 @@ TODO
 - libopenbsd
   - use the same directory structure as src/lib/libc to make diffs/merges simpler
   - import libc/regexp?
-  - add getmntinfo(3) and getfsstat(2)
 
 - usr.bin/tail
   - import, rewrite -F or add a shim for kqueue?
