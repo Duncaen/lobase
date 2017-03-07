@@ -6,7 +6,7 @@ GEN_SRCS = hash/md5hl.c hash/rmd160hl.c hash/sha1hl.c hash/sha224hl.c \
 
 CLEANFILES+=$(GEN_SRCS)
 
-SRCS = base64.c closefrom.c \
+SRCS = closefrom.c \
 	heapsort.c merge.c pledge-noop.c progname.c \
 	qsort.c radixsort.c random.c readpassphrase.c \
 	setproctitle.c strtoimax.c strtonum.c strtoumax.c \
@@ -17,6 +17,7 @@ SRCS = base64.c closefrom.c \
 
 SRCS += gen/errc.c gen/fts.c gen/warnc.c gen/verrc.c gen/vwarnc.c gen/setmode.c\
 SRCS += stdio/fgetwln.c
+SRCS += net/base64.c
 
 include config.mk
 

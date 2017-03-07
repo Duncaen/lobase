@@ -21,6 +21,13 @@
 #define __BEGIN_DECLS
 #define __END_DECLS
 
+#ifndef	__CONCAT
+#define	__CONCAT(x,y)	x ## y
+#endif
+#ifndef	__STRING
+#define	__STRING(x)	#x
+#endif
+
 #undef __weak_alias
 #define __weak_alias(new, old) \
 	extern __typeof(old) new __attribute__((weak, alias(#old)))
@@ -105,12 +112,6 @@ void setprogname(const char *progname);
 
 /* getbsize.c */
 char *getbsize(int *, long *);
-
-/* base64.c */
-/*
-int b64_ntop(unsigned char const *, size_t, char *, size_t);
-int b64_pton(char const *, unsigned char *, size_t);
-*/
 
 #define strtoq strtoll
 
