@@ -55,6 +55,11 @@ ifneq ($(HAVE_GETDTABLECOUNT),1)
 	SRCS += sys/getdtablecount.c
 endif
 
+ifneq ($(HAVE_GETFSSTAT),1)
+	SRCS += sys/getfsstat.c
+	SRCS += sys/statfs.c
+endif
+
 $(GEN_SRCS) : % : hash/helper.c
 
 hash/sha1hl.c:
