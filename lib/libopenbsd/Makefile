@@ -16,6 +16,7 @@ SRCS = closefrom.c \
 	hash/sha2.c $(GEN_SRCS)
 
 SRCS += gen/errc.c gen/fts.c gen/warnc.c gen/verrc.c gen/vwarnc.c gen/setmode.c\
+				gen/basename.c gen/dirname.c
 SRCS += stdio/fgetwln.c
 SRCS += net/base64.c
 
