@@ -3,6 +3,6 @@
 REGRESS_TARGETS = cut
 
 cut:
-	sh ${.CURDIR}/cut.sh
+	$(SHELL) ${.CURDIR}/cut.sh
 
 include bsd.regress.mk

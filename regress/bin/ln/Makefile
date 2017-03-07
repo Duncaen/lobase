@@ -1,7 +1,7 @@
 #	$OpenBSD: Makefile,v 1.1 2013/03/12 06:00:05 guenther Exp $
 
 regress: recursive links/source
-	@sh ${.CURDIR}/test_ln.sh && touch $@
+	@$(SHELL) ${.CURDIR}/test_ln.sh && touch $@
 
 clean:
 	rm -rf links regress

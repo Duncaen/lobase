@@ -3,6 +3,6 @@
 REGRESS_TARGETS = colrm
 
 colrm:
-	sh ${.CURDIR}/colrm.sh
+	$(SHELL) ${.CURDIR}/colrm.sh
 
 include bsd.regress.mk

@@ -3,6 +3,6 @@
 PROG= showargs
 
 run-regress-showargs:
-	@sh ${.CURDIR}/xargs-L.sh
+	@$(SHELL) ${.CURDIR}/xargs-L.sh
 
 include bsd.regress.mk

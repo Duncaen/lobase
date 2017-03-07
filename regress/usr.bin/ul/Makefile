@@ -3,6 +3,6 @@
 REGRESS_TARGETS = ul
 
 ul:
-	sh ${.CURDIR}/ul.sh
+	$(SHELL) ${.CURDIR}/ul.sh
 
 include bsd.regress.mk

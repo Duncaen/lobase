@@ -3,6 +3,6 @@
 REGRESS_TARGETS = wc
 
 wc:
-	sh ${.CURDIR}/wc.sh
+	$(SHELL) ${.CURDIR}/wc.sh
 
 include bsd.regress.mk
