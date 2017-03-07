@@ -59,9 +59,11 @@ static long	 regetmntinfo(struct statfs **, long);
 static int	 selected(const char *);
 static __dead void usage(void);
 
+#ifdef __OpenBSD__
 extern int	 e2fs_df(int, char *, struct statfs *);
 extern int	 ffs_df(int, char *, struct statfs *);
 static int	 raw_df(char *, struct statfs *);
+#endif
 
 int	hflag, iflag, kflag, lflag, nflag, Pflag;
 char	**typelist = NULL;
@@ -135,8 +137,10 @@ main(int argc, char *argv[])
 					continue;
 				}
 			} else if (S_ISCHR(stbuf.st_mode) || S_ISBLK(stbuf.st_mode)) {
+#ifdef __OpenBSD__
 				if (!raw_df(*argv, &mntbuf[mntsize]))
 					++mntsize;
+#endif
 				continue;
 			} else
 				mntpt = *argv;
@@ -416,6 +420,7 @@ posixprint(struct statfs *mntbuf, long mntsize, int maxwidth)
 	}
 }
 
+#ifdef __OpenBSD__
 static int
 raw_df(char *file, struct statfs *sfsp)
 {
@@ -435,6 +440,7 @@ raw_df(char *file, struct statfs *sfsp)
 	close (rfd);
 	return (ret);
 }
+#endif
 
 int
 bread(int rfd, off_t off, void *buf, int cnt)
