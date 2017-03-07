@@ -16,11 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#if defined(HAVE_SYS_QUEUE_H)
 #include <sys/queue.h>
-#else
-#include "openbsd-queue.h"
-#endif
 #include <sys/stat.h>
 
 #include <ctype.h>

@@ -28,11 +28,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(HAVE_SYS_QUEUE_H)
 #include <sys/queue.h>
-#else
-#include <openbsd-queue.h>
-#endif
 
 #include <ctype.h>
 #include <err.h>

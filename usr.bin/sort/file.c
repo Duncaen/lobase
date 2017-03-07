@@ -30,7 +30,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <openbsd-queue.h>
+#include <sys/queue.h>
 
 #include <err.h>
 #include <fcntl.h>

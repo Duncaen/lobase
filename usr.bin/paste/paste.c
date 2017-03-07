@@ -32,11 +32,7 @@
  * SUCH DAMAGE.
  */
 
-#if defined(HAVE_SYS_QUEUES_h)
 #include <sys/queue.h>
-#else
-#include "openbsd-queue.h"
-#endif
 #include <sys/types.h>
 #include <err.h>
 #include <errno.h>

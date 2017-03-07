@@ -44,11 +44,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef HAVE_SYS_TREE_H
 #include <sys/tree.h>
-#else
-#include <openbsd-tree.h>
-#endif
 #include <unistd.h>
 #include <util.h>
 

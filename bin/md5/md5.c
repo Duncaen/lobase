@@ -23,7 +23,7 @@
 
 #include <sys/time.h>
 #include <sys/types.h>
-#include <openbsd-queue.h>
+#include <sys/queue.h>
 #include <netinet/in.h>
 #include <ctype.h>
 #include <err.h>
