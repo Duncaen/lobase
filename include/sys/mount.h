@@ -36,6 +36,7 @@ struct openbsd_statfs {
 #define f_ffree		buf.f_ffree
 #define f_flags		buf.f_flags
 
+int getmntinfo(struct statfs **, int);
 int getfsstat(struct statfs *, size_t, int);
 int openbsd_statfs(const char *, struct statfs *);
 

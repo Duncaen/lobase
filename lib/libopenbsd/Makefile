@@ -60,6 +60,10 @@ ifneq ($(HAVE_GETFSSTAT),1)
 	SRCS += sys/statfs.c
 endif
 
+ifneq ($(HAVE_GETMNTINFO),1)
+	SRCS += gen/getmntinfo.c
+endif
+
 $(GEN_SRCS) : % : hash/helper.c
 
 hash/sha1hl.c:
