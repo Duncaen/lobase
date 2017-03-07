@@ -11,7 +11,7 @@ SRCS = closefrom.c \
 	qsort.c radixsort.c random.c readpassphrase.c \
 	setproctitle.c strtoimax.c strtonum.c strtoumax.c \
 	vis.c unvis.c pwcache.c pw_dup.c getbsize.c \
-	strmode.c logwtmp.c crypt/arc4random.c crypt/arc4random_uniform.c \
+	strmode.c crypt/arc4random.c crypt/arc4random_uniform.c \
 	crypt/chacha.c crypt/blowfish.c hash/md5.c hash/rmd160.c hash/sha1.c \
 	hash/sha2.c $(GEN_SRCS)
 
