@@ -1,5 +1,5 @@
 SUBDIR_MFLAGS = -I$(TOPDIR) -I$(TOPDIR)/mk
-SUBDIR_TARGETS = all install clean cleandir includes depend obj tags manlint
+SUBDIR_TARGETS = all install clean cleandir includes depend regress obj tags manlint
 SKIPDIR ?=
 
 $(SUBDIR_TARGETS): _SUBDIRUSE
