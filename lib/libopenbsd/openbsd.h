@@ -10,9 +10,11 @@
 
 #define FAIL_INSTEAD_OF_TRYING_FALLBACK
 
+#ifndef	ALIGN
 /* XXX: x86_64 only, see sys/arch/$arch/include/_types.h */
-#define ALIGNBYTES		(sizeof(long) - 1)
-#define ALIGN(p) (((u_int)(p) + ALIGNBYTES) &~ ALIGNBYTES)
+#define	ALIGNBYTES	(sizeof(long) - 1)
+#define	ALIGN(p)	(((size_t)(p) + ALIGNBYTES) &~ ALIGNBYTES)
+#endif
 
 #define __UNUSED		__attribute__ ((unused))
 
