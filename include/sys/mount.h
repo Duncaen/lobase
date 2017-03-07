@@ -18,6 +18,7 @@ union mount_info {
 
 struct openbsd_statfs {
 	struct statfs buf;
+	dev_t st_dev;
 	char f_fstypename[MFSNAMELEN];  /* fs type name */
 	char f_mntonname[MNAMELEN];     /* directory on which mounted */
 	char f_mntfromname[MNAMELEN];   /* mounted file system */
