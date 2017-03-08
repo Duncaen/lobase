@@ -44,12 +44,7 @@
 
 /* Flags passed to regcomp() and regexec() */
 int	 cflags;
-#if 0
-/* XXX: PORT: does this work? */
 int	 eflags = REG_STARTEND;
-#else
-int	 eflags;
-#endif
 
 int	 matchall;	/* shortcut */
 int	 patterns, pattern_sz;
