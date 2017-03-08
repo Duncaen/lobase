@@ -35,6 +35,10 @@
  * SUCH DAMAGE.
  */
 
+#ifdef __linux__
+# define __NEED_OPENBSD_statfs
+#endif
+
 #include <sys/stat.h>
 #include <sys/mount.h>
 
