@@ -242,9 +242,6 @@ split2(void)
 
 			pmatch.rm_so = 0;
 			pmatch.rm_eo = len - 1;
-#if !defined(REG_STARTEND)
-#define REG_STARTEND 0
-#endif
 			if (regexec(&rgx, bfr, 0, &pmatch, REG_STARTEND) == 0)
 				newfile();
 		} else if (lcnt++ == numlines) {
