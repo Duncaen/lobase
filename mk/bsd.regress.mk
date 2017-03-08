@@ -20,4 +20,4 @@ endif
 .PHONY: all clean regress depend
 
 .SUFFIXES:
-include config.mk
+include ${.TOPDIR}/config.mk

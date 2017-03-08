@@ -3,4 +3,4 @@
 regress:
 	@$(SHELL) ${.CURDIR}/fold.sh
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

@@ -22,4 +22,4 @@ all: ${REGRESS_TARGET}
 
 clean:
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

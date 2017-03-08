@@ -5,4 +5,4 @@ REGRESS_TARGETS = colrm
 colrm:
 	$(SHELL) ${.CURDIR}/colrm.sh
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

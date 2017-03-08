@@ -10,4 +10,4 @@ regress:
 clean:
 	rm -f test.*.out
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

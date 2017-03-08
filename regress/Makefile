@@ -1,2 +1,3 @@
-SUBDIR = bin sbin usr.bin usr.sbin
-include bsd.subdir.mk
+TOPDIR?=..
+SUBDIR=	bin sbin usr.bin usr.sbin
+include ${.TOPDIR}/mk/bsd.subdir.mk

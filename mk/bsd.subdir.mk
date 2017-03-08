@@ -1,24 +1,49 @@
-SUBDIR_MFLAGS = -I$(TOPDIR) -I$(TOPDIR)/mk
+MAKEOBJDIR?=	obj
+
+.TOPDIR?=	..
+.OBJDIR?=	${MAKEOBJDIR}
+.SRCDIR?=	.
+.CURDIR?=	.
+.RELDIR:=	$(.SRCDIR:.%=$(.TOPDIR)/../%)
+
+SUBDIR_MFLAGS=	--no-print-directory \
+		-I$(.NEXTTOP)/mk \
+		-C ${.OBJDIR}/$$nextdir \
+		-f ${.RELDIR}/$$nextdir/Makefile \
+		.OBJDIR=. \
+		.TOPDIR=${.TOPDIR}/.. \
+		.CURDIR=${.RELDIR}/$$nextdir \
+		.SRCDIR=${.SRCDIR}/$$nextdir \
+		MAKEOBJDIR=${.TOPDIR}/${MAKEOBJDIR} \
+		_THISDIR_=$$nextdir
+		
+
+
 SUBDIR_TARGETS = all install clean cleandir includes depend regress obj tags manlint
-SKIPDIR ?=
 
 $(SUBDIR_TARGETS): _SUBDIRUSE
 
+define __SUBDIRUSE
+for nextdir in $(SUBDIR); do                                                   \
+	b=; for s in $(SKIPDIR); do                                            \
+		[ "$$s" = "$$nextdir" ] && b=1 && break;                       \
+	done;                                                                  \
+	[ -n "$$b" ] && echo "($$nextdir skipped)" && continue;                \
+	echo "===> $${_THISDIR_:+$${_THISDIR_}/}$$nextdir";                    \
+	mkdir -p "${.OBJDIR}/$$nextdir"                                        \
+	&& $(MAKE) $(SUBDIR_MFLAGS) $(MAKECMDGOALS) || exit 1;                 \
+done
+endef
+
 _SUBDIRUSE:
-ifneq (,$(SUBDIR))
-	@for d in $(SUBDIR); do \
-		skip=; for s in $(SKIPDIR); do \
-			[ "$$s" = "$$d" ] && skip=1; \
-		done; \
-		[ -n "$$_THISDIR_" ] && n="$$_THISDIR_/$$d" || n=$$d; \
-		[ "$$skip" ] && echo "($$n skipped)" && continue; \
-		echo "===> $$n"; \
-		$(MAKE) $(SUBDIR_MFLAGS) -C $$d _THISDIR_=$$n $(MAKECMDGOALS) || exit 1; \
-	done
+ifneq ($(SUBDIR),)
+	@$(__SUBDIRUSE)
 
 $(SUBDIR):
-	@echo "===> $@"; \
-	$(MAKE) $(SUBDIR_MFLAGS) -C $@ all || exit 1
+	@nextdir="$@"; \
+	echo "===> $$nextdir"; \
+	mkdir -p "${.OBJDIR}/$$nextdir" \
+	&& $(MAKE) $(SUBDIR_MFLAGS) all || exit 1
 endif
 
 .PHONY: _SUBDIRUSE $(SUBDIR_TARGETS) $(SUBDIR)

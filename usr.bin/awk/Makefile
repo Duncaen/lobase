@@ -1,5 +1,7 @@
 #	$OpenBSD: Makefile,v 1.14 2013/08/18 22:06:44 miod Exp $
 
+.TOPDIR?=../..
+
 PROG=	awk
 SRCS=	ytab.c lex.c b.c main.c parse.c proctab.c tran.c lib.c run.c
 LDADD=	-lm
@@ -9,6 +11,7 @@ CFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
 HOSTCFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
 CPPFLAGS+=-D_GNU_SOURCE
 
+# XXX: replace with make depends
 lex.o b.o main.o tran.o run.o parse.o lib.o : ytab.h
 
 ytab.c: awkgram.y
@@ -24,4 +27,4 @@ proctab.c: maketab
 maketab: ytab.h maketab.c
 	${HOSTCC} ${HOSTCFLAGS} ${.CURDIR}/maketab.c -o $@
 
-include bsd.prog.mk
+include ${.TOPDIR}/mk/bsd.prog.mk

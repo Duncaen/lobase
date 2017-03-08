@@ -1,2 +1,3 @@
-SUBDIR = libopenbsd libutil
-include bsd.subdir.mk
+TOPDIR?=..
+SUBDIR=	libopenbsd libutil
+include ${.TOPDIR}/mk/bsd.subdir.mk

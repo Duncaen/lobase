@@ -1,3 +1,3 @@
-SUBDIR =
-SKIPDIR =
-include bsd.subdir.mk
+TOPDIR?=../..
+SUBDIR=
+include ${.TOPDIR}/mk/bsd.subdir.mk

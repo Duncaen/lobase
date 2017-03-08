@@ -67,4 +67,4 @@ t14.1 t15.1:
 clean:
 	rm -f *.copy *.patch *.orig
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

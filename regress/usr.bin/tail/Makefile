@@ -12,4 +12,4 @@ $(REGRESS_ROOT_TARGETS):
 $(REGRESS_TARGETS):
 	$(SHELL) $@.sh
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

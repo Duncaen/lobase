@@ -1,6 +1,8 @@
 #	$OpenBSD: Makefile,v 1.4 2010/01/04 17:50:39 deraadt Exp $
 
+.TOPDIR?=../..
+
 PROG=	sed
 SRCS=	compile.c main.c misc.c process.c
 
-include bsd.prog.mk
+include ${.TOPDIR}/mk/bsd.prog.mk

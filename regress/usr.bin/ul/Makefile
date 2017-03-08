@@ -5,4 +5,4 @@ REGRESS_TARGETS = ul
 ul:
 	$(SHELL) ${.CURDIR}/ul.sh
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

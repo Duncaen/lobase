@@ -5,4 +5,4 @@ REGRESS_TARGETS=	run_test
 run_test:
 	$(SHELL) $(.CURDIR)/TEST.sh >/dev/null
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

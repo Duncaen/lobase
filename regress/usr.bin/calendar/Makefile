@@ -10,4 +10,4 @@ $(REGRESS_TARGETS):
 
 .PHONY:	${REGRESS_TARGETS}
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

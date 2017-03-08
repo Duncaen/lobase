@@ -50,4 +50,4 @@ all: clean ${REGRESS_TARGET}
 clean:
 	rm -f *.log
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

@@ -5,4 +5,4 @@ REGRESS_TARGETS = wc
 wc:
 	$(SHELL) ${.CURDIR}/wc.sh
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

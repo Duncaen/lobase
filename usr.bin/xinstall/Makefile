@@ -1,5 +1,7 @@
 #	$OpenBSD: Makefile,v 1.7 2011/11/08 10:37:10 guenther Exp $
 
+.TOPDIR?=../..
+
 PROG=	xinstall
 SRCS=	xinstall.c
 MAN=	install.1
@@ -9,4 +11,4 @@ MAN=	install.1
 #	    -o ${BINOWN} -g ${BINGRP} \
 #	    -m ${BINMODE} ${PROG} ${DESTDIR}${BINDIR}/install
 
-include bsd.prog.mk
+include ${.TOPDIR}/mk/bsd.prog.mk

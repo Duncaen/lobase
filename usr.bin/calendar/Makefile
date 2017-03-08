@@ -1,5 +1,7 @@
 #	$OpenBSD: Makefile,v 1.10 2015/10/23 10:33:52 tedu Exp $
 
+.TOPDIR?=../..
+
 PROG=	calendar
 SRCS=   calendar.c io.c day.c pesach.c ostern.c paskha.c
 INTER=	de_DE.UTF-8 hr_HR.UTF-8 ru_RU.UTF-8 fr_FR.UTF-8
@@ -16,4 +18,4 @@ beforeinstall:
 #		${DESTDIR}/usr/share/calendar/${lang}; 
 #.endfor
 
-include bsd.prog.mk
+include ${.TOPDIR}/mk/bsd.prog.mk

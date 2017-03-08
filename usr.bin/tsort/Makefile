@@ -1,5 +1,7 @@
 #	$OpenBSD: Makefile,v 1.6 2014/05/12 19:11:20 espie Exp $
 
+.TOPDIR?=../..
+
 PROG =	tsort
 SRCS = tsort.c
 
@@ -8,4 +10,4 @@ DPADD += ${LIBUTIL}
 LDADD += -L$(TOPDIR)/lib/libutil -lutil
 CPPFLAGS+=-I$(TOPDIR)/lib/libutil
 
-include bsd.prog.mk
+include ${.TOPDIR}/mk/bsd.prog.mk

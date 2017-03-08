@@ -4,4 +4,4 @@
 regress:
 	@$(SHELL) ${.CURDIR}/basename.sh
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

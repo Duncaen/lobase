@@ -487,4 +487,4 @@ clean:
 
 .POSIX:
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

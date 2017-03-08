@@ -1,5 +1,7 @@
 # $OpenBSD: Makefile,v 1.16 2015/10/04 07:25:59 nicm Exp $
 
+.TOPDIR?=../..
+
 PROG=   file
 SRCS=   file.c magic-dump.c magic-load.c magic-test.c magic-common.c \
 	text.c xmalloc.c
@@ -39,4 +41,4 @@ afterinstall:
 
 all: file magic
 
-include bsd.prog.mk
+include ${.TOPDIR}/mk/bsd.prog.mk

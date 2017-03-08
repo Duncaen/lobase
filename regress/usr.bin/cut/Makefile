@@ -5,4 +5,4 @@ REGRESS_TARGETS = cut
 cut:
 	$(SHELL) ${.CURDIR}/cut.sh
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

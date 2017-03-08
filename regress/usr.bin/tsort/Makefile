@@ -51,4 +51,4 @@ pairs4:
 .PHONY: t1 t2 t7
 CLEANFILES+=t1.out t2.out t3.out t4.out t5.out t6.out pairs3 pairs4
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

@@ -1,3 +1,3 @@
-SUBDIR = mknod
-
-include bsd.subdir.mk
+TOPDIR?=..
+SUBDIR=	mknod
+include ${.TOPDIR}/mk/bsd.subdir.mk

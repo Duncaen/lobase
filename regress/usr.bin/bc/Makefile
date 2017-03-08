@@ -47,4 +47,4 @@ t19test: t19
 clean:
 	rm -f *.log t19
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

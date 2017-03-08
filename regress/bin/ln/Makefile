@@ -15,4 +15,4 @@ recursive: links
 links/source: links
 	@echo "Hello, world!" > ${.OBJDIR}/links/source
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

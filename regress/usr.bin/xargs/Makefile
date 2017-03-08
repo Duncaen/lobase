@@ -5,4 +5,4 @@ PROG= showargs
 run-regress-showargs:
 	@$(SHELL) ${.CURDIR}/xargs-L.sh
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk

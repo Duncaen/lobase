@@ -1,9 +1,12 @@
 #	$OpenBSD: Makefile,v 1.9 2016/05/26 21:24:16 millert Exp $
 
+.TOPDIR?=../..
+
 PROG=	which
 MAN=	which.1 whereis.1
 LINKS=	${BINDIR}/which ${BINDIR}/whereis
 
+# XXX: put the updated man page in the objdir?
 check_path_in_man:
 	@echo "Checking path expansion in whereis.1"; \
 	stdpath=`printf 'include paths.h\n_PATH_STDPATH\n' | \
@@ -16,4 +19,4 @@ check_path_in_man:
 all: check_path_in_man
 CLEANFILES = check_path_in_man
 
-include bsd.prog.mk
+include ${.TOPDIR}/mk/bsd.prog.mk

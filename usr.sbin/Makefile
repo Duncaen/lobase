@@ -1,3 +1,3 @@
-SUBDIR = mtree rdate
-
-include bsd.subdir.mk
+TOPDIR?=..
+SUBDIR=	mtree rdate
+include ${.TOPDIR}/mk/bsd.subdir.mk

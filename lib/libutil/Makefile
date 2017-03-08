@@ -1,6 +1,9 @@
 #	$OpenBSD: Makefile,v 1.39 2016/03/30 06:38:43 jmc Exp $
 #	$NetBSD: Makefile,v 1.8 1996/05/16 07:03:28 thorpej Exp $
 
+.TOPDIR?=../..
+.CURDIR?=.
+
 LIB=	util
 CPPFLAGS+=-D_GNU_SOURCE
 
@@ -29,4 +32,4 @@ includes:
 	    eval "$$j"; \
 	done
 
-include bsd.lib.mk
+include ${.TOPDIR}/mk/bsd.lib.mk

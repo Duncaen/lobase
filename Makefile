@@ -1,9 +1,7 @@
-export TOPDIR := $(shell pwd)
-
-SUBDIR = lib bin sbin usr.bin usr.sbin
+SUBDIR=	lib bin sbin usr.bin usr.sbin
 
 ifeq (clean,$(filter clean,$(MAKECMDGOALS)))
-SUBDIR += regress
+SUBDIR+=regress
 endif
 
 all:

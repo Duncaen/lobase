@@ -1,27 +1,31 @@
-include config.mk
+include ${.TOPDIR}/mk/bsd.own.mk
 
-.CURDIR = .
-CLEANFILES += $(PROG) *.o
+CPPFLAGS+=	-I${.TOPDIR}/include -include compat.h
+CPPFLAGS+=	-I${.TOPDIR} -include config.h
 
-CPPFLAGS += -I$(TOPDIR)/lib/libopenbsd -include openbsd.h -I$(TOPDIR) -include config.h
+ifdef MAKEOBJDIR
+LIBPATHS+=	${MAKEOBJDIR}/lib
+endif
+LIBPATHS+=	${.TOPDIR}/obj/lib ${.TOPDIR}/lib
 
-LIBC ?= $(TOPDIR)/lib/libopenbsd/libopenbsd.a
-LIBUTIL ?= $(TOPDIR)/lib/libutil/libutil.a
+_find_lib=	$(firstword $(wildcard $(LIBPATHS:%=%/$(1))))
+
+LIBC?=		$(call _find_lib,libopenbsd/libopenbsd.a)
+LIBUTIL?=	$(call _find_lib,libutil/libutil.a)
 
 ifeq (-lutil,$(filter -lutil,$(LDADD)))
-	LDFLAGS+= -L$(TOPDIR)/lib/libutil
+LDFLAGS+=	-L$(dir $(LIBUTIL))
 endif
-LDFLAGS += -L$(TOPDIR)/lib/libopenbsd $(LDADD) -lopenbsd
+
+LDFLAGS+=	-L$(dir $(LIBC)) $(LDADD) -lopenbsd
 
 CFILES = $(filter %.c,$(SRCS))
 YFILES = $(filter %.y,$(SRCS))
 LFILES = $(filter %.l,$(SRCS))
 
-OBJS = $(YFILES:.y=.o) $(LFILES:.l=.o) $(CFILES:.c=.o)
-
-ifneq (,$(findstring $(.DEFAULT_GOAL),install beforeinstall afterinstall))
-	.DEFAULT_GOAL :=
-endif
+OBJS += $(YFILES:.y=.o)
+OBJS += $(LFILES:.l=.o)
+OBJS += $(CFILES:.c=.o)
 
 .DEFAULT_GOAL :=
 
@@ -33,20 +37,33 @@ else
 $(PROG) : % : %.o
 endif
 
-y.tab.h y.tab.c:
-	$(YACC) -d $(YFILES)
+y.tab.h y.tab.c: $(YFILES)
+	$(YACC) -d $^
 
 %.o: %.y y.tab.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c y.tab.c -o $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(PROG):
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 clean:
-	rm -f $(CLEANFILES) y.tab.h y.tab.c
+ifdef SRCS
+	rm -f $(OBJS)
+else
+	rm -f $(PROG).o
+endif
+ifdef PROG
+	rm -f $(PROG)
+endif
+ifdef YFILES
+	rm -f y.tab.h y.tab.c
+endif
+ifdef CLEANFILES
+	rm -f $(CLEANFILES)
+endif
 
 install: proginstall install_links
 
@@ -72,3 +89,8 @@ ifneq (,$(LINKS))
 endif
 
 .PHONY: all clean install proginstall
+
+-include ${.TOPDIR}/mk/bsd.obj.mk
+-include ${.TOPDIR}/mk/bsd.dep.mk
+include ${.TOPDIR}/mk/bsd.subdir.mk
+-include ${.TOPDIR}/mk/bsd.sys.mk

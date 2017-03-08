@@ -1,14 +1,14 @@
+include ${.TOPDIR}/mk/bsd.own.mk
+
 STATICLIB = lib$(LIB).a
-LIBDIR=/lib
-BINOWN=root
-BINGRP=root
-LIBOWN=$(BINOWN)
-LIBGRP=$(BINGRP)
 
-.CURDIR = .
+#.CURDIR = .
+#_objdir = ${.CURDIR}/obj
+#VPATH+=	$(__objdir)
 
-CPPFLAGS += -I$(TOPDIR)/lib/libopenbsd -include openbsd.h -I$(TOPDIR)/include \
-						-I$(TOPDIR) -include config.h
+CPPFLAGS+=	-I$(.TOPDIR)/include -include compat.h \
+		-I$(.TOPDIR) -include config.h
+
 LDFLAGS += $(LDADD)
 
 CFILES = $(filter %.c,$(SRCS))
@@ -68,8 +68,7 @@ realinstall: beforeinstall
 .PHONY: all clean cleandir install libinstall
 
 ifndef NOMAN
-include bsd.man.mk
+include ${.TOPDIR}/mk/bsd.man.mk
 endif
 
-include bsd.subdir.mk
-include config.mk
+include ${.TOPDIR}/mk/bsd.subdir.mk

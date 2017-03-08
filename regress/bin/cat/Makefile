@@ -8,4 +8,4 @@ cat_be:
 cat_se:
 	cat -se ${.CURDIR}/cat_se.in | cmp -s ${.CURDIR}/cat_se.out /dev/stdin
 
-include bsd.regress.mk
+include ${.TOPDIR}/mk/bsd.regress.mk
