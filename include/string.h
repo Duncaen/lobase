@@ -45,6 +45,9 @@ size_t	 strlcpy(char *, const char *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 void	 strmode(int, char *);
 
+int	timingsafe_bcmp(const void *, const void *, size_t);
+int	timingsafe_memcmp(const void *, const void *, size_t);
+
 #endif /* _COMPAT_STRING_H_ */
 
 #include_next <string.h>
