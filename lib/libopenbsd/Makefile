@@ -20,6 +20,8 @@ SRCS += gen/errc.c gen/fts.c gen/warnc.c gen/verrc.c gen/vwarnc.c gen/setmode.c\
 SRCS += stdio/fgetwln.c
 SRCS += net/base64.c
 
+SRCS += regex/regcomp.c regex/regerror.c regex/regexec.c regex/regfree.c
+
 include config.mk
 
 ifneq ($(HAVE_EXPLICIT_BZERO),1)
