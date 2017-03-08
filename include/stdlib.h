@@ -59,6 +59,9 @@ void srandomdev(void);
 char *initstate(unsigned int, char *, size_t);
 char *setstate(char *);
 
+/* void srand_deterministic(unsigned int); */
+#define	srand_deterministic(x)	srand((x))
+
 #endif /* _COMPAT_STDLIB_H_ */
 
 #include_next <stdlib.h>

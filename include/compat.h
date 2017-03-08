@@ -144,6 +144,9 @@ uintmax_t	strtoumax(const char *, char **, int);
 #define SHA512_Init SHA512Init
 #define SHA512_Final SHA512Final
 
+/* sys/syslimits.h */
+#define	CHILD_MAX	80	/* max simultaneous processes */
+
 /* setproctitle.c */
 void setproctitle(const char *, ...);
 
