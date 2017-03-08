@@ -43,6 +43,8 @@
 
 #include <sys/types.h>
 
+#define	_PASSWORD_LEN	128	/* max length, not counting NUL */
+
 char		*user_from_uid(uid_t, int);
 char		*bcrypt_gensalt(u_int8_t);
 char		*bcrypt(const char *, const char *);
