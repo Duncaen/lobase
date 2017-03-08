@@ -2,10 +2,8 @@
 #include <sys/stat.h>
 #include <string.h>
 
-/* sys/mount defines statfs as openbsd_statfs, here i need the original one */
-#undef statfs
-
-int openbsd_statfs(const char *path, struct openbsd_statfs *buf)
+int
+openbsd_statfs(const char *path, struct openbsd_statfs *buf)
 {
 	struct statfs sfb;
 	struct stat sb;

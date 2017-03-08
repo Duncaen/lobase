@@ -36,9 +36,9 @@
  * Return information about mounted filesystems.
  */
 int
-getmntinfo(struct statfs **mntbufp, int flags)
+getmntinfo(struct openbsd_statfs **mntbufp, int flags)
 {
-	static struct statfs *mntbuf;
+	static struct openbsd_statfs *mntbuf;
 	static int mntsize;
 	static size_t bufsize;
 
@@ -46,9 +46,9 @@ getmntinfo(struct statfs **mntbufp, int flags)
 		return (0);
 	if (bufsize > 0 && (mntsize = getfsstat(mntbuf, bufsize, flags)) < 0)
 		return (0);
-	while (bufsize <= mntsize * sizeof(struct statfs)) {
+	while (bufsize <= mntsize * sizeof(struct openbsd_statfs)) {
 		free(mntbuf);
-		bufsize = (mntsize + 1) * sizeof(struct statfs);
+		bufsize = (mntsize + 1) * sizeof(struct openbsd_statfs);
 		if ((mntbuf = malloc(bufsize)) == 0) {
 			bufsize = 0;
 			return (0);

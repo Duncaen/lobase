@@ -7,9 +7,6 @@
 #include <mntent.h>
 #include <string.h>
 
-/* sys/mount.h defines statfs as openbsd_statfs, here i need the original one */
-#undef statfs
-
 int
 getfsstat(struct openbsd_statfs *buf, size_t bufsize, int flags)
 {
