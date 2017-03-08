@@ -4,6 +4,7 @@
  * Written by Raymond Lai <ray@cyth.net>.
  * Public domain.
  */
+#define _GNU_SOURCE /* for asprintf */
 
 #include <sys/types.h>
 #include <sys/wait.h>
