@@ -1,4 +1,4 @@
-/*	$OpenBSD: md5.c,v 1.84 2015/12/09 19:36:17 mmcc Exp $	*/
+/*	$OpenBSD: md5.c,v 1.89 2016/12/16 17:55:26 krw Exp $	*/
 
 /*
  * Copyright (c) 2001,2003,2005-2007,2010,2013,2014
@@ -21,8 +21,8 @@
  * Materiel Command, USAF, under agreement number F39502-99-1-0512.
  */
 
-#include <sys/time.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <sys/queue.h>
 #include <netinet/in.h>
 #include <ctype.h>
@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <time.h>
 #include <unistd.h>
 #include <errno.h>
 
@@ -51,8 +52,6 @@
 #define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 #define MAXIMUM(a, b)	(((a) > (b)) ? (a) : (b))
 
-extern int optreset;
-
 union ANY_CTX {
 #if !defined(SHA2_ONLY)
 	CKSUM_CTX cksum;
@@ -70,7 +69,7 @@ struct hash_function {
 	int base64;
 	void *ctx;	/* XXX - only used by digest_file() */
 	void (*init)(void *);
-	void (*update)(void *, const unsigned char *, unsigned int);
+	void (*update)(void *, const unsigned char *, size_t);
 	void (*final)(unsigned char *, void *);
 	char * (*end)(void *, char *);
 	TAILQ_ENTRY(hash_function) tailq;
@@ -83,7 +82,7 @@ struct hash_function {
 		-1,
 		NULL,
 		(void (*)(void *))CKSUM_Init,
-		(void (*)(void *, const unsigned char *, unsigned int))CKSUM_Update,
+		(void (*)(void *, const unsigned char *, size_t))CKSUM_Update,
 		(void (*)(unsigned char *, void *))CKSUM_Final,
 		(char *(*)(void *, char *))CKSUM_End
 	},
@@ -94,7 +93,7 @@ struct hash_function {
 		0,
 		NULL,
 		(void (*)(void *))MD5Init,
-		(void (*)(void *, const unsigned char *, unsigned int))MD5Update,
+		(void (*)(void *, const unsigned char *, size_t))MD5Update,
 		(void (*)(unsigned char *, void *))MD5Final,
 		(char *(*)(void *, char *))MD5End
 	},
@@ -105,7 +104,7 @@ struct hash_function {
 		0,
 		NULL,
 		(void (*)(void *))RMD160Init,
-		(void (*)(void *, const unsigned char *, unsigned int))RMD160Update,
+		(void (*)(void *, const unsigned char *, size_t))RMD160Update,
 		(void (*)(unsigned char *, void *))RMD160Final,
 		(char *(*)(void *, char *))RMD160End
 	},
@@ -116,7 +115,7 @@ struct hash_function {
 		0,
 		NULL,
 		(void (*)(void *))SHA1Init,
-		(void (*)(void *, const unsigned char *, unsigned int))SHA1Update,
+		(void (*)(void *, const unsigned char *, size_t))SHA1Update,
 		(void (*)(unsigned char *, void *))SHA1Final,
 		(char *(*)(void *, char *))SHA1End
 	},
@@ -127,7 +126,7 @@ struct hash_function {
 		0,
 		NULL,
 		(void (*)(void *))SHA224Init,
-		(void (*)(void *, const unsigned char *, unsigned int))SHA224Update,
+		(void (*)(void *, const unsigned char *, size_t))SHA224Update,
 		(void (*)(unsigned char *, void *))SHA224Final,
 		(char *(*)(void *, char *))SHA224End
 	},
@@ -139,7 +138,7 @@ struct hash_function {
 		0,
 		NULL,
 		(void (*)(void *))SHA256Init,
-		(void (*)(void *, const unsigned char *, unsigned int))SHA256Update,
+		(void (*)(void *, const unsigned char *, size_t))SHA256Update,
 		(void (*)(unsigned char *, void *))SHA256Final,
 		(char *(*)(void *, char *))SHA256End
 	},
@@ -151,9 +150,20 @@ struct hash_function {
 		0,
 		NULL,
 		(void (*)(void *))SHA384Init,
-		(void (*)(void *, const unsigned char *, unsigned int))SHA384Update,
+		(void (*)(void *, const unsigned char *, size_t))SHA384Update,
 		(void (*)(unsigned char *, void *))SHA384Final,
 		(char *(*)(void *, char *))SHA384End
+	},
+	{
+		"SHA512/256",
+		SHA512_256_DIGEST_LENGTH,
+		STYLE_MD5,
+		0,
+		NULL,
+		(void (*)(void *))SHA512_256Init,
+		(void (*)(void *, const unsigned char *, size_t))SHA512_256Update,
+		(void (*)(unsigned char *, void *))SHA512_256Final,
+		(char *(*)(void *, char *))SHA512_256End
 	},
 #endif /* !defined(SHA2_ONLY) */
 	{
@@ -163,7 +173,7 @@ struct hash_function {
 		0,
 		NULL,
 		(void (*)(void *))SHA512Init,
-		(void (*)(void *, const unsigned char *, unsigned int))SHA512Update,
+		(void (*)(void *, const unsigned char *, size_t))SHA512Update,
 		(void (*)(unsigned char *, void *))SHA512Final,
 		(char *(*)(void *, char *))SHA512End
 	},
@@ -199,7 +209,7 @@ main(int argc, char **argv)
 	size_t len;
 	char *cp, *input_string, *selective_checklist;
 	const char *optstr;
-	int fl, error, base64, i;
+	int fl, error, base64;
 	int bflag, cflag, pflag, rflag, tflag, xflag;
 
 	if (pledge("stdio rpath wpath cpath", NULL) == -1)
@@ -360,6 +370,8 @@ main(int argc, char **argv)
 	else if (input_string)
 		digest_string(input_string, &hl);
 	else if (selective_checklist) {
+		int i;
+
 		error = digest_filelist(selective_checklist, TAILQ_FIRST(&hl),
 		    argc, argv);
 		for (i = 0; i < argc; i++) {
@@ -429,7 +441,7 @@ digest_string(char *string, struct hash_list *hl)
 
 	TAILQ_FOREACH(hf, hl, tailq) {
 		hf->init(&context);
-		hf->update(&context, string, (unsigned int)strlen(string));
+		hf->update(&context, string, strlen(string));
 		digest_end(hf, &context, digest, sizeof(digest),
 		    hf->base64);
 		digest_printstr(hf, string, digest);
@@ -501,7 +513,7 @@ digest_file(const char *file, struct hash_list *hl, int echo)
 				err(1, "stdout: write error");
 		}
 		TAILQ_FOREACH(hf, hl, tailq)
-			hf->update(hf->ctx, data, (unsigned int)nread);
+			hf->update(hf->ctx, data, nread);
 	}
 	if (ferror(fp)) {
 		warn("%s: read error", file);
@@ -689,7 +701,7 @@ digest_filelist(const char *file, struct hash_function *defhash, int selcount,
 
 		hf->init(&context);
 		while ((nread = fread(data, 1UL, sizeof(data), fp)) > 0)
-			hf->update(&context, data, (unsigned int)nread);
+			hf->update(&context, data, nread);
 		if (ferror(fp)) {
 			warn("%s: read error", file);
 			error = 1;
@@ -749,7 +761,7 @@ digest_time(struct hash_list *hl, int times)
 		gettimeofday(&start, NULL);
 		hf->init(&context);
 		for (i = 0; i < count; i++)
-			hf->update(&context, data, TEST_BLOCK_LEN);
+			hf->update(&context, data, (size_t)TEST_BLOCK_LEN);
 		digest_end(hf, &context, digest, sizeof(digest), hf->base64);
 		gettimeofday(&stop, NULL);
 		timersub(&stop, &start, &res);
@@ -788,8 +800,8 @@ digest_test(struct hash_list *hl)
 
 		for (i = 0; i < 8; i++) {
 			hf->init(&context);
-			hf->update((void *)&context, test_strings[i],
-			    (unsigned int)strlen(test_strings[i]));
+			hf->update(&context, test_strings[i],
+			    strlen(test_strings[i]));
 			digest_end(hf, &context, digest, sizeof(digest),
 			    hf->base64);
 			digest_printstr(hf, test_strings[i], digest);
@@ -799,8 +811,7 @@ digest_test(struct hash_list *hl)
 		memset(buf, 'a', sizeof(buf));
 		hf->init(&context);
 		for (i = 0; i < 1000; i++)
-			hf->update(&context, buf,
-			    (unsigned int)sizeof(buf));
+			hf->update(&context, buf, sizeof(buf));
 		digest_end(hf, &context, digest, sizeof(digest), hf->base64);
 		digest_print(hf, "one million 'a' characters",
 		    digest);
