@@ -15,16 +15,18 @@ CPPFLAGS+=-D_GNU_SOURCE
 lex.o b.o main.o tran.o run.o parse.o lib.o : ytab.h
 
 ytab.c: awkgram.y
-	${YACC} -d ${.CURDIR}/awkgram.y
-	mv y.tab.c ytab.c
+	@echo ${YACC} -d awkgram.y
+	@${YACC} -d ${.CURDIR}/awkgram.y
+	@mv y.tab.c ytab.c
 
 ytab.h: ytab.c
-	mv y.tab.h ytab.h
+	@mv y.tab.h ytab.h
 
 proctab.c: maketab
 	./maketab >proctab.c
 
 maketab: ytab.h maketab.c
-	${HOSTCC} ${HOSTCFLAGS} ${.CURDIR}/maketab.c -o $@
+	@echo ${HOSTCC} maketab.c -o $(@F)
+	@${HOSTCC} ${HOSTCFLAGS} ${.CURDIR}/maketab.c -o $@
 
 include ${.TOPDIR}/mk/bsd.prog.mk

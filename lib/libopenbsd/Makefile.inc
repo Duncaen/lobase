@@ -8,7 +8,7 @@ all:
 	@echo "need to define LIBCSRCDIR" >&2; exit 1
 endif
 
-CFLAGS+=-I${LIBCSRCDIR}/include -I${LIBCSRCDIR}/hidden -D__LIBC__ \
+CPPFLAGS+=-I${LIBCSRCDIR}/include -I${LIBCSRCDIR}/hidden -D__LIBC__ \
 	-Werror-implicit-function-declaration -include namespace.h
 
 #.if ${COMPILER_VERSION:L} != "gcc3"
@@ -16,7 +16,7 @@ CFLAGS+=-Werror=deprecated-declarations
 #.endif
 
 # Include link-time warnings about unsafe API uses (ie. strcpy)
-CFLAGS+=-DAPIWARN
+CPPCFLAGS+=-DAPIWARN
 
 include ${LIBCSRCDIR}/gen/Makefile.inc
 include ${LIBCSRCDIR}/crypt/Makefile.inc

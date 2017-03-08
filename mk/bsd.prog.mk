@@ -37,17 +37,23 @@ else
 $(PROG) : % : %.o
 endif
 
-y.tab.h y.tab.c: $(YFILES)
-	$(YACC) -d $^
+$(LFILES:.l=.o) : %.o : %.c
 
-%.o: %.y y.tab.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c y.tab.c -o $@
+y.tab.h y.tab.c: $(YFILES)
+	@echo $(YACC) -d $(^F)
+	@$(YACC) -d $^
+
+%.c: %.l
+	@echo "$(LEX) -t $(LFLAGS) $(<F) > $(@F)"
+	$(LEX) -t $(LFLAGS) $< > $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	@echo $(CC) -c $(CFLAGS) $(<F)
+	@$(CC) -c $(CFLAGS) $(CPPFLAGS) $<
 
 $(PROG):
-	$(CC) $^ -o $@ $(LDFLAGS)
+	@echo $(CC) -o $(@F) $(^F) $(LDADD)
+	@$(CC) -o $@ $^ $(LDPATHS) $(LDFLAGS)
 
 clean:
 ifdef SRCS

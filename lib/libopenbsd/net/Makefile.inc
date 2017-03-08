@@ -3,6 +3,6 @@
 # net sources
 VPATH+=	${LIBCSRCDIR}/net
 
-CFLAGS+=-DRESOLVSORT
+CPPCFLAGS+=-DRESOLVSORT
 
 SRCS+=	base64.c

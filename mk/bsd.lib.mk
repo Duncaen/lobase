@@ -29,19 +29,24 @@ else
 $(STATICLIB) : % : %.o
 endif
 
-y.tab.h y.tab.c:
-	$(YACC) -d $<
+y.tab.h y.tab.c: $(YFILES)
+	@echo $(YACC) -d $(^F)
+	@$(YACC) -d $^
 
-%.o: %.y y.tab.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c y.tab.c -o $@
+%.c: %.l
+	@echo "$(LEX) $(<F) > $(@F)"
+	@$(LEX) -t $< > $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	@echo $(CC) -c $(CFLAGS) $(<F)
+	@$(CC) -c $(CFLAGS) $(CPPFLAGS) $<
 
 $(STATICLIB):
-	rm -f $@
-	$(AR) rc $@ $(OBJS)
-	$(RANLIB) $@
+	@rm -f $@
+	@echo $(AR) $@ $(^F)
+	@$(AR) rc $@ $(^F)
+	@echo $(RANLIB) $@
+	@$(RANLIB) $@
 
 clean: _SUBDIRUSE
 	rm -f $(STATICLIB) $(OBJS)

@@ -3,8 +3,6 @@
 
 LIB=openbsd
 
-# CPPFLAGS += -include include/compat.h -include config.h
-
 SRCS+=	closefrom.c \
 	heapsort.c merge.c pledge-noop.c progname.c \
 	qsort.c radixsort.c random.c readpassphrase.c \
