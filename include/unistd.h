@@ -51,6 +51,7 @@ int	 getresuid(uid_t *, uid_t *, uid_t *);
 void	*setmode(const char *);
 int	 setresgid(gid_t, gid_t, gid_t);
 int	 setresuid(uid_t, uid_t, uid_t);
+int	 pledge(const char *, const char *[]);
 
 #endif /* _COMPAT_UNISTD_H_ */
 

@@ -30,7 +30,9 @@
 
 #include <sys/types.h>
 #include <sys/mount.h>
+
 #include <stdlib.h>
+#include <mntent.h>
 
 /*
  * Return information about mounted filesystems.

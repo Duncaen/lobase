@@ -1,14 +1,9 @@
-#ifndef _OPENBSD_H
-#define _OPENBSD_H
-/* #define _GNU_SOURCE */
-/* #include <stdarg.h> */
-/* #include <stdint.h> */
-/* #include <limits.h> */
-/* #include <sys/types.h> */
-/* #undef _GNU_SOURCE */
-/* #undef _FEATURES_H */
+#ifndef _COMPAT_H_
+#define _COMPAT_H_
 
 #define FAIL_INSTEAD_OF_TRYING_FALLBACK
+
+#define __warn_references(x,y)
 
 #ifndef	ALIGN
 /* XXX: x86_64 only, see sys/arch/$arch/include/_types.h */
@@ -32,9 +27,6 @@
 
 #undef __weak_alias
 #define __weak_alias(new, old) \
-	extern __typeof(old) new __attribute__((weak, alias(#old)))
-
-#define MAKE_CLONE(new, old) \
 	extern __typeof(old) new __attribute__((weak, alias(#old)))
 
 #ifndef SA_LEN
