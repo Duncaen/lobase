@@ -37,15 +37,16 @@ else
 $(PROG) : % : %.o
 endif
 
-$(LFILES:.l=.o) : %.o : %.c
-
-y.tab.h y.tab.c: $(YFILES)
+y.tab.c y.tab.h: $(YFILES)
 	@echo $(YACC) -d $(^F)
 	@$(YACC) -d $^
 
+$(YFILES:.y=.c): y.tab.c
+	@cp -f y.tab.c $@
+
 %.c: %.l
 	@echo "$(LEX) -t $(LFLAGS) $(<F) > $(@F)"
-	$(LEX) -t $(LFLAGS) $< > $@
+	@$(LEX) -t $(LFLAGS) $< > $@
 
 %.o: %.c
 	@echo $(CC) -c $(CFLAGS) $(<F)

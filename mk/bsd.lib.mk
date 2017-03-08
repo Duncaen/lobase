@@ -33,9 +33,12 @@ y.tab.h y.tab.c: $(YFILES)
 	@echo $(YACC) -d $(^F)
 	@$(YACC) -d $^
 
+$(YFILES:.y=.c): y.tab.c
+	@cp -f y.tab.c $@
+
 %.c: %.l
-	@echo "$(LEX) $(<F) > $(@F)"
-	@$(LEX) -t $< > $@
+	@echo "$(LEX) -t $(LFLAGS) $(<F) > $(@F)"
+	@$(LEX) -t $(LFLAGS) $< > $@
 
 %.o: %.c
 	@echo $(CC) -c $(CFLAGS) $(<F)
