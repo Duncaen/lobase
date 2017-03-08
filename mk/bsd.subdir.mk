@@ -37,10 +37,10 @@ endef
 
 _SUBDIRUSE:
 ifneq ($(SUBDIR),)
-	@$(__SUBDIRUSE)
+	+@$(__SUBDIRUSE)
 
 $(SUBDIR):
-	@nextdir="$@"; \
+	+@nextdir="$@"; \
 	echo "===> $$nextdir"; \
 	mkdir -p "${.OBJDIR}/$$nextdir" \
 	&& $(MAKE) $(SUBDIR_MFLAGS) all || exit 1
