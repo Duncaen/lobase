@@ -3,8 +3,8 @@
 # stdio sources
 VPATH+=	${LIBCSRCDIR}/gen
 
-SRCS+=	basename.c dirname.c errc.c fts.c getmntinfo.c glob.c setmode.c unvis.c\
-	verrc.c vis.c vwarnc.c warnc.c
+SRCS+=	basename.c dirname.c errc.c fts.c getmntinfo.c glob.c setmode.c \
+	signame.c unvis.c verrc.c vis.c vwarnc.c warnc.c
 
 
 MAN+=	basename.3 dirname.3 fts.3 getmntinfo.3 glob.3 setmode.3 unvis.3 vis.3
