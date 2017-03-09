@@ -1,1 +1,1 @@
-../lib/libutil/imsg.h
+../lib/liboutil/imsg.h

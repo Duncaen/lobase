@@ -7,6 +7,6 @@ SRCS = tsort.c
 
 CDIAGFLAGS = -Wall -Wno-char-subscripts -Wstrict-prototypes -pedantic -W
 DPADD += ${LIBUTIL}
-LDADD += -lutil
+LDADD += -loutil
 
 include ${.TOPDIR}/mk/bsd.prog.mk

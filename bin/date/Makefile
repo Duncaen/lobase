@@ -5,6 +5,6 @@
 PROG=	date
 SRCS=	date.c
 DPADD+=	${LIBUTIL}
-LDADD+=	-lutil
+LDADD+=	-loutil
 
 include ${.TOPDIR}/mk/bsd.prog.mk

@@ -4,7 +4,7 @@
 .TOPDIR?=../..
 .CURDIR?=.
 
-LIB=	util
+LIB=	outil
 CPPFLAGS+=-D_GNU_SOURCE
 
 HDRS=	util.h imsg.h

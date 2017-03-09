@@ -11,10 +11,10 @@ LIBPATHS+=	${.TOPDIR}/obj/lib ${.TOPDIR}/lib
 _find_lib=	$(firstword $(wildcard $(LIBPATHS:%=%/$(1))))
 
 LIBC?=		$(call _find_lib,libopenbsd/libopenbsd.a)
-LIBUTIL?=	$(call _find_lib,libutil/libutil.a)
+LIBOUTIL?=	$(call _find_lib,liboutil/liboutil.a)
 
-ifeq (-lutil,$(filter -lutil,$(LDADD)))
-LDFLAGS+=	-L$(dir $(LIBUTIL))
+ifeq (-loutil,$(filter -loutil,$(LDADD)))
+LDFLAGS+=	-L$(dir $(LIBOUTIL))
 endif
 
 LDFLAGS+=	-L$(dir $(LIBC)) $(LDADD) -lopenbsd

@@ -4,7 +4,7 @@
 
 PROG=	df
 SRCS=	df.c
-LDADD=	-lutil
+LDADD=	-loutil
 DPADD=	${LIBUTIL}
 
 include ${.TOPDIR}/mk/bsd.prog.mk

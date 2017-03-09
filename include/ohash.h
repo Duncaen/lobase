@@ -1,1 +1,1 @@
-../lib/libutil/ohash.h
+../lib/liboutil/ohash.h

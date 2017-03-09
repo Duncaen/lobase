@@ -4,6 +4,6 @@
 
 PROG=	wc
 DPADD= ${LIBUTIL}
-LDADD= -lutil
+LDADD= -loutil
 
 include ${.TOPDIR}/mk/bsd.prog.mk

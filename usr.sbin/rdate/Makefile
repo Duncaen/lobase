@@ -6,7 +6,7 @@ PROG=	rdate
 SRCS=	rdate.c rfc868time.c ntp.c ntpleaps.c
 CFLAGS+=-Wall
 DPADD+= ${LIBUTIL}
-LDADD+= -lutil
+LDADD+= -loutil
 
 MAN=	rdate.8
 

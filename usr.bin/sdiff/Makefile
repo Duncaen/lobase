@@ -6,7 +6,7 @@ PROG=sdiff
 SRCS=common.c edit.c sdiff.c
 COPTS+=-Wall -W
 
-LDADD+=	-lutil
+LDADD+=	-loutil
 DPADD+=	${LIBUTIL}
 
 include ${.TOPDIR}/mk/bsd.prog.mk

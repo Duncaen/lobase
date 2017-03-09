@@ -1,1 +1,1 @@
-../lib/libutil/util.h
+../lib/liboutil/util.h

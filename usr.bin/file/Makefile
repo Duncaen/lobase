@@ -7,7 +7,7 @@ SRCS=   file.c magic-dump.c magic-load.c magic-test.c magic-common.c \
 	text.c xmalloc.c
 MAN=	file.1 magic.5
 
-LDADD=	-lutil
+LDADD=	-loutil
 DPADD=	${LIBUTIL}
 
 CDIAGFLAGS+= -Wno-long-long -Wall -W -Wnested-externs -Wformat=2
