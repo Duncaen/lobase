@@ -1,4 +1,4 @@
-/*	$OpenBSD: process.c,v 1.28 2016/05/30 18:10:29 martijn Exp $	*/
+/*	$OpenBSD: process.c,v 1.32 2017/02/22 14:09:09 tom Exp $	*/
 
 /*-
  * Copyright (c) 1992 Diomidis Spinellis.
@@ -89,7 +89,6 @@ process(void)
 	SPACE tspace;
 	size_t len, oldpsl;
 	char *p;
-	int oldpsanl;
 
 	for (linenum = 0; mf_fgets(&PS, REPLACE);) {
 		pd = 0;
@@ -185,7 +184,6 @@ redirect:
 					break;
 				if ((p = memchr(ps, '\n', psl)) != NULL) {
 					oldpsl = psl;
-					oldpsanl = psanl;
 					psl = p - ps;
 					psanl = 1;
 					OUT();
@@ -393,7 +391,7 @@ substitute(struct s_command *cp)
 			else
 				slen--;
 			if (*s != '\0') {
-			 	cspace(&SS, s++, 1, APPEND);
+				cspace(&SS, s++, 1, APPEND);
 				le++;
 			}
 			lastempty = 1;
@@ -404,7 +402,7 @@ substitute(struct s_command *cp)
 	    regexec_e(re, ps, REG_NOTBOL, 0, le, psl));
 
 	/* Did not find the requested number of matches. */
-	if (n > 1)
+	if (n > 0)
 		return (0);
 
 	/* Copy the trailing retained string. */
@@ -539,7 +537,6 @@ regexec_e(regex_t *preg, const char *string, int eflags,
 		return (0);
 	}
 	error(FATAL, "RE error: %s", strregerror(eval, defpreg));
-	/* NOTREACHED */
 }
 
 /*
@@ -569,12 +566,12 @@ regsub(SPACE *sp, char *string, char *src)
 		else
 			no = -1;
 		if (no < 0) {		/* Ordinary character. */
- 			if (c == '\\' && (*src == '\\' || *src == '&'))
- 				c = *src++;
+			if (c == '\\' && (*src == '\\' || *src == '&'))
+				c = *src++;
 			NEEDSP(1);
- 			*dst++ = c;
+			*dst++ = c;
 			++sp->len;
- 		} else if (match[no].rm_so != -1 && match[no].rm_eo != -1) {
+		} else if (match[no].rm_so != -1 && match[no].rm_eo != -1) {
 			len = match[no].rm_eo - match[no].rm_so;
 			NEEDSP(len);
 			memmove(dst, string + match[no].rm_so, len);
