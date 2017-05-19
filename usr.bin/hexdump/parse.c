@@ -1,4 +1,4 @@
-/*	$OpenBSD: parse.c,v 1.20 2016/03/15 04:19:13 mmcc Exp $	*/
+/*	$OpenBSD: parse.c,v 1.22 2016/09/04 16:41:43 tb Exp $	*/
 /*	$NetBSD: parse.c,v 1.12 2001/12/07 13:37:39 bjh21 Exp $	*/
 
 /*
@@ -29,6 +29,10 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif /* _GNU_SOURCE */
 
 #include <sys/types.h>
 #include <sys/file.h>
@@ -147,8 +151,7 @@ add(const char *fmt)
 		for (savep = ++p; *p != '"';)
 			if (*p++ == 0)
 				badfmt(fmt);
-		tfu->fmt = strndup(savep, p - savep);
-		if (tfu->fmt == NULL)
+		if ((tfu->fmt = strndup(savep, p - savep)) == NULL)
 			err(1, NULL);
 		escape(tfu->fmt);
 		p++;
@@ -217,9 +220,8 @@ rewrite(FS *fs)
 	PR *pr, **nextpr;
 	FU *fu;
 	char *p1, *p2;
-	char savech, *fmtp, cs[3];
+	char savech, *fmtp, cs[4];
 	int nconv, prec;
-	size_t len;
 
 	nextpr = NULL;
 	prec = 0;
@@ -295,9 +297,10 @@ rewrite(FS *fs)
 				else
 					pr->flags = F_UINT;
 
-				cs[2] = '\0';
-				cs[1] = cs[0];
-				cs[0] = 'q';
+				cs[3] = '\0';
+				cs[2] = cs[0];
+				cs[1] = 'l';
+				cs[0] = 'l';
 				switch(fu->bcnt) {
 				case 0: case 4:
 					pr->bcnt = 4;
@@ -355,9 +358,10 @@ rewrite(FS *fs)
 					++p2;
 					switch(p1[2]) {
 					case 'd': case 'o': case'x':
-						cs[0] = 'q';
-						cs[1] = p1[2];
-						cs[2] = '\0';
+						cs[0] = 'l';
+						cs[1] = 'l';
+						cs[2] = p1[2];
+						cs[3] = '\0';
 						break;
 					default:
 						if (p1[2])
@@ -406,10 +410,8 @@ rewrite(FS *fs)
 			 */
 			savech = *p2;
 			p1[0] = '\0';
-			len = strlen(fmtp) + strlen(cs) + 1;
-			if ((pr->fmt = calloc(1, len)) == NULL)
+			if (asprintf(&pr->fmt, "%s%s", fmtp, cs) == -1)
 				err(1, NULL);
-			snprintf(pr->fmt, len, "%s%s", fmtp, cs);
 			*p2 = savech;
 			pr->cchar = pr->fmt + (p1 - fmtp);
 			fmtp = p2;
