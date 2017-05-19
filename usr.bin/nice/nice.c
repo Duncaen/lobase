@@ -1,4 +1,4 @@
-/*	$OpenBSD: nice.c,v 1.15 2015/10/19 18:53:35 deraadt Exp $	*/
+/*	$OpenBSD: nice.c,v 1.17 2016/10/28 07:22:59 schwarze Exp $	*/
 /*	$NetBSD: nice.c,v 1.9 1995/08/31 23:30:58 jtc Exp $	*/
 
 /*
@@ -31,18 +31,17 @@
  */
 
 #include <sys/resource.h>
+
+#include <ctype.h>
+#include <err.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>
-#include <ctype.h>
-#include <errno.h>
-#include <err.h>
 #include <unistd.h>
 
 #define	DEFNICE	10
 
-int	main(int, char **);
-static void usage(void);
+static void __dead usage(void);
 
 int
 main(int argc, char *argv[])
@@ -50,8 +49,6 @@ main(int argc, char *argv[])
 	const char *errstr;
 	int prio = DEFNICE;
 	int c;
-
-	setlocale(LC_ALL, "");
 
 	if (pledge("stdio exec proc", NULL) == -1)
 		err(1, "pledge");
@@ -75,7 +72,6 @@ main(int argc, char *argv[])
 			break;
 		default:
 			usage();
-			break;
 		}
 	}
 	argc -= optind;
@@ -98,7 +94,7 @@ main(int argc, char *argv[])
 	err((errno == ENOENT) ? 127 : 126, "%s", argv[0]);
 }
 
-static void
+static void __dead
 usage(void)
 {
 	extern char *__progname;
