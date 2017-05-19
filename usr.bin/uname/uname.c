@@ -1,4 +1,4 @@
-/*	$OpenBSD: uname.c,v 1.17 2015/12/24 15:01:24 tb Exp $	*/
+/*	$OpenBSD: uname.c,v 1.19 2016/10/28 07:22:59 schwarze Exp $	*/
 
 /*
  * Copyright (c) 1994 Winning Strategies, Inc.
@@ -35,7 +35,6 @@
 #include <sys/utsname.h>
 
 #include <err.h>
-#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -44,7 +43,7 @@
 #define MACHINE_ARCH "unknown"
 #endif
 
-static void usage(void);
+static void __dead usage(void);
 
 #define	PRINT_SYSNAME		0x01
 #define	PRINT_NODENAME		0x02
@@ -61,8 +60,6 @@ main(int argc, char *argv[])
 	int c;
 	int space = 0;
 	int print_mask = 0;
-
-	setlocale(LC_ALL, "");
 
 	if (pledge("stdio", NULL) == -1)
 		err(1, "pledge");
@@ -92,20 +89,16 @@ main(int argc, char *argv[])
 			break;
 		default:
 			usage();
-			/* NOTREACHED */
 		}
 	}
 
-	if (optind != argc) {
+	if (optind != argc)
 		usage();
-		/* NOTREACHED */
-	}
 
-	if (!print_mask) {
+	if (!print_mask)
 		print_mask = PRINT_SYSNAME;
-	}
 
-	if (uname(&u))
+	if (uname(&u) == -1)
 		err(1, NULL);
 
 	if (print_mask & PRINT_SYSNAME) {
@@ -147,7 +140,7 @@ main(int argc, char *argv[])
 	return 0;
 }
 
-static void
+static void __dead
 usage(void)
 {
 	fprintf(stderr, "usage: uname [-amnprsv]\n");
