@@ -1,3 +1,4 @@
+-include ../Makefile.inc
 include ${.TOPDIR}/mk/bsd.own.mk
 
 CPPFLAGS+=	-I${.TOPDIR}/include -include compat.h
