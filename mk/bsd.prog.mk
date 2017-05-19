@@ -98,6 +98,10 @@ endif
 
 .PHONY: all clean install proginstall
 
+ifndef NOMAN
+include ${.TOPDIR}/mk/bsd.man.mk
+endif
+
 -include ${.TOPDIR}/mk/bsd.obj.mk
 -include ${.TOPDIR}/mk/bsd.dep.mk
 include ${.TOPDIR}/mk/bsd.subdir.mk
