@@ -4,6 +4,6 @@
 VPATH+=	${LIBCSRCDIR}/stdlib
 
 ifneq ($(HAVE_REALLOCARRAY),1)
-SRCS+=	reallocarray.c
+SRCS+=	reallocarray.c recallocarray.c
 MAN+=	malloc.3
 endif
