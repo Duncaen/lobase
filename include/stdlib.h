@@ -42,7 +42,7 @@ uint32_t arc4random(void);
 uint32_t arc4random_uniform(uint32_t);
 void arc4random_buf(void *, size_t)
 	__attribute__((__bounded__ (__string__,1,2)));
-
+char *devname(dev_t, mode_t);
 void *reallocarray(void *optr, size_t nmemb, size_t size);
 int heapsort(void *, size_t, size_t, int (*)(const void *, const void *));
 int mergesort(void *, size_t, size_t, int (*)(const void *, const void *));
