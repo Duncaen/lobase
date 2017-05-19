@@ -53,9 +53,6 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <search.h>
-#include <mntent.h>
-#include <paths.h>
 
 #if 0
 #define DEF_FORMAT \
@@ -160,9 +157,6 @@
 #define SHOW_filename	'N'
 #define SHOW_sizerdev	'Z'
 
-static void *filesystems;
-static int scanned_filesystems;
-
 void	usage(const char *);
 void	output(const struct stat *, const char *,
 	    const char *, int, int);
@@ -173,7 +167,6 @@ int	format1(const struct stat *,	/* stat info */
 	    int, int, int, int,		/* the parsed format */
 	    int, int);
 
-
 char *timefmt;
 
 #define addchar(s, c, nl) \
@@ -183,73 +176,6 @@ char *timefmt;
 	} while (0/*CONSTCOND*/)
 
 extern char *__progname;
-
-struct idmap {
-	long id;
-	char *name;
-};
-
-static int fwid;
-
-int
-idorder(const void *a, const void *b)
-{
-	struct idmap *ia = (struct idmap *)a;
-	struct idmap *ib = (struct idmap *)b;
-
-	if (ia->id == ib->id)
-		return 0;
-	else if (ia->id < ib->id)
-		return -1;
-	else
-		return 1;
-}
-
-static void
-scan_filesystems()
-{
-	FILE *mtab;
-	struct mntent *mnt;
-	struct stat st;
-
-	/* Approach: iterate over mtab and memorize st_dev for each mountpoint.
-	 * this will fail if we are not allowed to read the mountpoint, but then
-	 * we should not have to look up this st_dev value... */
-	mtab = setmntent(_PATH_MOUNTED, "r");
-	if (!mtab)
-		return;
-
-	while ((mnt = getmntent(mtab))) {
-		if (stat(mnt->mnt_dir, &st) < 0)
-			continue;
-
-		struct idmap *newkey = malloc(sizeof (struct idmap));
-		newkey->id = st.st_dev;
-		newkey->name = strdup(mnt->mnt_fsname);
-		tsearch(newkey, &filesystems, idorder);
-	};
-
-	endmntent(mtab);
-
-	scanned_filesystems = 1;
-}
-
-static char *
-devname(dev_t devid, mode_t mode)
-{
-	struct idmap key, **result;
-	key.id = devid;
-	key.name = 0;
-
-	if (!scanned_filesystems)
-		scan_filesystems();
-	result = tfind(&key, &filesystems, idorder);
-
-	if (result && (int)strlen((*result)->name) > fwid)
-		fwid = strlen((*result)->name);
-
-	return result ? (*result)->name : "??";
-}
 
 int
 main(int argc, char *argv[])
