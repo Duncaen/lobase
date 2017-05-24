@@ -35,6 +35,7 @@
 #ifndef _COMPAT_UNISTD_H_
 #define	_COMPAT_UNISTD_H_
 
+
 #include <sys/types.h>
 
 #define	STDIN_FILENO	0	/* standard input file descriptor */
@@ -53,6 +54,15 @@ int	 setresgid(gid_t, gid_t, gid_t);
 int	 setresuid(uid_t, uid_t, uid_t);
 int	 pledge(const char *, const char *[]);
 
+#ifndef _GETOPT_DEFINED_
+#define _GETOPT_DEFINED_
+int	 getopt(int, char * const *, const char *);
+extern	 char *optarg;			/* getopt(3) external variables */
+extern	 int opterr, optind, optopt, optreset;
+#endif /* _GETOPT_DEFINED_ */
+
 #endif /* _COMPAT_UNISTD_H_ */
 
+#define	_COMPAT_GETOPT_H_	/* glibc includes getopt.h */
 #include_next <unistd.h>
+#undef	_COMPAT_GETOPT_H_
