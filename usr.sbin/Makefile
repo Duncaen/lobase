@@ -1,3 +1,3 @@
 TOPDIR?=..
-SUBDIR=	mtree rdate
+SUBDIR=	chroot mtree rdate
 include ${.TOPDIR}/mk/bsd.subdir.mk
