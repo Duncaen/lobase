@@ -3,6 +3,9 @@
 # stdlib sources
 VPATH+=	${LIBCSRCDIR}/stdlib
 
+SRCS+=	getopt_long.c
+MAN+=	getopt.3 getopt_long.3
+
 ifneq ($(HAVE_REALLOCARRAY),1)
 SRCS+=	reallocarray.c recallocarray.c
 MAN+=	malloc.3
