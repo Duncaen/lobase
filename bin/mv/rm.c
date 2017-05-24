@@ -1,4 +1,4 @@
-/*	$OpenBSD: rm.c,v 1.7 2015/11/27 17:32:16 tedu Exp $	*/
+/*	$OpenBSD: rm.c,v 1.11 2016/10/10 18:13:21 tedu Exp $	*/
 /*	$NetBSD: rm.c,v 1.19 1995/09/07 06:48:50 jtc Exp $	*/
 
 /*-
@@ -31,8 +31,6 @@
  */
 
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mount.h>
 
 #include <err.h>
 #include <errno.h>
@@ -42,46 +40,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <limits.h>
-#include <pwd.h>
-#include <grp.h>
 
-#define MAXIMUM(a, b)	(((a) > (b)) ? (a) : (b))
+static int eval;
 
-extern char *__progname;
-
-static int eval, stdin_ok;
-
-static int	check(char *, char *, struct stat *);
 static void	checkdot(char **);
-static void	rm_file(char **);
 static void	rm_tree(char **);
 
-static void __dead
-usage(void)
-{
-	(void)fprintf(stderr, "usage: %s [-dfiPRr] file ...\n", __progname);
-	exit(1);
-}
-
-/*
- * rm --
- *	This rm is different from historic rm's, but is expected to match
- *	POSIX 1003.2 behavior.  The most visible difference is that -f
- *	has two specific effects now, ignore non-existent files and force
- * 	file removal.
- */
 int
 rmmain(int argc, char *argv[])
 {
 
 	checkdot(argv);
 
-	if (*argv) {
-		stdin_ok = isatty(STDIN_FILENO);
-
+	if (*argv)
 		rm_tree(argv);
-	}
 
 	return (eval);
 }
@@ -92,12 +64,6 @@ rm_tree(char **argv)
 	FTS *fts;
 	FTSENT *p;
 	int flags;
-
-	/*
-	 * If the -i option is specified, the user can skip on the pre-order
-	 * visit.  The fts_number field flags skipped directories.
-	 */
-#define	SKIPPED	1
 
 	flags = FTS_PHYSICAL;
 	flags |= FTS_NOSTAT;
@@ -114,20 +80,8 @@ rm_tree(char **argv)
 			continue;
 		case FTS_ERR:
 			errc(1, p->fts_errno, "%s", p->fts_path);
-		case FTS_NS:
-			/*
-			 * FTS_NS: assume that if can't stat the file, it
-			 * can't be unlinked.
-			 */
-			break;
 		case FTS_D:
-			/* Pre-order: give user chance to skip. */
 			continue;
-		case FTS_DP:
-			/* Post-order: see if user skipped. */
-			if (p->fts_number == SKIPPED)
-				continue;
-			break;
 		default:
 			break;
 		}
@@ -158,72 +112,6 @@ rm_tree(char **argv)
 	if (errno)
 		err(1, "fts_read");
 	fts_close(fts);
-}
-
-static void
-rm_file(char **argv)
-{
-	struct stat sb;
-	int rval;
-	char *f;
-
-	/*
-	 * Remove a file.  POSIX 1003.2 states that, by default, attempting
-	 * to remove a directory is an error, so must always stat the file.
-	 */
-	while ((f = *argv++) != NULL) {
-		/* Assume if can't stat the file, can't unlink it. */
-		if (lstat(f, &sb)) {
-			if (errno != ENOENT) {
-				warn("%s", f);
-				eval = 1;
-			}
-			continue;
-		}
-
-		if (S_ISDIR(sb.st_mode)) {
-			warnx("%s: is a directory", f);
-			eval = 1;
-			continue;
-		}
-		if (S_ISDIR(sb.st_mode))
-			rval = rmdir(f);
-		else {
-			rval = unlink(f);
-		}
-		if (rval && (errno != ENOENT)) {
-			warn("%s", f);
-			eval = 1;
-		}
-	}
-}
-
-static int
-check(char *path, char *name, struct stat *sp)
-{
-	int ch, first;
-	char modep[15];
-
-	/*
-	 * If it's not a symbolic link and it's unwritable and we're
-	 * talking to a terminal, ask.  Symbolic links are excluded
-	 * because their permissions are meaningless.  Check stdin_ok
-	 * first because we may not have stat'ed the file.
-	 */
-	if (!stdin_ok || S_ISLNK(sp->st_mode) || !access(name, W_OK) ||
-	    errno != EACCES)
-		return (1);
-	strmode(sp->st_mode, modep);
-	(void)fprintf(stderr, "override %s%s%s/%s for %s? ",
-	    modep + 1, modep[9] == ' ' ? "" : " ",
-	    user_from_uid(sp->st_uid, 0),
-	    group_from_gid(sp->st_gid, 0), path);
-	(void)fflush(stderr);
-
-	first = ch = getchar();
-	while (ch != '\n' && ch != EOF)
-		ch = getchar();
-	return (first == 'y' || first == 'Y');
 }
 
 /*
