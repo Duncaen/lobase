@@ -1,4 +1,4 @@
-/*	$OpenBSD: pax.c,v 1.45 2016/06/23 06:37:36 semarie Exp $	*/
+/*	$OpenBSD: pax.c,v 1.50 2017/03/11 12:55:47 tb Exp $	*/
 /*	$NetBSD: pax.c,v 1.5 1996/03/26 23:54:20 mrg Exp $	*/
 
 /*-
@@ -36,10 +36,10 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/resource.h>
 #include <signal.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -90,8 +90,9 @@ int	exit_val;		/* exit value */
 int	docrc;			/* check/create file crc */
 char	*dirptr;		/* destination dir in a copy */
 char	*argv0;			/* root of argv[0] */
+enum op_mode op_mode;		/* what program are we acting as? */
 sigset_t s_mask;		/* signal mask for cleanup critical sect */
-FILE	*listf;	/* file pointer to print file list to */
+FILE	*listf;			/* file pointer to print file list to */
 int	listfd = STDERR_FILENO;	/* fd matching listf, for sighandler output */
 char	*tempfile;		/* tempfile to use for mkstemp(3) */
 char	*tempbase;		/* basename of tempfile to use for mkstemp(3) */
@@ -263,13 +264,13 @@ main(int argc, char **argv)
 	 * so can't pledge at all then.
 	 */
 	if (pmode == 0 || (act != EXTRACT && act != COPY)) {
-		if (pledge("stdio rpath wpath cpath fattr dpath getpw ioctl proc exec",
+		if (pledge("stdio rpath wpath cpath fattr dpath getpw proc exec tape",
 		    NULL) == -1)
 			err(1, "pledge");
 
 		/* Copy mode, or no gzip -- don't need to fork/exec. */
 		if (gzip_program == NULL || act == COPY) {
-			if (pledge("stdio rpath wpath cpath fattr dpath getpw ioctl",
+			if (pledge("stdio rpath wpath cpath fattr dpath getpw tape",
 			    NULL) == -1)
 				err(1, "pledge");
 		}

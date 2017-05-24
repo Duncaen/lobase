@@ -1,4 +1,4 @@
-/*	$OpenBSD: ar_io.c,v 1.56 2016/06/03 23:22:20 tedu Exp $	*/
+/*	$OpenBSD: ar_io.c,v 1.62 2017/03/11 12:55:47 tb Exp $	*/
 /*	$NetBSD: ar_io.c,v 1.5 1996/03/26 23:54:13 mrg Exp $	*/
 
 /*-
@@ -35,21 +35,20 @@
  */
 
 #include <sys/types.h>
-#include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/mtio.h>
 #include <sys/wait.h>
-#include <signal.h>
-#include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
-#include <stdlib.h>
 #include <err.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "pax.h"
-#include "options.h"
 #include "extern.h"
 
 /*
@@ -175,7 +174,7 @@ ar_open(const char *name)
 		artyp = ioctl(arfd, MTIOCGET, &mb) ? ISCHR : ISTAPE;
 	else if (S_ISBLK(arsb.st_mode))
 		artyp = ISBLK;
-	else if ((lseek(arfd, (off_t)0L, SEEK_CUR) == -1) && (errno == ESPIPE))
+	else if ((lseek(arfd, 0, SEEK_CUR) == -1) && (errno == ESPIPE))
 		artyp = ISPIPE;
 	else
 		artyp = ISREG;
@@ -390,12 +389,12 @@ ar_close(int in_sig)
 		return;
 	}
 
-	if (strcmp(NM_PAX, argv0) == 0)
+	if (op_mode == OP_PAX)
 		(void)dprintf(listfd, "%s: %s vol %d, %lu files,"
 		    " %llu bytes read, %llu bytes written.\n",
 		    argv0, frmt->name, arvol-1, flcnt, rdcnt, wrcnt);
 #ifndef NOCPIO
-	else if (strcmp(NM_CPIO, argv0) == 0)
+	else if (op_mode == OP_CPIO)
 		(void)dprintf(listfd, "%llu blocks\n",
 		    (rdcnt ? rdcnt : wrcnt) / 5120);
 #endif /* !NOCPIO */
@@ -462,7 +461,7 @@ ar_set_wr(void)
 	 * file, we must get rid of all the stuff after the current offset
 	 * (it was not written by pax).
 	 */
-	if (((cpos = lseek(arfd, (off_t)0L, SEEK_CUR)) < 0) ||
+	if (((cpos = lseek(arfd, 0, SEEK_CUR)) < 0) ||
 	    (ftruncate(arfd, cpos) < 0)) {
 		syswarn(1, errno, "Unable to truncate archive file");
 		return(-1);
@@ -621,9 +620,9 @@ ar_write(char *buf, int bsz)
 			 * in size by forcing the runt record to next archive
 			 * volume
 			 */
-			if ((cpos = lseek(arfd, (off_t)0L, SEEK_CUR)) < 0)
+			if ((cpos = lseek(arfd, 0, SEEK_CUR)) < 0)
 				break;
-			cpos -= (off_t)res;
+			cpos -= res;
 			if (ftruncate(arfd, cpos) < 0)
 				break;
 			res = lstrval = 0;
@@ -757,9 +756,9 @@ ar_rdsync(void)
 		io_ok = 0;
 		if (((fsbz = arsb.st_blksize) <= 0) || (artyp != ISREG))
 			fsbz = BLKMULT;
-		if ((cpos = lseek(arfd, (off_t)0L, SEEK_CUR)) < 0)
+		if ((cpos = lseek(arfd, 0, SEEK_CUR)) < 0)
 			break;
-		mpos = fsbz - (cpos % (off_t)fsbz);
+		mpos = fsbz - (cpos % fsbz);
 		if (lseek(arfd, mpos, SEEK_CUR) < 0)
 			break;
 		lstrval = 1;
@@ -818,7 +817,7 @@ ar_fow(off_t sksz, off_t *skipped)
 	/*
 	 * figure out where we are in the archive
 	 */
-	if ((cpos = lseek(arfd, (off_t)0L, SEEK_CUR)) >= 0) {
+	if ((cpos = lseek(arfd, 0, SEEK_CUR)) >= 0) {
 		/*
 		 * we can be asked to move farther than there are bytes in this
 		 * volume, if so, just go to file end and let normal buf_fill()
@@ -886,7 +885,7 @@ ar_rev(off_t sksz)
 		 * may not even have the ability to lseek() in any direction).
 		 * First we figure out where we are in the archive.
 		 */
-		if ((cpos = lseek(arfd, (off_t)0L, SEEK_CUR)) < 0) {
+		if ((cpos = lseek(arfd, 0, SEEK_CUR)) < 0) {
 			syswarn(1, errno,
 			   "Unable to obtain current archive byte offset");
 			lstrval = -1;
@@ -900,7 +899,7 @@ ar_rev(off_t sksz)
 		 * previous volume and continue our movement backwards from
 		 * there.
 		 */
-		if ((cpos -= sksz) < (off_t)0L) {
+		if ((cpos -= sksz) < 0) {
 			if (arvol > 1) {
 				/*
 				 * this should never happen
@@ -909,7 +908,7 @@ ar_rev(off_t sksz)
 				lstrval = -1;
 				return(-1);
 			}
-			cpos = (off_t)0L;
+			cpos = 0;
 		}
 		if (lseek(arfd, cpos, SEEK_SET) < 0) {
 			syswarn(1, errno, "Unable to seek archive backwards");
@@ -1112,7 +1111,7 @@ ar_next(void)
 	if (sigprocmask(SIG_SETMASK, &o_mask, NULL) < 0)
 		syswarn(0, errno, "Unable to restore signal mask");
 
-	if (done || !wr_trail || force_one_volume || strcmp(NM_TAR, argv0) == 0)
+	if (done || !wr_trail || force_one_volume || op_mode == OP_TAR)
 		return(-1);
 
 	tty_prnt("\nATTENTION! %s archive volume change required.\n", argv0);
@@ -1262,7 +1261,7 @@ ar_start_gzip(int fd, const char *path, int wr)
 		close(fds[1]);
 
 		if (pmode == 0 || (act != EXTRACT && act != COPY)) {
-		    if (pledge("stdio rpath wpath cpath fattr dpath getpw ioctl proc",
+		    if (pledge("stdio rpath wpath cpath fattr dpath getpw proc tape",
 			NULL) == -1)
 				err(1, "pledge");
 		}

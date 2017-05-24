@@ -1,4 +1,4 @@
-/*	$OpenBSD: ar_subs.c,v 1.45 2015/03/19 05:14:24 guenther Exp $	*/
+/*	$OpenBSD: ar_subs.c,v 1.48 2016/08/26 05:06:14 guenther Exp $	*/
 /*	$NetBSD: ar_subs.c,v 1.5 1995/03/21 09:07:06 cgd Exp $	*/
 
 /*-
@@ -34,19 +34,17 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/types.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #include <sys/stat.h>
-#include <signal.h>
-#include <string.h>
-#include <stdio.h>
-#include <fcntl.h>
 #include <errno.h>
-#include <unistd.h>
-#include <stdlib.h>
-#if !defined(__OpenBSD__)
+#include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
 #include <time.h>
-#endif
+#include <unistd.h>
+
 #include "pax.h"
 #include "extern.h"
 
@@ -87,9 +85,6 @@ list(void)
 	 */
 	if ((get_arc() < 0) || ((*frmt->options)() < 0) ||
 	    ((*frmt->st_rd)() < 0))
-		return;
-
-	if (vflag && ((uidtb_start() < 0) || (gidtb_start() < 0)))
 		return;
 
 	now = time(NULL);
