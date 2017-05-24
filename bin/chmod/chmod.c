@@ -1,4 +1,4 @@
-/*	$OpenBSD: chmod.c,v 1.39 2015/12/31 23:38:16 guenther Exp $	*/
+/*	$OpenBSD: chmod.c,v 1.41 2017/02/17 10:14:12 tb Exp $	*/
 /*	$NetBSD: chmod.c,v 1.12 1995/03/21 09:02:09 cgd Exp $	*/
 
 /*
@@ -39,7 +39,6 @@
 #include <fts.h>
 #include <grp.h>
 #include <limits.h>
-#include <locale.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +50,7 @@ extern char *__progname;
 
 gid_t a_gid(const char *);
 uid_t a_uid(const char *, int);
-__dead void usage(void);
+static void __dead usage(void);
 
 int
 main(int argc, char *argv[])
@@ -67,8 +66,6 @@ main(int argc, char *argv[])
 	gid_t gid;
 	u_int32_t fclear, fset;
 	char *ep, *mode, *cp, *flags;
-
-	setlocale(LC_ALL, "");
 
 	if (strlen(__progname) > 2) {
 		ischown = __progname[2] == 'o';
@@ -158,6 +155,7 @@ done:
 			atflags = 0;
 		}
 	} else if (!hflag) {
+		fts_options |= FTS_COMFOLLOW;
 		atflags = 0;
 #if !defined(__OpenBSD__)
 	fts_options = FTS_LOGICAL;
@@ -306,7 +304,7 @@ done:
 	if (errno)
 		err(1, "fts_read");
 	fts_close(ftsp);
-	exit(rval);
+	return (rval);
 }
 
 /*
@@ -366,7 +364,7 @@ a_gid(const char *s)
 	return (gid);
 }
 
-void
+static void __dead
 usage(void)
 {
 	fprintf(stderr,
