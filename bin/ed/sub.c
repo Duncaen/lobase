@@ -1,4 +1,4 @@
-/*	$OpenBSD: sub.c,v 1.15 2016/03/22 17:58:28 mmcc Exp $	*/
+/*	$OpenBSD: sub.c,v 1.18 2016/10/11 06:54:05 martijn Exp $	*/
 /*	$NetBSD: sub.c,v 1.4 1995/03/21 09:04:50 cgd Exp $	*/
 
 /* sub.c: This file contains the substitution routines for the ed
@@ -173,7 +173,8 @@ search_and_replace(regex_t *pat, int gflag, int kth)
 
 
 /* substitute_matching_text: replace text matched by a pattern according to
-   a substitution template; return pointer to the modified text */
+   a substitution template; return length of rbuf if changed, 0 if unchanged, or
+   ERR on error */
 static int
 substitute_matching_text(regex_t *pat, line_t *lp, int gflag, int kth)
 {
@@ -181,48 +182,52 @@ substitute_matching_text(regex_t *pat, line_t *lp, int gflag, int kth)
 	int changed = 0;
 	int matchno = 0;
 	int i = 0;
+	int nempty = -1;
 	regmatch_t rm[SE_MAX];
 	char *txt;
-	char *eot;
+	char *eot, *eom;
 
-	if ((txt = get_sbuf_line(lp)) == NULL)
+	if ((eom = txt = get_sbuf_line(lp)) == NULL)
 		return ERR;
 	if (isbinary)
 		NUL_TO_NEWLINE(txt, lp->len);
 	eot = txt + lp->len;
 	if (!regexec(pat, txt, SE_MAX, rm, 0)) {
 		do {
+/* Don't do a 0-length match directly after a non-0-length */
+			if (rm[0].rm_eo == nempty) {
+				rm[0].rm_so++;
+				rm[0].rm_eo = lp->len;
+				continue;
+			}
 			if (!kth || kth == ++matchno) {
-				changed++;
-				i = rm[0].rm_so;
+				changed = 1;
+				i = rm[0].rm_so - (eom - txt);
 				REALLOC(rbuf, rbufsz, off + i, ERR);
 				if (isbinary)
-					NEWLINE_TO_NUL(txt, rm[0].rm_eo);
-				memcpy(rbuf + off, txt, i);
+					NEWLINE_TO_NUL(eom,
+					    rm[0].rm_eo - (eom - txt));
+				memcpy(rbuf + off, eom, i);
 				off += i;
 				if ((off = apply_subst_template(txt, rm, off,
 				    pat->re_nsub)) < 0)
 					return ERR;
-			} else {
-				i = rm[0].rm_eo;
-				REALLOC(rbuf, rbufsz, off + i, ERR);
-				if (isbinary)
-					NEWLINE_TO_NUL(txt, i);
-				memcpy(rbuf + off, txt, i);
-				off += i;
+				eom = txt + rm[0].rm_eo;
+				if (kth)
+					break;
 			}
-			txt += rm[0].rm_eo;
-		} while (*txt && (!changed || ((gflag & GSG) && rm[0].rm_eo)) &&
-		    !regexec(pat, txt, SE_MAX, rm, REG_NOTBOL));
-		i = eot - txt;
+			if (rm[0].rm_so == rm[0].rm_eo)
+				rm[0].rm_so = rm[0].rm_eo + 1;
+			else
+				nempty = rm[0].rm_so = rm[0].rm_eo;
+			rm[0].rm_eo = lp->len;
+		} while (rm[0].rm_so < lp->len && (gflag & GSG || kth) &&
+		    !regexec(pat, txt, SE_MAX, rm, REG_STARTEND | REG_NOTBOL));
+		i = eot - eom;
 		REALLOC(rbuf, rbufsz, off + i + 2, ERR);
-		if (i > 0 && !rm[0].rm_eo && (gflag & GSG)) {
-			seterrmsg("infinite substitution loop");
-			return  ERR;
-		}
 		if (isbinary)
-			NEWLINE_TO_NUL(txt, i);
-		memcpy(rbuf + off, txt, i);
+			NEWLINE_TO_NUL(eom, i);
+		memcpy(rbuf + off, eom, i);
 		memcpy(rbuf + off + i, "\n", 2);
 	}
 	return changed ? off + i + 1 : 0;
