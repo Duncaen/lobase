@@ -32,7 +32,6 @@ TODO
 ----
 
 - mk/bsd.prog.mk
-  - install man pages
   - add DPADD support
 
 - mk/bsd.lib.mk
@@ -41,13 +40,10 @@ TODO
 
 - libopenbsd
   - use the same directory structure as src/lib/libc to make diffs/merges simpler
+  - move compat implementations into compat directory
 
 - usr.bin/tail
   - import, rewrite -F or add a shim for kqueue?
-
-- */*/Makefile
-  - I added -D_GNU_SOURCE and/or -D_XOPEN_SOURCE to some of the makefiles
-    to shut up warnings, would be nice to move those into the right files.
 
 lib
 ---
@@ -89,6 +85,7 @@ sbin
 ----
 
 mknod
+nologin
 
 usr.bin
 -------
@@ -179,5 +176,6 @@ xinstall
 usr.sbin
 --------
 
+chroot
 mtree
 rdate
