@@ -1,10 +1,7 @@
+-include ../Makefile.inc
 include ${.TOPDIR}/mk/bsd.own.mk
 
 STATICLIB = lib$(LIB).a
-
-#.CURDIR = .
-#_objdir = ${.CURDIR}/obj
-#VPATH+=	$(__objdir)
 
 CPPFLAGS+=	-I$(.TOPDIR)/include -include compat.h \
 		-I$(.TOPDIR) -include config.h
