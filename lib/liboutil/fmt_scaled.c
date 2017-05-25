@@ -1,4 +1,4 @@
-/*	$OpenBSD: fmt_scaled.c,v 1.12 2013/11/29 19:00:51 deraadt Exp $	*/
+/*	$OpenBSD: fmt_scaled.c,v 1.16 2017/03/16 02:40:46 dtucker Exp $	*/
 
 /*
  * Copyright (c) 2001, 2002, 2003 Ian F. Darwin.  All rights reserved.
@@ -121,14 +121,30 @@ scan_scaled(char *scaled, long long *result)
 				/* ignore extra fractional digits */
 				continue;
 			fract_digits++;		/* for later scaling */
+			if (fpart > LLONG_MAX / 10) {
+				errno = ERANGE;
+				return -1;
+			}
 			fpart *= 10;
+			if (i > LLONG_MAX - fpart) {
+				errno = ERANGE;
+				return -1;
+			}
 			fpart += i;
 		} else {				/* normal digit */
 			if (++ndigits >= MAX_DIGITS) {
 				errno = ERANGE;
 				return -1;
 			}
+			if (whole > LLONG_MAX / 10) {
+				errno = ERANGE;
+				return -1;
+			}
 			whole *= 10;
+			if (i > LLONG_MAX - whole) {
+				errno = ERANGE;
+				return -1;
+			}
 			whole += i;
 		}
 	}
@@ -157,6 +173,13 @@ scan_scaled(char *scaled, long long *result)
 				return -1;
 			}
 			scale_fact = scale_factors[i];
+
+			/* check for overflow and underflow after scaling */
+			if (whole > LLONG_MAX / scale_fact ||
+			    whole < LLONG_MIN / scale_fact) {
+				errno = ERANGE;
+				return -1;
+			}
 
 			/* scale whole part */
 			whole *= scale_fact;

@@ -1,4 +1,4 @@
-/*	$OpenBSD: imsg-buffer.c,v 1.8 2015/12/29 18:05:01 benno Exp $	*/
+/*	$OpenBSD: imsg-buffer.c,v 1.10 2017/04/11 09:57:19 reyk Exp $	*/
 
 /*
  * Copyright (c) 2003, 2004 Henning Brauer <henning@openbsd.org>
@@ -78,7 +78,7 @@ ibuf_realloc(struct ibuf *buf, size_t len)
 		return (-1);
 	}
 
-	b = realloc(buf->buf, buf->wpos + len);
+	b = recallocarray(buf->buf, buf->size, buf->wpos + len, 1);
 	if (b == NULL)
 		return (-1);
 	buf->buf = b;
@@ -182,7 +182,7 @@ ibuf_free(struct ibuf *buf)
 {
 	if (buf == NULL)
 		return;
-	free(buf->buf);
+	freezero(buf->buf, buf->size);
 	free(buf);
 }
 
