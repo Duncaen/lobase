@@ -37,6 +37,7 @@
 #include <locale.h>
 #include <ctype.h>
 #include <err.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <util.h>
 #include <wchar.h>

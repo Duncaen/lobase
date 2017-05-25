@@ -32,6 +32,7 @@
 #include <sys/mman.h>
 
 #include <ctype.h>
+#include <fcntl.h>
 #include <libgen.h>
 #include <stddef.h>
 #include <stdint.h>
