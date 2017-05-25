@@ -11,8 +11,7 @@
 #define	ALIGN(p)	(((size_t)(p) + ALIGNBYTES) &~ ALIGNBYTES)
 #endif
 
-#define __UNUSED		__attribute__ ((unused))
-#define __unused		__attribute__ ((unused))
+#define __UNUSED	__attribute__ ((unused))
 
 #define __dead		__attribute__((__noreturn__))
 

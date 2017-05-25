@@ -782,7 +782,7 @@ cmpsuffix(unsigned char si1, unsigned char si2)
  */
 static int
 numcoll_impl(struct key_value *kv1, struct key_value *kv2,
-    size_t offset __unused, bool use_suffix)
+    size_t offset __UNUSED, bool use_suffix)
 {
 	struct bwstring *s1, *s2;
 	wchar_t sfrac1[MAX_NUM_SIZE + 1], sfrac2[MAX_NUM_SIZE + 1];
@@ -955,7 +955,7 @@ hnumcoll(struct key_value *kv1, struct key_value *kv2, size_t offset)
  */
 static int
 randomcoll(struct key_value *kv1, struct key_value *kv2,
-    size_t offset __unused)
+    size_t offset __UNUSED)
 {
 	struct bwstring *s1, *s2;
 	MD5_CTX ctx1, ctx2;
@@ -1008,7 +1008,7 @@ randomcoll(struct key_value *kv1, struct key_value *kv2,
  */
 static int
 versioncoll(struct key_value *kv1, struct key_value *kv2,
-    size_t offset __unused)
+    size_t offset __UNUSED)
 {
 	struct bwstring *s1, *s2;
 
@@ -1081,7 +1081,7 @@ cmp_nans(double d1, double d2)
  */
 static int
 gnumcoll(struct key_value *kv1, struct key_value *kv2,
-    size_t offset __unused)
+    size_t offset __UNUSED)
 {
 	double d1, d2;
 	int err1, err2;
@@ -1237,7 +1237,7 @@ gnumcoll(struct key_value *kv1, struct key_value *kv2,
  * Implements month sort (-M).
  */
 static int
-monthcoll(struct key_value *kv1, struct key_value *kv2, size_t offset __unused)
+monthcoll(struct key_value *kv1, struct key_value *kv2, size_t offset __UNUSED)
 {
 	int val1, val2;
 	bool key1_read, key2_read;
