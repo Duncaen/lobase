@@ -56,6 +56,9 @@ int	 pledge(const char *, const char *[]);
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
+#define getopt openbsd_getopt
+#define opterr openbsd_opterr
+#define optind openbsd_optind
 int	 getopt(int, char * const *, const char *);
 extern	 char *optarg;			/* getopt(3) external variables */
 extern	 int opterr, optind, optopt, optreset;
