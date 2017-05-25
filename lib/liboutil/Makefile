@@ -5,7 +5,6 @@
 .CURDIR?=.
 
 LIB=	outil
-CPPFLAGS+=-D_GNU_SOURCE
 
 HDRS=	util.h imsg.h
 SRCS=	bcrypt_pbkdf.c \

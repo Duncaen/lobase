@@ -4,6 +4,5 @@
 
 PROG=		expr
 SRCS=		expr.c
-CPPFLAGS+=-D_GNU_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

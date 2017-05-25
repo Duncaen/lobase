@@ -10,7 +10,7 @@ LINKS=	${BINDIR}/md5 ${BINDIR}/sha1 \
 	${BINDIR}/md5 ${BINDIR}/sha512 \
 	${BINDIR}/md5 ${BINDIR}/cksum
 
-CPPFLAGS+= -I${.CURDIR} -D_GNU_SOURCE
+CPPFLAGS+= -I${.CURDIR}
 COPTS+=	-Wall -Wconversion -Wmissing-prototypes
 
 include ${.TOPDIR}/mk/bsd.prog.mk

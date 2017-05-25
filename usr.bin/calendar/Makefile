@@ -5,7 +5,6 @@
 PROG=	calendar
 SRCS=   calendar.c io.c day.c pesach.c ostern.c paskha.c
 INTER=	de_DE.UTF-8 hr_HR.UTF-8 ru_RU.UTF-8 fr_FR.UTF-8
-CPPFLAGS+=-D_GNU_SOURCE
 
 beforeinstall:
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m 444 \

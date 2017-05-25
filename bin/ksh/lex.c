@@ -4,6 +4,10 @@
  * lexical analysis and source input
  */
 
+#define _GNU_SOURCE
+
+#include <sys/time.h>
+
 #include <ctype.h>
 #include <errno.h>
 #include <libgen.h>

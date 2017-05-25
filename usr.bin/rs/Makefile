@@ -4,6 +4,5 @@
 
 PROG=	rs
 SRCS=	rs.c utf8.c
-CPPFLAGS+=-D_GNU_SOURCE -D_XOPEN_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

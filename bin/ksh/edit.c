@@ -5,6 +5,8 @@
  *
  */
 
+#define _GNU_SOURCE
+
 #include "config.h"
 #ifdef EDIT
 

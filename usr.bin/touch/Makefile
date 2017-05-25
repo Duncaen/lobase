@@ -3,6 +3,5 @@
 .TOPDIR?=../..
 
 PROG=	touch
-CPPFLAGS+=-D_XOPEN_SOURCE -D_GNU_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

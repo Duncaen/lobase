@@ -3,6 +3,5 @@
 .TOPDIR?=../..
 
 PROG=	column
-CPPFLAGS+=-D_GNU_SOURCE -D_XOPEN_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

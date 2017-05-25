@@ -3,6 +3,5 @@
 .TOPDIR?=../..
 
 PROG=	fold
-CPPFLAGS+=-D_XOPEN_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

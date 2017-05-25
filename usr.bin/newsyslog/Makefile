@@ -3,7 +3,6 @@
 .TOPDIR?=../..
 
 PROG=	newsyslog
-CPPFLAGS+=-D_GNU_SOURCE
 
 BINOWN=	root
 

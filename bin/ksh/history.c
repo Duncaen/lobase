@@ -13,6 +13,7 @@
  *		to work on your system
  */
 
+#include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/uio.h>
 

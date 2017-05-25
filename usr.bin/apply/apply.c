@@ -33,6 +33,8 @@
  * SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE
+
 #include <sys/wait.h>
 
 #include <ctype.h>

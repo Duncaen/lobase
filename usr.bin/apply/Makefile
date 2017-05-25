@@ -3,6 +3,5 @@
 .TOPDIR?=../..
 
 PROG=	apply
-CPPFLAGS+=-D_GNU_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

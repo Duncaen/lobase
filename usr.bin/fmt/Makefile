@@ -4,6 +4,5 @@
 
 PROG=	fmt
 SRCS=	fmt.c
-CPPFLAGS+=-D_XOPEN_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

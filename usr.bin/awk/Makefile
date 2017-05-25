@@ -9,7 +9,6 @@ DPADD=	${LIBM}
 CLEANFILES+=proctab.c maketab ytab.c ytab.h
 CFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
 HOSTCFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
-CPPFLAGS+=-D_GNU_SOURCE
 
 # XXX: replace with make depends
 lex.o b.o main.o tran.o run.o parse.o lib.o : ytab.h

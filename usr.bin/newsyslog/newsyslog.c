@@ -71,6 +71,8 @@
  *
  */
 
+#define _GNU_SOURCE
+
 #define CONF "/etc/newsyslog.conf"
 #define PIDFILE "/var/run/syslog.pid"
 #define COMPRESS "/usr/bin/gzip"

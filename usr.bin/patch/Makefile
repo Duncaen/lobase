@@ -4,6 +4,5 @@
 
 PROG=	patch
 SRCS=	patch.c pch.c inp.c util.c backupfile.c mkpath.c ed.c
-CPPFLAGS+=-D_GNU_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

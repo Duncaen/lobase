@@ -6,6 +6,5 @@ PROG=	ls
 SRCS=	cmp.c ls.c main.c print.c util.c utf8.c
 DPADD= ${LIBUTIL}
 LDADD= -loutil
-CPPFLAGS+=-D_GNU_SOURCE
 
 include ${.TOPDIR}/mk/bsd.prog.mk

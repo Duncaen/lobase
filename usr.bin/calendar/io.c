@@ -29,6 +29,8 @@
  * SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE
+
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
