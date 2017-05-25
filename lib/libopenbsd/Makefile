@@ -23,7 +23,6 @@ endif
 ifneq ($(HAVE_GETENTROPY),1)
 # XXX: fix fstatfs
 SRCS+=	getentropy_linux.c
-getentropy_linux.o : CPPFLAGS += -D_GNU_SOURCE
 endif
 
 include ${.TOPDIR}/mk/bsd.lib.mk
