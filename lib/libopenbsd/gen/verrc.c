@@ -45,3 +45,4 @@ verrc(int eval, int code, const char *fmt, va_list ap)
 	(void)fprintf(stderr, "%s\n", strerror(code));
 	exit(eval);
 }
+DEF_WEAK(verrc);

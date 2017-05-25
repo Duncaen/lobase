@@ -40,3 +40,4 @@ errc(int eval, int code, const char *fmt, ...)
 	verrc(eval, code, fmt, ap);
 	va_end(ap);
 }
+DEF_WEAK(errc);
