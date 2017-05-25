@@ -5,6 +5,8 @@
 # sys sources
 VPATH+=	${LIBCSRCDIR}/sys
 
+include ${.TOPDIR}/config.mk
+
 ifneq ($(HAVE_GETFSSTAT),1)
 SRCS+=	getfsstat.c
 SRCS+=	statfs.c

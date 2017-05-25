@@ -6,6 +6,8 @@ VPATH+=	${LIBCSRCDIR}/string
 SRCS+=	timingsafe_bcmp.c timingsafe_memcmp.c
 MAN+=	timingsafe_bcmp.3
 
+include ${.TOPDIR}/config.mk
+
 ifneq ($(HAVE_EXPLICIT_BZERO),1)
 SRCS+=	explicit_bzero.c
 endif

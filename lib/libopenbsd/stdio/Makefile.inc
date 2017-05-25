@@ -5,6 +5,8 @@ VPATH+=	${LIBCSRCDIR}/stdio
 
 SRCS+=	fgetwln.c
 
+include ${.TOPDIR}/config.mk
+
 ifneq ($(HAVE_FGETLN),1)
 SRCS+=	fgetln.c
 endif
