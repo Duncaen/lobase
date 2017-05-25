@@ -33,9 +33,6 @@
 #ifndef _COMPAT_GETOPT_H_
 #define _COMPAT_GETOPT_H_
 
-#define	getopt(argc, argv, optstr) \
-	openbsd_getopt(argc, argv, optstr)
-
 #define	getopt_long(argc, argv, optstr, longopts, longindex) \
 	openbsd_getopt_long_only(argc, argv, optstr, longopts, longindex)
 
@@ -70,9 +67,10 @@ int	 getopt_long_only(int, char * const *, const char *,
 	    const struct option *, int *);
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-#define getopt openbsd_getopt
-#define opterr openbsd_opterr
-#define optind openbsd_optind
+#define	getopt(argc, argv, optstr) \
+	openbsd_getopt(argc, argv, optstr)
+#define	opterr openbsd_opterr
+#define	optind openbsd_optind
 int	 getopt(int, char * const *, const char *);
 
 extern   char *optarg;                  /* getopt(3) external variables */
