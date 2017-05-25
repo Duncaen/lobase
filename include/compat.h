@@ -29,6 +29,9 @@
 #define __weak_alias(new, old) \
 	extern __typeof(old) new __attribute__((weak, alias(#old)))
 
+#define __strong_alias(new, old) \
+	extern __typeof(old) new __attribute__((alias(#old)))
+
 #ifndef SA_LEN
 #define SA_LEN(X) \
 	(((struct sockaddr*)(X))->sa_family == AF_INET ? sizeof(struct sockaddr_in) : \
