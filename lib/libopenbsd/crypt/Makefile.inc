@@ -2,6 +2,6 @@
 
 VPATH+=	${LIBCSRCDIR}/arch/${MACHINE_CPU}/crypt ${LIBCSRCDIR}/crypt
 
-SRCS+=	arc4random.c arc4random_uniform.c bcrypt.c blowfish.c
+SRCS+=	arc4random.c arc4random_uniform.c bcrypt.c blowfish.c crypt.c cryptutil.c
 
 MAN+=	blowfish.3 arc4random.3

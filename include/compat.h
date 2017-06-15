@@ -18,6 +18,9 @@
 #define __BEGIN_DECLS
 #define __END_DECLS
 
+#define __BEGIN_HIDDEN_DECLS
+#define __END_HIDDEN_DECLS
+
 #ifndef	__CONCAT
 #define	__CONCAT(x,y)	x ## y
 #endif

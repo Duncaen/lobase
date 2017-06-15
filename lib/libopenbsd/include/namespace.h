@@ -145,7 +145,7 @@
 
 /* #define	PROTO_NORMAL(x)		__dso_hidden typeof(x) x asm(HIDDEN_STRING(x)) */
 /* #define	PROTO_STD_DEPRECATED(x)	typeof(x) x __attribute__((deprecated)) */
-/* #define	PROTO_DEPRECATED(x)	typeof(x) x __attribute__((deprecated, weak)) */
+#define	PROTO_DEPRECATED(x)	typeof(x) x __attribute__((deprecated, weak))
 /* #define	PROTO_CANCEL(x)		__dso_hidden typeof(x) HIDDEN(x), \ */
 /* 					x asm(CANCEL_STRING(x)) */
 /* #define	PROTO_WRAP(x)		PROTO_NORMAL(x), WRAP(x) */
