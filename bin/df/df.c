@@ -321,6 +321,11 @@ prtstat(struct statfs *sfsp, int maxwidth, int headerlen, int blocksize)
 	u_int64_t used, inodes;
 	int64_t availblks;
 
+#if __linux__
+	if (sfsp->f_blocks == 0)
+		return;
+#endif
+
 	(void)printf("%-*.*s", maxwidth, maxwidth, sfsp->f_mntfromname);
 	used = sfsp->f_blocks - sfsp->f_bfree;
 	availblks = sfsp->f_bavail + used;
@@ -407,6 +412,10 @@ posixprint(struct statfs *mntbuf, long mntsize, int maxwidth)
 
 	for (i = 0; i < mntsize; i++) {
 		sfsp = &mntbuf[i];
+#if __linux__
+		if (sfsp->f_blocks == 0)
+			continue;
+#endif
 		used = sfsp->f_blocks - sfsp->f_bfree;
 		avail = sfsp->f_bavail + used;
 		if (avail == 0)
