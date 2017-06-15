@@ -179,7 +179,7 @@ complete_local(char *word, int list)
 	for (dp = readdir(dd); dp != NULL; dp = readdir(dd)) {
 		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
 			continue;
-		if (strlen(file) > dp->d_namlen)
+		if (strlen(file) > D_NAMLEN(dp))
 			continue;
 		if (strncmp(file, dp->d_name, strlen(file)) == 0) {
 			char *tcp;
