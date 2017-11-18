@@ -177,5 +177,5 @@ usr.sbin
 --------
 
 chroot
-mtree
+mtree	No flags support
 rdate
