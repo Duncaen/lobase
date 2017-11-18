@@ -1,8 +1,7 @@
-#	$OpenBSD: Makefile,v 1.4 1998/04/25 23:08:26 millert Exp $
+#	$OpenBSD: Makefile,v 1.5 2017/07/09 21:23:19 espie Exp $
 
 .TOPDIR?=../..
 
 PROG=	fmt
-SRCS=	fmt.c
 
 include ${.TOPDIR}/mk/bsd.prog.mk
