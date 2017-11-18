@@ -1,8 +1,7 @@
-#	$OpenBSD: Makefile,v 1.5 2015/11/11 19:05:28 deraadt Exp $
+#	$OpenBSD: Makefile,v 1.6 2017/07/09 21:23:19 espie Exp $
 
 .TOPDIR?=../..
 
-MAN=	true.1
 PROG=	true
 
 include ${.TOPDIR}/mk/bsd.prog.mk
