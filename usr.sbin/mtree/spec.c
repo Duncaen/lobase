@@ -192,7 +192,7 @@ set(char *t, NODE *ip)
 			if (!ip->md5digest)
 				error("%s", strerror(errno));
 			break;
-#if 0
+#ifdef HAVE_CHFLAGS
 		case F_FLAGS:
 			if (!strcmp(val, "none")) {
 				ip->file_flags = 0;

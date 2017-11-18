@@ -251,7 +251,7 @@ statf(int indent, FTSENT *p)
 		output(indent, &offset, "link=%s", escaped_name);
 		free(escaped_name);
 	}
-#if 0
+#ifdef HAVE_CHFLAGS
 	if (keys & F_FLAGS && !S_ISLNK(p->fts_statp->st_mode)) {
 		char *file_flags;
 

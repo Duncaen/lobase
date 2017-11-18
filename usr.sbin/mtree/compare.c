@@ -323,7 +323,7 @@ typeerr:		LABEL;
 		LABEL;
 		(void)printf("%slink ref (%s, %s)\n", tab, cp, s->slink);
 	}
-#if 0
+#ifdef HAVE_CHFLAGS
 	if (s->flags & F_FLAGS && s->file_flags != p->fts_statp->st_flags) {
 		char *db_flags = NULL;
 		char *cur_flags = NULL;
