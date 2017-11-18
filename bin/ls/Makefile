@@ -4,7 +4,7 @@
 
 PROG=	ls
 SRCS=	cmp.c ls.c main.c print.c util.c utf8.c
-DPADD= ${LIBUTIL}
-LDADD= -loutil
+DPADD=	${LIBUTIL}
+LDADD=	-loutil -lrt
 
 include ${.TOPDIR}/mk/bsd.prog.mk
