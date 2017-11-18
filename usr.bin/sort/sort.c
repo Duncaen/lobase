@@ -29,7 +29,7 @@
 
 #include <sys/resource.h>
 #include <sys/stat.h>
-#if 0
+#ifdef __OpenBSD__
 #include <sys/sysctl.h>
 #endif
 #include <sys/types.h>
@@ -212,7 +212,7 @@ set_hw_params(void)
 	long long user_memory;
 	struct rlimit rl;
 	size_t len;
-#if 0
+#ifdef __OpenBSD__
 	int mib[] = { CTL_HW, HW_USERMEM64 };
 
 	/* Get total user (non-kernel) memory. */
