@@ -3,5 +3,6 @@
 .TOPDIR?=../..
 
 PROG=	rm
+LDADD=	-lrt
 
 include ${.TOPDIR}/mk/bsd.prog.mk
