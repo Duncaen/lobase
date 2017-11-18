@@ -16,7 +16,7 @@ openbsd_statfs(const char *path, struct openbsd_statfs *buf)
 	if (!(num = getmntinfo(&mntbuf, MNT_WAIT)))
 		return -1;
 
-	for (i = 0; i <= num; i++)
+	for (i = 0; i < num; i++)
 		if (mntbuf[i].st_dev == sb.st_dev) {
 			if (statfs(path, &sfb) == -1)
 				return -1;
