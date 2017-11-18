@@ -1,4 +1,4 @@
-#	$OpenBSD: Makefile,v 1.14 2013/08/18 22:06:44 miod Exp $
+#	$OpenBSD: Makefile,v 1.16 2017/07/10 21:30:37 espie Exp $
 
 .TOPDIR?=../..
 
@@ -12,6 +12,9 @@ HOSTCFLAGS+=-I. -I${.CURDIR} -DHAS_ISBLANK -DNDEBUG
 
 # XXX: replace with make depends
 lex.o b.o main.o tran.o run.o parse.o lib.o : ytab.h
+
+# XXX: add BUILDFIRST to mk/prog.bsd.mk
+BUILDFIRST = ytab.h
 
 ytab.c: awkgram.y
 	@echo ${YACC} -d awkgram.y
