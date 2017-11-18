@@ -1,4 +1,4 @@
-/*	$OpenBSD: md5.c,v 1.89 2016/12/16 17:55:26 krw Exp $	*/
+/*	$OpenBSD: md5.c,v 1.92 2017/09/11 16:35:38 millert Exp $	*/
 
 /*
  * Copyright (c) 2001,2003,2005-2007,2010,2013,2014
@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/queue.h>
+#include <sys/resource.h>
 #include <netinet/in.h>
 #include <ctype.h>
 #include <err.h>
@@ -424,8 +425,7 @@ digest_end(const struct hash_function *hf, void *ctx, char *buf, size_t bsize,
 		hf->final(digest, ctx);
 		if (b64_ntop(digest, hf->digestlen, buf, bsize) == -1)
 			errx(1, "error encoding base64");
-		memset(digest, 0, hf->digestlen);
-		free(digest);
+		freezero(digest, hf->digestlen);
 	} else {
 		hf->end(ctx, buf);
 	}
@@ -558,6 +558,7 @@ digest_filelist(const char *file, struct hash_function *defhash, int selcount,
 	char *lbuf = NULL;
 	FILE *listfp, *fp;
 	size_t len, nread;
+	int *sel_found = NULL;
 	u_char data[32 * 1024];
 	union ANY_CTX context;
 	struct hash_function *hf;
@@ -567,6 +568,12 @@ digest_filelist(const char *file, struct hash_function *defhash, int selcount,
 	} else if ((listfp = fopen(file, "r")) == NULL) {
 		warn("cannot open %s", file);
 		return(1);
+	}
+
+	if (sel != NULL) {
+		sel_found = calloc((size_t)selcount, sizeof(*sel_found));
+		if (sel_found == NULL)
+			err(1, NULL);
 	}
 
 	algorithm_max = algorithm_min = strlen(functions[0].name);
@@ -677,13 +684,11 @@ digest_filelist(const char *file, struct hash_function *defhash, int selcount,
 		/*
 		 * If only a selection of files is wanted, proceed only
 		 * if the filename matches one of those in the selection.
-		 * Mark found files by setting them to NULL so that we can
-		 * detect files that are missing from the checklist later.
 		 */
-		if (sel) {
+		if (sel != NULL) {
 			for (i = 0; i < selcount; i++) {
-				if (sel[i] && strcmp(sel[i], filename) == 0) {
-					sel[i] = NULL;
+				if (strcmp(sel[i], filename) == 0) {
+					sel_found[i] = 1;
 					break;
 				}
 			}
@@ -729,6 +734,17 @@ digest_filelist(const char *file, struct hash_function *defhash, int selcount,
 	if (!found)
 		warnx("%s: no properly formatted checksum lines found", file);
 	free(lbuf);
+	if (sel_found != NULL) {
+		/*
+		 * Mark found files by setting them to NULL so that we can
+		 * detect files that are missing from the checklist later.
+		 */
+		for (i = 0; i < selcount; i++) {
+			if (sel_found[i])
+				sel[i] = NULL;
+		}
+		free(sel_found);
+	}
 	return(error || !found);
 }
 
@@ -739,7 +755,8 @@ void
 digest_time(struct hash_list *hl, int times)
 {
 	struct hash_function *hf;
-	struct timeval start, stop, res;
+	struct rusage start, stop;
+	struct timeval res;
 	union ANY_CTX context;
 	u_int i;
 	u_char data[TEST_BLOCK_LEN];
@@ -758,13 +775,13 @@ digest_time(struct hash_list *hl, int times)
 		for (i = 0; i < TEST_BLOCK_LEN; i++)
 			data[i] = (u_char)(i & 0xff);
 
-		gettimeofday(&start, NULL);
+		getrusage(RUSAGE_SELF, &start);
 		hf->init(&context);
 		for (i = 0; i < count; i++)
 			hf->update(&context, data, (size_t)TEST_BLOCK_LEN);
 		digest_end(hf, &context, digest, sizeof(digest), hf->base64);
-		gettimeofday(&stop, NULL);
-		timersub(&stop, &start, &res);
+		getrusage(RUSAGE_SELF, &stop);
+		timersub(&stop.ru_utime, &start.ru_utime, &res);
 		elapsed = res.tv_sec + res.tv_usec / 1000000.0;
 
 		(void)printf("\nDigest = %s\n", digest);
