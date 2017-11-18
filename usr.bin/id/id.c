@@ -1,4 +1,4 @@
-/*	$OpenBSD: id.c,v 1.26 2015/10/09 01:37:07 deraadt Exp $	*/
+/*	$OpenBSD: id.c,v 1.28 2017/05/30 15:29:53 tedu Exp $	*/
 
 /*-
  * Copyright (c) 1991, 1993
@@ -29,6 +29,11 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/types.h>
+#ifdef __OpenBSD__
+#include <sys/socket.h> /* getrtable() lives here */
+#endif
+
 #include <err.h>
 #include <errno.h>
 #include <grp.h>
@@ -55,7 +60,7 @@ main(int argc, char *argv[])
 {
 	struct group *gr;
 	struct passwd *pw;
-	int ch, cflag, Gflag, gflag, nflag, pflag, rflag, uflag;
+	int ch, cflag, Gflag, gflag, nflag, pflag, Rflag, rflag, uflag;
 	uid_t uid;
 	gid_t gid;
 	const char *opts;
@@ -63,7 +68,7 @@ main(int argc, char *argv[])
 	if (pledge("stdio getpw", NULL) == -1)
 		err(1, "pledge");
 
-	cflag = Gflag = gflag = nflag = pflag = rflag = uflag = 0;
+	cflag = Gflag = gflag = nflag = pflag = Rflag = rflag = uflag = 0;
 
 	if (strcmp(getprogname(), "groups") == 0) {
 		Gflag = 1;
@@ -78,7 +83,7 @@ main(int argc, char *argv[])
 		if (argc > 1)
 			usage();
 	} else
-		opts = "cGgnpru";
+		opts = "cGgnpRru";
 
 	while ((ch = getopt(argc, argv, opts)) != -1)
 		switch(ch) {
@@ -97,6 +102,9 @@ main(int argc, char *argv[])
 		case 'p':
 			pflag = 1;
 			break;
+		case 'R':
+			Rflag = 1;
+			break;
 		case 'r':
 			rflag = 1;
 			break;
@@ -110,7 +118,7 @@ main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	switch (cflag + Gflag + gflag + pflag + uflag) {
+	switch (cflag + Gflag + gflag + pflag + Rflag + uflag) {
 	case 1:
 		break;
 	case 0:
@@ -123,6 +131,13 @@ main(int argc, char *argv[])
 
 	if (strcmp(opts, "") != 0 && argc > 1)
 		usage();
+
+	if (Rflag) {
+#ifdef __OpenBSD__
+		printf("%d\n", getrtable());
+#endif
+		exit(0);
+	}
 
 	pw = *argv ? who(*argv) : NULL;
 
@@ -356,6 +371,7 @@ usage(void)
 		(void)fprintf(stderr, "       id -G [-n] [user]\n");
 		(void)fprintf(stderr, "       id -g [-nr] [user]\n");
 		(void)fprintf(stderr, "       id -p [user]\n");
+		(void)fprintf(stderr, "       id -R\n");
 		(void)fprintf(stderr, "       id -u [-nr] [user]\n");
 	}
 	exit(1);
