@@ -133,6 +133,11 @@ uintmax_t	strtoumax(const char *, char **, int);
 	(x)->d_namlen
 #endif
 
+/* for musl, required by xinstall */
+#ifndef S_BLKSIZE
+#define S_BLKSIZE 512
+#endif
+
 /* XXX: read dynamically? */
 #define UID_MAX 60000
 #define GID_MAX 60000
