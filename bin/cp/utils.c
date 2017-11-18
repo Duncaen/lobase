@@ -105,8 +105,7 @@ copy_file(FTSENT *entp, int dne)
 		to_fd = open(to.p_path, O_WRONLY | O_TRUNC, 0);
 	} else
 		to_fd = open(to.p_path, O_WRONLY | O_TRUNC | O_CREAT,
-		    fs->st_mode & ~(S_ISVTX | S_ISUID | S_ISGID));
-		/* XXX: PORT: wtf? S_ISTXT vs S_ISVTX */
+		    fs->st_mode & ~(S_ISTXT | S_ISUID | S_ISGID));
 
 	if (to_fd == -1) {
 		warn("%s", to.p_path);
@@ -257,8 +256,7 @@ setfile(struct stat *fs, int fd)
 	int rval;
 
 	rval = 0;
-	fs->st_mode &= S_ISVTX | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO;
-	/* XXX: PORT: wtf? S_ISTXT vs S_ISVTX */
+	fs->st_mode &= S_ISTXT | S_ISUID | S_ISGID | S_IRWXU | S_IRWXG | S_IRWXO;
 
 	ts[0] = fs->st_atim;
 	ts[1] = fs->st_mtim;
@@ -279,8 +277,7 @@ setfile(struct stat *fs, int fd)
 			warn("chown: %s", to.p_path);
 			rval = 1;
 		}
-		fs->st_mode &= ~(S_ISVTX | S_ISUID | S_ISGID);
-		/* XXX: PORT: wtf? S_ISTXT vs S_ISVTX */
+		fs->st_mode &= ~(S_ISTXT | S_ISUID | S_ISGID);
 	}
 	if (fd >= 0 ? fchmod(fd, fs->st_mode) :
 	    fchmodat(AT_FDCWD, to.p_path, fs->st_mode, AT_SYMLINK_NOFOLLOW)) {
@@ -288,7 +285,7 @@ setfile(struct stat *fs, int fd)
 		rval = 1;
 	}
 
-#if 0
+#ifdef HAVE_CHFLAGS
 	/*
 	 * XXX
 	 * NFS doesn't support chflags; ignore errors unless there's reason
