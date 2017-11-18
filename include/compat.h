@@ -12,6 +12,7 @@
 #endif
 
 #define __UNUSED	__attribute__ ((unused))
+#define __unused	__attribute__ ((unused))
 
 #define __dead		__attribute__((__noreturn__))
 
