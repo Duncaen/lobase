@@ -54,7 +54,7 @@
 #include "extern.h"
 
 #ifndef SIGINFO
-#define SIGINFO SIGPWR
+#define SIGINFO SIGUSR1
 #endif
 
 static void dd_close(void);

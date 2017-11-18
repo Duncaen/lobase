@@ -58,7 +58,7 @@ cat
 chmod		Some differences, because OpenBSD has permissions for symlinks
 cp
 date
-dd		No SIGINFO support
+dd		No SIGINFO support, use SIGUSR1 instead
 df		No support for raw devices on linux
 domainname
 echo
