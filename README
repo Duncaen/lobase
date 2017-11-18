@@ -122,7 +122,7 @@ grep
 head
 hexdump
 htpasswd
-id			Does not support -R to show the current processes routing table
+id		Does not support -R to show the current processes routing table
 indent
 join
 jot
@@ -171,7 +171,7 @@ vis
 wc
 what
 which
-xinstall
+xinstall	Does not support file flags (-f)
 
 usr.sbin
 --------
