@@ -33,6 +33,7 @@
 #include <sys/stat.h>
 
 #include <fcntl.h>
+#include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 #include <utmp.h>
@@ -52,10 +53,10 @@ logwtmp(const char *line, const char *name, const char *host)
 		(void) strncpy(ut.ut_line, line, sizeof(ut.ut_line));
 		(void) strncpy(ut.ut_name, name, sizeof(ut.ut_name));
 		(void) strncpy(ut.ut_host, host, sizeof(ut.ut_host));
-#ifdef __linux
-		(void) time((time_t *)&ut.ut_tv.tv_sec);
-#else
+#ifdef __OpenBSD__
 		(void) time(&ut.ut_time);
+#else
+		(void) time((time_t *)&ut.ut_tv.tv_sec);
 #endif
 		if (write(fd, &ut, sizeof(struct utmp)) !=
 		    sizeof(struct utmp))

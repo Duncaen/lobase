@@ -234,7 +234,7 @@ imsg_create(struct imsgbuf *ibuf, uint32_t type, uint32_t peerid, pid_t pid,
 }
 
 int
-imsg_add(struct ibuf *msg, const void *data, u_int16_t datalen)
+imsg_add(struct ibuf *msg, const void *data, uint16_t datalen)
 {
 	if (datalen)
 		if (ibuf_add(msg, data, datalen) == -1) {
@@ -255,7 +255,7 @@ imsg_close(struct imsgbuf *ibuf, struct ibuf *msg)
 	if (msg->fd != -1)
 		hdr->flags |= IMSGF_HASFD;
 
-	hdr->len = (u_int16_t)msg->wpos;
+	hdr->len = (uint16_t)msg->wpos;
 
 	ibuf_close(&ibuf->w, msg);
 }
