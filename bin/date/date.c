@@ -235,7 +235,7 @@ setthetime(char *p)
 		if (adjtime(&tv, NULL) == -1)
 			errx(1, "adjtime");
 	} else {
-#if 0
+#ifdef HAVE_WTMP
 #ifndef SMALL
 		logwtmp("|", "date", "");
 #endif
@@ -244,7 +244,7 @@ setthetime(char *p)
 		tv.tv_usec = 0;
 		if (settimeofday(&tv, NULL))
 			err(1, "settimeofday");
-#if 0
+#if HAVE_WTMP
 #ifndef SMALL
 		logwtmp("{", "date", "");
 #endif

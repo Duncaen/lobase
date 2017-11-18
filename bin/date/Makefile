@@ -1,9 +1,8 @@
-#	$OpenBSD: Makefile,v 1.4 2011/07/07 21:00:59 deraadt Exp $
+#	$OpenBSD: Makefile,v 1.5 2017/07/09 21:23:18 espie Exp $
 
 .TOPDIR?=../..
 
 PROG=	date
-SRCS=	date.c
 DPADD+=	${LIBUTIL}
 LDADD+=	-loutil
 
