@@ -71,7 +71,7 @@ main(int argc, char *argv[])
 		ischown = __progname[2] == 'o';
 		ischgrp = __progname[2] == 'g';
 		ischmod = __progname[2] == 'm';
-#if 0
+#if HAVE_CHFLAGS
 		ischflags = __progname[2] == 'f';
 #else
 		ischflags = 0;
@@ -162,7 +162,7 @@ done:
 #endif
 	}
 
-#if 0
+#if HAVE_CHFLAGS
 	if (ischflags) {
 		if (pledge("stdio rpath fattr", NULL) == -1)
 			err(1, "pledge");
@@ -291,7 +291,7 @@ done:
 			if (!fchownat(AT_FDCWD, p->fts_accpath, uid, gid,
 			    atflags) || fflag)
 				continue;
-#if 0
+#if HAVE_CHFLAGS
 		} else {
 			if (!chflagsat(AT_FDCWD, p->fts_accpath, oct ? fset :
 			    (p->fts_statp->st_flags | fset) & fclear, atflags))
