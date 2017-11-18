@@ -1,4 +1,4 @@
-/*	$OpenBSD: args.c,v 1.26 2014/09/14 22:44:47 schwarze Exp $	*/
+/*	$OpenBSD: args.c,v 1.28 2016/08/16 16:44:55 krw Exp $	*/
 /*	$NetBSD: args.c,v 1.7 1996/03/01 01:18:58 jtc Exp $	*/
 
 /*-
@@ -162,13 +162,13 @@ jcl(char **argv)
 
 	/*
 	 * Read and write take size_t's as arguments.  Lseek, however,
-	 * takes an off_t (quad).
+	 * takes an off_t.
 	 */
 	if (cbsz > SSIZE_MAX || in.dbsz > SSIZE_MAX || out.dbsz > SSIZE_MAX)
 		errx(1, "buffer sizes cannot be greater than %zd",
 		    (ssize_t)SSIZE_MAX);
 	if (in.offset > LLONG_MAX / in.dbsz || out.offset > LLONG_MAX / out.dbsz)
-		errx(1, "seek offsets cannot be larger than %qd", LLONG_MAX);
+		errx(1, "seek offsets cannot be larger than %lld", LLONG_MAX);
 }
 
 static int
@@ -309,7 +309,7 @@ f_conv(char *arg)
 
 /*
  * Convert an expression of the following forms to a size_t
- * 	1) A positive decimal number, optionally followed by
+ *	1) A positive decimal number, optionally followed by
  *		b - multiply by 512.
  *		k, m or g - multiply by 1024 each.
  *		w - multiply by sizeof int
@@ -392,7 +392,7 @@ erange:
 
 /*
  * Convert an expression of the following forms to an off_t
- * 	1) A positive decimal number, optionally followed by
+ *	1) A positive decimal number, optionally followed by
  *		b - multiply by 512.
  *		k, m or g - multiply by 1024 each.
  *		w - multiply by sizeof int
@@ -406,7 +406,7 @@ get_off(char *val)
 	off_t num, t;
 	char *expr;
 
-	num = strtoq(val, &expr, 0);
+	num = strtoll(val, &expr, 0);
 	if (num == LLONG_MAX)			/* Overflow. */
 		err(1, "%s", oper);
 	if (expr == val)			/* No digits. */

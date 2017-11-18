@@ -1,4 +1,4 @@
-/*	$OpenBSD: dd.h,v 1.6 2014/02/12 01:18:36 bluhm Exp $	*/
+/*	$OpenBSD: dd.h,v 1.8 2017/08/13 02:06:42 tedu Exp $	*/
 /*	$NetBSD: dd.h,v 1.4 1995/03/21 09:04:08 cgd Exp $	*/
 
 /*-
@@ -50,7 +50,7 @@ typedef struct {
 #define	NOREAD		0x08		/* not readable */
 	u_int	flags;
 
-	char 	*name;			/* name */
+	char	*name;			/* name */
 	int	fd;			/* file descriptor */
 	off_t	offset;			/* # of blocks to skip */
 
@@ -68,7 +68,7 @@ typedef struct {
 	size_t	trunc;			/* # of truncated records */
 	size_t	swab;			/* # of odd-length swab blocks */
 	off_t	bytes;			/* # of bytes written */
-	struct	timeval	startv;		/* start time of dd */
+	struct	timespec start;		/* start time of dd */
 } STAT;
 
 /* Flags (in ddflags). */
