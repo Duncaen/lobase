@@ -33,7 +33,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
-#if 0
+#ifdef __OpenBSD__
 #include <sys/sysctl.h>
 #endif
 
@@ -117,11 +117,11 @@ main(int argc, char *argv[])
 			(long long)ru.ru_stime.tv_sec, ru.ru_stime.tv_usec/10000);
 	}
 
-#if 0
 	/* XXX: PORT: add alternative ? */
 	if (lflag) {
-		int hz;
 		long ticks;
+#ifdef __OpenBSD__
+		int hz;
 		int mib[2];
 		struct clockinfo clkinfo;
 		size_t size;
@@ -136,6 +136,10 @@ main(int argc, char *argv[])
 
 		ticks = hz * (ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) +
 		     hz * (ru.ru_utime.tv_usec + ru.ru_stime.tv_usec) / 1000000;
+
+#else
+		ticks = sysconf(_SC_CLK_TCK);
+#endif
 
 		fprintf(stderr, "%10ld  %s\n",
 			ru.ru_maxrss, "maximum resident set size");
@@ -166,7 +170,6 @@ main(int argc, char *argv[])
 		fprintf(stderr, "%10ld  %s\n",
 			ru.ru_nivcsw, "involuntary context switches");
 	}
-#endif
 
 	if (exitonsig) {
 		if (signal(exitonsig, SIG_DFL) == SIG_ERR)
