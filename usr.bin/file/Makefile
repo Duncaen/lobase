@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile,v 1.16 2015/10/04 07:25:59 nicm Exp $
+# $OpenBSD: Makefile,v 1.17 2017/06/28 13:37:56 brynet Exp $
 
 .TOPDIR?=../..
 
