@@ -1,4 +1,4 @@
-/*	$OpenBSD: encrypt.c,v 1.42 2015/10/10 18:14:20 doug Exp $	*/
+/*	$OpenBSD: encrypt.c,v 1.47 2017/05/24 09:19:55 mestre Exp $	*/
 
 /*
  * Copyright (c) 1996, Jason Downs.  All rights reserved.
@@ -38,6 +38,7 @@
 #include <login_cap.h>
 #endif
 #include <limits.h>
+#include <readpassphrase.h>
 
 /*
  * Very simple little program, for encrypting passwords from the command
@@ -46,11 +47,12 @@
 
 extern char *__progname;
 
-void	usage(void);
+static void __dead	usage(void);
+static void		print_passwd(char *, int, char *);
 
 #define DO_BLF		0
 
-void
+static void __dead
 usage(void)
 {
 
@@ -79,9 +81,9 @@ print_passwd(char *string, int operation, char *extra)
 		if ((lc = login_getclass(extra)) == NULL)
 			errx(1, "unable to get login class `%s'",
 			    extra ? (char *)extra : "default");
-
 		pref = login_getcapstr(lc, "localcipher", NULL, NULL);
 #else
+		/* XXX: is this in sync with the default from login_class? */
 		pref = extra;
 		if (extra == NULL)
 			pref = "blowfish,a";
@@ -132,13 +134,16 @@ main(int argc, char **argv)
 	}
 
 	if (((argc - optind) < 1)) {
-		char line[BUFSIZ], *string;
+		char line[BUFSIZ];
+		char string[1024];
 
 		if (prompt) {
-			if ((string = getpass("Enter string: ")) == NULL)
-				err(1, "getpass");
+			if (readpassphrase("Enter string: ", string,
+			    sizeof(string), RPP_ECHO_OFF) == NULL)
+				err(1, "readpassphrase");
 			print_passwd(string, operation, extra);
 			(void)fputc('\n', stdout);
+			explicit_bzero(string, sizeof(string));
 		} else {
 			size_t len;
 			/* Encrypt stdin to stdout. */
@@ -173,8 +178,7 @@ main(int argc, char **argv)
 		(void)fputc('\n', stdout);
 
 		/* Wipe our copy, before we free it. */
-		explicit_bzero(string, strlen(string));
-		free(string);
+		freezero(string, strlen(string));
 	}
-	exit(0);
+	return 0;
 }
