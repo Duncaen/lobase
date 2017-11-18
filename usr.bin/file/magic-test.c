@@ -305,8 +305,8 @@ magic_test_double(struct magic_line *ml, double value, double wanted)
 }
 
 static int
-magic_test_type_none(__unused struct magic_line *ml,
-    __unused struct magic_state *ms)
+magic_test_type_none(__UNUSED struct magic_line *ml,
+    __UNUSED struct magic_state *ms)
 {
 	return (0);
 }
@@ -955,36 +955,36 @@ magic_test_type_uqdate(struct magic_line *ml, struct magic_state *ms)
 }
 
 static int
-magic_test_type_bestring16(__unused struct magic_line *ml,
-    __unused struct magic_state *ms)
+magic_test_type_bestring16(__UNUSED struct magic_line *ml,
+    __UNUSED struct magic_state *ms)
 {
 	return (-2);
 }
 
 static int
-magic_test_type_lestring16(__unused struct magic_line *ml,
-    __unused struct magic_state *ms)
+magic_test_type_lestring16(__UNUSED struct magic_line *ml,
+    __UNUSED struct magic_state *ms)
 {
 	return (-2);
 }
 
 static int
-magic_test_type_melong(__unused struct magic_line *ml,
-    __unused struct magic_state *ms)
+magic_test_type_melong(__UNUSED struct magic_line *ml,
+    __UNUSED struct magic_state *ms)
 {
 	return (-2);
 }
 
 static int
-magic_test_type_medate(__unused struct magic_line *ml,
-    __unused struct magic_state *ms)
+magic_test_type_medate(__UNUSED struct magic_line *ml,
+    __UNUSED struct magic_state *ms)
 {
 	return (-2);
 }
 
 static int
-magic_test_type_meldate(__unused struct magic_line *ml,
-    __unused struct magic_state *ms)
+magic_test_type_meldate(__UNUSED struct magic_line *ml,
+    __UNUSED struct magic_state *ms)
 {
 	return (-2);
 }
@@ -1154,15 +1154,15 @@ magic_test_type_clear(struct magic_line *ml, struct magic_state *ms)
 }
 
 static int
-magic_test_type_name(__unused struct magic_line *ml,
-    __unused struct magic_state *ms)
+magic_test_type_name(__UNUSED struct magic_line *ml,
+    __UNUSED struct magic_state *ms)
 {
 	return (-1);
 }
 
 static int
-magic_test_type_use(__unused struct magic_line *ml,
-    __unused struct magic_state *ms)
+magic_test_type_use(__UNUSED struct magic_line *ml,
+    __UNUSED struct magic_state *ms)
 {
 	return (1);
 }

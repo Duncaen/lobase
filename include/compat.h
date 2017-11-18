@@ -12,7 +12,9 @@
 #endif
 
 #define __UNUSED	__attribute__ ((unused))
+/* XXX: __unused clashes with musls stat.h
 #define __unused	__attribute__ ((unused))
+*/
 
 #define __dead		__attribute__((__noreturn__))
 

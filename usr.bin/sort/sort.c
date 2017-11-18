@@ -402,7 +402,7 @@ invalid:
  * Signal handler that clears the temporary files.
  */
 static void
-sig_handler(int sig __unused)
+sig_handler(int sig __UNUSED)
 {
 	clear_tmp_files();
 	_exit(2);
