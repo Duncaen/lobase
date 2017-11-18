@@ -54,7 +54,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#if 0
+#ifdef HAVE_CHFLAGS
 #define DEF_FORMAT \
 	"%d %i %Sp %l %Su %Sg %r %z \"%Sa\" \"%Sm\" \"%Sc\" " \
 	"%k %b %#Xf %N"
@@ -69,7 +69,7 @@
 #endif
 #define LS_FORMAT	"%Sp %l %Su %Sg %Z %Sm %N%SY"
 #define LSF_FORMAT	"%Sp %l %Su %Sg %Z %Sm %N%T%SY"
-#if 0
+#ifdef HAVE_CHFLAGS
 #define SHELL_FORMAT \
 	"st_dev=%d st_ino=%i st_mode=%#p st_nlink=%l " \
 	"st_uid=%u st_gid=%g st_rdev=%r st_size=%z " \
@@ -144,12 +144,16 @@
 #define SHOW_st_atime	'a'
 #define SHOW_st_mtime	'm'
 #define SHOW_st_ctime	'c'
+#ifdef HAVE_ST_BTIME
 #define SHOW_st_btime	'B'
+#endif
 #define SHOW_st_size	'z'
 #define SHOW_st_blocks	'b'
 #define SHOW_st_blksize	'k'
-#if 0
+#ifdef HAVE_CHFLAGS
 #define SHOW_st_flags	'f'
+#endif
+#ifdef HAVE_FILEGEN
 #define SHOW_st_gen	'v'
 #endif
 #define SHOW_symlink	'Y'
@@ -471,12 +475,16 @@ output(const struct stat *st, const char *file,
 			fmtcase(what, SHOW_st_atime);
 			fmtcase(what, SHOW_st_mtime);
 			fmtcase(what, SHOW_st_ctime);
+#ifdef HAVE_ST_BTIME
 			fmtcase(what, SHOW_st_btime);
+#endif
 			fmtcase(what, SHOW_st_size);
 			fmtcase(what, SHOW_st_blocks);
 			fmtcase(what, SHOW_st_blksize);
-#if 0
+#ifdef HAVE_CHFLAGS
 			fmtcase(what, SHOW_st_flags);
+#endif
+#ifdef HAVE_FILEGEN
 			fmtcase(what, SHOW_st_gen);
 #endif
 			fmtcase(what, SHOW_symlink);
@@ -639,36 +647,29 @@ format1(const struct stat *st,
 	case SHOW_st_atime:
 		gottime = 1;
 		secs = st->st_atime;
-#if 0
 		nsecs = st->st_atimensec;
-#endif
 		/* FALLTHROUGH */
 	case SHOW_st_mtime:
 		if (!gottime) {
 			gottime = 1;
 			secs = st->st_mtime;
-#if 0
 			nsecs = st->st_mtimensec;
-#endif
 		}
 		/* FALLTHROUGH */
 	case SHOW_st_ctime:
 		if (!gottime) {
 			gottime = 1;
 			secs = st->st_ctime;
-#if 0
 			nsecs = st->st_ctimensec;
-#endif
 		}
 		/* FALLTHROUGH */
+#ifdef HAVE_ST_BTIME
 	case SHOW_st_btime:
-#if 0
 		if (!gottime) {
 			gottime = 1;
 			secs = st->__st_birthtimespec.tv_sec;
 			nsecs = st->__st_birthtimespec.tv_nsec;
 		}
-#endif
 		small = (sizeof(secs) == 4);
 		data = secs;
 		small = 1;
@@ -680,6 +681,7 @@ format1(const struct stat *st,
 		if (ofmt == 0)
 			ofmt = FMTF_DECIMAL;
 		break;
+#endif
 	case SHOW_st_size:
 		small = (sizeof(st->st_size) == 4);
 		data = st->st_size;
@@ -704,7 +706,7 @@ format1(const struct stat *st,
 		if (ofmt == 0)
 			ofmt = FMTF_UNSIGNED;
 		break;
-#if 0
+#ifdef HAVE_CHFLAGS
 	case SHOW_st_flags:
 		small = (sizeof(st->st_flags) == 4);
 		data = st->st_flags;
@@ -713,6 +715,8 @@ format1(const struct stat *st,
 		if (ofmt == 0)
 			ofmt = FMTF_UNSIGNED;
 		break;
+#endif
+#ifdef HAVE_FILEGEN
 	case SHOW_st_gen:
 		small = (sizeof(st->st_gen) == 4);
 		data = st->st_gen;

@@ -151,7 +151,7 @@ shar
 sort
 spell
 split
-stat		Does not support file flags and file generations on linux
+stat		Does not support file flags, generations and birthtime on linux
 tee
 time
 touch
