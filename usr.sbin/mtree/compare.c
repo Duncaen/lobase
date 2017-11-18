@@ -1,5 +1,5 @@
 /*	$NetBSD: compare.c,v 1.11 1996/09/05 09:56:48 mycroft Exp $	*/
-/*	$OpenBSD: compare.c,v 1.25 2015/12/21 19:37:21 mmcc Exp $	*/
+/*	$OpenBSD: compare.c,v 1.27 2016/08/16 16:41:46 krw Exp $	*/
 
 /*-
  * Copyright (c) 1989, 1993
@@ -185,8 +185,9 @@ typeerr:		LABEL;
 	}
 	if (s->flags & F_SIZE && s->st_size != p->fts_statp->st_size) {
 		LABEL;
-		(void)printf("%ssize (%qd, %qd)\n",
-		    tab, s->st_size, p->fts_statp->st_size);
+		(void)printf("%ssize (%lld, %lld)\n",
+		    tab, (long long)s->st_size,
+		    (long long)p->fts_statp->st_size);
 		tab = "\t";
 	}
 	/*
@@ -201,24 +202,35 @@ typeerr:		LABEL;
 		struct timeval tv[2];
 
 		TIMESPEC_TO_TIMEVAL(&tv[0], &s->st_mtimespec);
+#ifdef __OpenBSD__
+		TIMESPEC_TO_TIMEVAL(&tv[1], &p->fts_statp->st_mtimespec);
+#else
 		TIMESPEC_TO_TIMEVAL(&tv[1], &p->fts_statp->st_mtim);
+#endif
 		if (tv[0].tv_sec != tv[1].tv_sec ||
 		    tv[0].tv_usec != tv[1].tv_usec) {
 			LABEL;
+#ifdef __OpenBSD__
+			(void)printf("%smodification time (%.24s, ",
+			    tab, ctime(&s->st_mtimespec.tv_sec));
+			(void)printf("%.24s",
+			    ctime(&p->fts_statp->st_mtimespec.tv_sec));
+#else
 			(void)printf("%smodification time (%.24s, ",
 			    tab, ctime(&s->st_mtimespec.tv_sec));
 			(void)printf("%.24s",
 			    ctime(&p->fts_statp->st_mtim.tv_sec));
+#endif
 			if (tflag) {
 				tv[1] = tv[0];
 				if (utimes(p->fts_accpath, tv))
 					(void)printf(", not modified: %s)\n",
 					    strerror(errno));
-				else  
-					(void)printf(", modified)\n");  
+				else
+					(void)printf(", modified)\n");
 			} else
 				(void)printf(")\n");
-			tab = "\t";   
+			tab = "\t";
 		}
 	}
 	if (s->flags & F_CKSUM) {
@@ -330,18 +342,18 @@ typeerr:		LABEL;
 			REPLACE_COMMA(cur_flags);
 			printf("%sflags (%s, %s", tab, (*db_flags == '\0') ?
 						  "-" : db_flags,
-						  (*cur_flags == '\0') ? 
+						  (*cur_flags == '\0') ?
 						  "-" : cur_flags);
 				tab = "\t";
 			if (uflag)
 				if (chflags(p->fts_accpath, s->file_flags))
 					(void)printf(", not modified: %s)\n",
 						strerror(errno));
-				else	
+				else
 					(void)printf(", modified)\n");
 			else
 				(void)printf(")\n");
-			tab = "\t"; 
+			tab = "\t";
 
 			free(db_flags);
 			free(cur_flags);

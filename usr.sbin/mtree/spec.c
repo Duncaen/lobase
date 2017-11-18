@@ -1,5 +1,5 @@
 /*	$NetBSD: spec.c,v 1.6 1995/03/07 21:12:12 cgd Exp $	*/
-/*	$OpenBSD: spec.c,v 1.26 2012/07/08 21:19:42 naddy Exp $	*/
+/*	$OpenBSD: spec.c,v 1.28 2016/08/16 16:41:46 krw Exp $	*/
 
 /*-
  * Copyright (c) 1989, 1993
@@ -97,7 +97,7 @@ spec(void)
 			set(p, centry);
 			continue;
 		}
-			
+
 		/* Grab file name, "$", "set", or "unset". */
 		if ((p = strtok(p, "\n\t ")) == NULL)
 			error("missing field");
@@ -201,7 +201,7 @@ set(char *t, NODE *ip)
 			if (strtofflags(&val, &fset, &fclr))
 				error("%s", strerror(errno));
 			ip->file_flags = fset;
-			break; 
+			break;
 #endif
 		case F_GID:
 			ip->st_gid = strtoul(val, &ep, 10);
@@ -243,7 +243,7 @@ set(char *t, NODE *ip)
 				error("%s", strerror(errno));
 			break;
 		case F_SIZE:
-			ip->st_size = strtoull(val, &ep, 10);
+			ip->st_size = strtoll(val, &ep, 10);
 			if (*ep)
 				error("invalid size %s", val);
 			break;
