@@ -1,4 +1,4 @@
-/*	$OpenBSD: util.c,v 1.56 2016/08/25 15:11:05 tedu Exp $	*/
+/*	$OpenBSD: util.c,v 1.57 2017/04/03 16:18:35 tedu Exp $	*/
 
 /*-
  * Copyright (c) 1999 James Howard and Dag-Erling Coïdan Smørgrav
@@ -39,9 +39,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifndef NOZ
 #include <zlib.h>
-#endif
 
 #include "grep.h"
 
@@ -173,7 +171,7 @@ procfile(char *fn)
 static int
 procline(str_t *l, int nottext)
 {
-	regmatch_t	pmatch;
+	regmatch_t	pmatch = { 0 };
 	int		c, i, r;
 	regoff_t	offset;
 
