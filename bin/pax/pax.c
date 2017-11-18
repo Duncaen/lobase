@@ -92,7 +92,7 @@ char	*dirptr;		/* destination dir in a copy */
 char	*argv0;			/* root of argv[0] */
 enum op_mode op_mode;		/* what program are we acting as? */
 sigset_t s_mask;		/* signal mask for cleanup critical sect */
-FILE	*listf;			/* file pointer to print file list to */
+FILE	*listf;		/* file pointer to print file list to */
 int	listfd = STDERR_FILENO;	/* fd matching listf, for sighandler output */
 char	*tempfile;		/* tempfile to use for mkstemp(3) */
 char	*tempbase;		/* basename of tempfile to use for mkstemp(3) */

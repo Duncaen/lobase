@@ -1,4 +1,4 @@
-/*	$OpenBSD: pat_rep.c,v 1.41 2016/08/26 04:19:28 guenther Exp $	*/
+/*	$OpenBSD: pat_rep.c,v 1.43 2017/09/16 07:42:34 otto Exp $	*/
 /*	$NetBSD: pat_rep.c,v 1.4 1995/03/21 09:07:33 cgd Exp $	*/
 
 /*-
@@ -553,6 +553,9 @@ fn_match(char *pattern, char *string, char **pend)
 				return (-1);
 			break;
 		case '\\':
+			if ((c = *pattern++) == '\0')
+				return (-1);
+			/* FALLTHROUGH */
 		default:
 			if (c != *string++)
 				return (-1);
@@ -794,7 +797,7 @@ tty_rename(ARCHD *arcn)
 	tty_prnt("Processing continues, name changed to: %s\n", tmpname);
 	res = add_name(arcn->name, arcn->nlen, tmpname);
 	arcn->nlen = strlcpy(arcn->name, tmpname, sizeof(arcn->name));
-	if (arcn->nlen >= sizeof(arcn->name))
+	if ((size_t)arcn->nlen >= sizeof(arcn->name))
 		arcn->nlen = sizeof(arcn->name) - 1; /* XXX truncate? */
 	if (res < 0)
 		return(-1);
