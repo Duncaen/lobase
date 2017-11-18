@@ -626,6 +626,7 @@ ac_header_list=
 ac_subst_vars='LTLIBOBJS
 HAVE_SYS_SIGNAME
 HAVE_SYS_SIGLIST
+HAVE_RECALLOCARRAY
 HAVE_REALLOCARRAY
 HAVE_EXPLICIT_BZERO
 HAVE_GETENTROPY
@@ -5006,6 +5007,10 @@ if test "x$ac_cv_func_explicit_bzero" = "xyes"; then :
 fi
 if test "x$ac_cv_func_reallocarray" = "xyes"; then :
   HAVE_REALLOCARRAY=1
+
+fi
+if test "x$ac_cv_func_recallocarray" = "xyes"; then :
+  HAVE_RECALLOCARRAY=1
 
 fi
 if test "x$ac_cv_have_decl_sys_siglist" = "xyes"; then :

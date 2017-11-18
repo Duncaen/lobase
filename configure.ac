@@ -56,6 +56,7 @@ AS_IF([test "x$ac_cv_func_strlcpy" = "xyes"],[AC_SUBST(HAVE_STRLCPY, 1)],[])
 AS_IF([test "x$ac_cv_func_getentropy" = "xyes"],[AC_SUBST(HAVE_GETENTROPY, 1)],[])
 AS_IF([test "x$ac_cv_func_explicit_bzero" = "xyes"],[AC_SUBST(HAVE_EXPLICIT_BZERO, 1)],[])
 AS_IF([test "x$ac_cv_func_reallocarray" = "xyes"],[AC_SUBST(HAVE_REALLOCARRAY, 1)],[])
+AS_IF([test "x$ac_cv_func_recallocarray" = "xyes"],[AC_SUBST(HAVE_RECALLOCARRAY, 1)],[])
 AS_IF([test "x$ac_cv_have_decl_sys_siglist" = "xyes"],[AC_SUBST(HAVE_SYS_SIGLIST, 1)],[])
 AS_IF([test "x$ac_cv_have_decl_sys_signame" = "xyes"],[AC_SUBST(HAVE_SYS_SIGNAME, 1)],[])
 

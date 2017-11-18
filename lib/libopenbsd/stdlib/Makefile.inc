@@ -13,6 +13,11 @@ SRCS+=	freezero.c
 endif
 
 ifneq ($(HAVE_REALLOCARRAY),1)
-SRCS+=	reallocarray.c recallocarray.c
+SRCS+=	reallocarray.c
+MAN+=	malloc.3
+endif
+
+ifneq ($(HAVE_RECALLOCARRAY),1)
+SRCS+=	recallocarray.c
 MAN+=	malloc.3
 endif

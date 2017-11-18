@@ -31,7 +31,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#if 0
+#if HAVE_LIBC_DB
 #include <db.h>
 #endif
 #include <dirent.h>
@@ -75,7 +75,7 @@ devname_nodb(dev_t dev, mode_t type)
 char *
 devname(dev_t dev, mode_t type)
 {
-#if 0
+#if HAVE_LIBC_DB
 	static DB *db;
 	static bool failure;
 	struct {
