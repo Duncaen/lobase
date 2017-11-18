@@ -52,10 +52,6 @@
 
 #include "pathnames.h"
 
-#ifndef EFTYPE
-#define EFTYPE	EBFONT
-#endif
-
 #define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 
 #define	DIRECTORY	0x01		/* Tell install it's a directory. */
@@ -113,7 +109,7 @@ main(int argc, char *argv[])
 			iflags |= USEFSYNC;
 			break;
 		case 'f':
-#if 0
+#if __OpenBSD__
 			flags = optarg;
 			if (strtofflags(&flags, &fset, NULL))
 				errx(1, "%s: invalid flag", flags);
@@ -376,7 +372,7 @@ install(char *from_name, char *to_name, u_long fset, u_int flags)
 		    strerror(serrno));
 	}
 
-#if 0
+#if __OpenBSD__
 	/*
 	 * If provided a set of flags, set them, otherwise, preserve the
 	 * flags, except for the dump flag.
@@ -400,7 +396,7 @@ install(char *from_name, char *to_name, u_long fset, u_int flags)
 	 * and the files are different (or just not compared).
 	 */
 	if (safecopy && !files_match) {
-#if 0
+#if __OpenBSD__
 		/* Try to turn off the immutable bits. */
 		if (to_sb.st_flags & (NOCHANGEBITS))
 			(void)chflags(to_name, to_sb.st_flags & ~(NOCHANGEBITS));
