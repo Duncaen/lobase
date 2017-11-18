@@ -58,7 +58,7 @@ cat
 chmod		Some differences, because OpenBSD has permissions for symlinks
 cp
 date
-dd
+dd		No SIGINFO support
 df		No support for raw devices on linux
 domainname
 echo
@@ -122,7 +122,7 @@ grep
 head
 hexdump
 htpasswd
-id
+id			Does not support -R to show the current processes routing table
 indent
 join
 jot
