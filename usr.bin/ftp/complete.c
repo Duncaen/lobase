@@ -1,4 +1,4 @@
-/*	$OpenBSD: complete.c,v 1.29 2015/10/18 03:04:11 mmcc Exp $	*/
+/*	$OpenBSD: complete.c,v 1.31 2017/08/01 15:04:44 anton Exp $	*/
 /*	$NetBSD: complete.c,v 1.10 1997/08/18 10:20:18 lukem Exp $	*/
 
 /*-
@@ -104,7 +104,7 @@ complete_ambiguous(char *word, int list, StringList *words)
 			    lastmatch + wordlen, matchlen - wordlen);
 			if (el_insertstr(el, insertstr) == -1)
 				return (CC_ERROR);
-			else	
+			else
 					/*
 					 * XXX: really want CC_REFRESH_BEEP
 					 */
@@ -288,7 +288,6 @@ complete(EditLine *el, int ch)
 	int celems, dolist;
 	size_t len;
 
-	ch = ch;		/* not used */
 	lf = el_line(el);
 	len = lf->lastchar - lf->buffer;
 	if (len >= sizeof(line))

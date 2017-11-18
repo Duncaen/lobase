@@ -1,10 +1,10 @@
-/*	$OpenBSD: main.c,v 1.109 2016/07/13 16:35:47 jsing Exp $	*/
+/*	$OpenBSD: main.c,v 1.119 2017/01/24 23:47:34 beck Exp $	*/
 /*	$NetBSD: main.c,v 1.24 1997/08/18 10:20:26 lukem Exp $	*/
 
 /*
  * Copyright (C) 1997 and 1998 WIDE Project.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -16,7 +16,7 @@
  * 3. Neither the name of the project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -80,7 +80,9 @@
 #include "cmds.h"
 #include "ftp_var.h"
 
-#ifndef SMALL
+int connect_timeout;
+
+#ifndef NOSSL
 char * const ssl_verify_opts[] = {
 #define SSL_CAFILE	0
 	"cafile",
@@ -94,11 +96,75 @@ char * const ssl_verify_opts[] = {
 	"do",
 #define SSL_VERIFYDEPTH	5
 	"depth",
+#define SSL_MUSTSTAPLE	6
+	"muststaple",
+#define SSL_NOVERIFYTIME	7
+	"noverifytime",
 	NULL
 };
 
 struct tls_config *tls_config;
-#endif /* !SMALL */
+
+static void
+process_ssl_options(char *cp)
+{
+	const char *errstr;
+	long long depth;
+	char *str;
+
+	while (*cp) {
+		switch (getsubopt(&cp, ssl_verify_opts, &str)) {
+		case SSL_CAFILE:
+			if (str == NULL)
+				errx(1, "missing CA file");
+			if (tls_config_set_ca_file(tls_config, str) != 0)
+				errx(1, "tls ca file failed: %s",
+				    tls_config_error(tls_config));
+			break;
+		case SSL_CAPATH:
+			if (str == NULL)
+				errx(1, "missing CA directory path");
+			if (tls_config_set_ca_path(tls_config, str) != 0)
+				errx(1, "tls ca path failed: %s",
+				    tls_config_error(tls_config));
+			break;
+		case SSL_CIPHERS:
+			if (str == NULL)
+				errx(1, "missing cipher list");
+			if (tls_config_set_ciphers(tls_config, str) != 0)
+				errx(1, "tls ciphers failed: %s",
+				    tls_config_error(tls_config));
+			break;
+		case SSL_DONTVERIFY:
+			tls_config_insecure_noverifycert(tls_config);
+			tls_config_insecure_noverifyname(tls_config);
+			break;
+		case SSL_DOVERIFY:
+			tls_config_verify(tls_config);
+			break;
+		case SSL_VERIFYDEPTH:
+			if (str == NULL)
+				errx(1, "missing depth");
+			depth = strtonum(str, 0, INT_MAX, &errstr);
+			if (errstr)
+				errx(1, "certificate validation depth is %s",
+				    errstr);
+			tls_config_set_verify_depth(tls_config, (int)depth);
+			break;
+		case SSL_MUSTSTAPLE:
+			tls_config_ocsp_require_stapling(tls_config);
+			break;
+		case SSL_NOVERIFYTIME:
+			tls_config_insecure_noverifytime(tls_config);
+			break;
+		default:
+			errx(1, "unknown -S suboption `%s'",
+			    suboptarg ? suboptarg : "");
+			/* NOTREACHED */
+		}
+	}
+}
+#endif /* !NOSSL */
 
 int family = PF_UNSPEC;
 int pipeout;
@@ -106,21 +172,21 @@ int pipeout;
 int
 main(volatile int argc, char *argv[])
 {
-	int ch, top, rval;
+	int ch, rval;
+#ifndef SMALL
+	int top;
+#endif
 	struct passwd *pw = NULL;
 	char *cp, homedir[PATH_MAX];
 	char *outfile = NULL;
 	const char *errstr;
 	int dumb_terminal = 0;
-#ifndef SMALL
-	long long depth;
-#endif
 
 	ftpport = "ftp";
 	httpport = "http";
-#ifndef SMALL
+#ifndef NOSSL
 	httpsport = "https";
-#endif /* !SMALL */
+#endif /* !NOSSL */
 	gateport = getenv("FTPSERVERPORT");
 	if (gateport == NULL || *gateport == '\0')
 		gateport = "ftpgate";
@@ -133,11 +199,13 @@ main(volatile int argc, char *argv[])
 	verbose = 0;
 	progress = 0;
 	gatemode = 0;
+#ifndef NOSSL
+	cookiefile = NULL;
+#endif /* NOSSL */
 #ifndef SMALL
 	editing = 0;
 	el = NULL;
 	hist = NULL;
-	cookiefile = NULL;
 	resume = 0;
 	srcaddr = NULL;
 	marg_sl = sl_init();
@@ -192,7 +260,7 @@ main(volatile int argc, char *argv[])
 	if (isatty(fileno(ttyout)) && !dumb_terminal && foregroundproc())
 		progress = 1;		/* progress bar on if tty is usable */
 
-#ifndef SMALL
+#ifndef NOSSL
 	cookiefile = getenv("http_cookies");
 	if (tls_init() != 0)
 		errx(1, "tls init failed");
@@ -200,16 +268,20 @@ main(volatile int argc, char *argv[])
 		tls_config = tls_config_new();
 		if (tls_config == NULL)
 			errx(1, "tls config failed");
-		tls_config_set_protocols(tls_config, TLS_PROTOCOLS_ALL);
-		if (tls_config_set_ciphers(tls_config, "all") != 0)
-			errx(1, "tls set ciphers failed");
+		if (tls_config_set_protocols(tls_config,
+		    TLS_PROTOCOLS_ALL) != 0)
+			errx(1, "tls set protocols failed: %s",
+			    tls_config_error(tls_config));
+		if (tls_config_set_ciphers(tls_config, "legacy") != 0)
+			errx(1, "tls set ciphers failed: %s",
+			    tls_config_error(tls_config));
 	}
 #endif /* !SMALL */
 
 	httpuseragent = NULL;
 
 	while ((ch = getopt(argc, argv,
-		    "46AaCc:dD:Eegik:Mmno:pP:r:S:s:tU:vV")) != -1) {
+		    "46AaCc:dD:Eegik:Mmno:pP:r:S:s:tU:vVw:")) != -1) {
 		switch (ch) {
 		case '4':
 			family = PF_INET;
@@ -267,10 +339,10 @@ main(volatile int argc, char *argv[])
 			break;
 
 		case 'k':
-			keep_alive_timeout = strtonum(optarg, 0, INT_MAX, 
+			keep_alive_timeout = strtonum(optarg, 0, INT_MAX,
 			    &errstr);
 			if (errstr != NULL) {
-				warnx("keep alive amount is %s: %s", errstr, 
+				warnx("keep alive amount is %s: %s", errstr,
 					optarg);
 				usage();
 			}
@@ -310,68 +382,16 @@ main(volatile int argc, char *argv[])
 		case 'r':
 			retry_connect = strtonum(optarg, 0, INT_MAX, &errstr);
 			if (errstr != NULL) {
-				warnx("retry amount is %s: %s", errstr, 
+				warnx("retry amount is %s: %s", errstr,
 					optarg);
 				usage();
 			}
 			break;
 
 		case 'S':
-#ifndef SMALL
-			cp = optarg;
-			while (*cp) {
-				char	*str;
-				switch (getsubopt(&cp, ssl_verify_opts, &str)) {
-				case SSL_CAFILE:
-					if (str == NULL)
-						errx(1, "missing CA file");
-					if (tls_config_set_ca_file(
-					    tls_config, str) != 0)
-						errx(1, "tls ca file failed");
-					break;
-				case SSL_CAPATH:
-					if (str == NULL)
-						errx(1, "missing CA directory"
-						    " path");
-					if (tls_config_set_ca_path(
-					    tls_config, str) != 0)
-						errx(1, "tls ca path failed");
-					break;
-				case SSL_CIPHERS:
-					if (str == NULL)
-						errx(1, "missing cipher list");
-					if (tls_config_set_ciphers(
-					    tls_config, str) != 0)
-						errx(1, "tls ciphers failed");
-					break;
-				case SSL_DONTVERIFY:
-					tls_config_insecure_noverifycert(
-					    tls_config);
-					tls_config_insecure_noverifyname(
-					    tls_config);
-					break;
-				case SSL_DOVERIFY:
-					tls_config_verify(tls_config);
-					break;
-				case SSL_VERIFYDEPTH:
-					if (str == NULL)
-						errx(1, "missing depth");
-					depth = strtonum(str, 0, INT_MAX,
-					    &errstr);
-					if (errstr)
-						errx(1, "certificate "
-						    "validation depth is %s",
-						    errstr);
-					tls_config_set_verify_depth(
-					    tls_config, (int)depth);
-					break;
-				default:
-					errx(1, "unknown -S suboption `%s'",
-					    suboptarg ? suboptarg : "");
-					/* NOTREACHED */
-				}
-			}
-#endif
+#ifndef NOSSL
+			process_ssl_options(optarg);
+#endif /* !NOSSL */
 			break;
 
 		case 's':
@@ -404,6 +424,11 @@ main(volatile int argc, char *argv[])
 			verbose = 0;
 			break;
 
+		case 'w':
+			connect_timeout = strtonum(optarg, 0, 200, &errstr);
+			if (errstr)
+				errx(1, "-w: %s", errstr);
+			break;
 		default:
 			usage();
 		}
@@ -411,9 +436,9 @@ main(volatile int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-#ifndef SMALL
+#ifndef NOSSL
 	cookie_load();
-#endif /* !SMALL */
+#endif /* !NOSSL */
 	if (httpuseragent == NULL)
 		httpuseragent = HTTP_USER_AGENT;
 
@@ -894,28 +919,34 @@ help(int argc, char *argv[])
 }
 #endif /* !SMALL */
 
-void
+__dead void
 usage(void)
 {
 	fprintf(stderr, "usage: "
 #ifndef SMALL
-	    "%1$s [-46AadEegiMmnptVv] [-D title] [-k seconds] [-P port] "
+	    "ftp [-46AadEegiMmnptVv] [-D title] [-k seconds] [-P port] "
 	    "[-r seconds]\n"
 	    "           [-s srcaddr] [host [port]]\n"
-	    "       %1$s [-C] [-o output] [-s srcaddr]\n"
+	    "       ftp [-C] [-o output] [-s srcaddr]\n"
 	    "           ftp://[user:password@]host[:port]/file[/] ...\n"
-	    "       %1$s [-C] [-c cookie] [-o output] [-S ssl_options] "
+	    "       ftp [-C] [-c cookie] [-o output] [-S ssl_options] "
 	    "[-s srcaddr]\n"
-	    "           [-U useragent] "
+	    "           [-U useragent] [-w seconds] "
 	    "http[s]://[user:password@]host[:port]/file ...\n"
-	    "       %1$s [-C] [-o output] [-s srcaddr] file:file ...\n"
-	    "       %1$s [-C] [-o output] [-s srcaddr] host:/file[/] ...\n",
+	    "       ftp [-C] [-o output] [-s srcaddr] file:file ...\n"
+	    "       ftp [-C] [-o output] [-s srcaddr] host:/file[/] ...\n"
 #else /* !SMALL */
-	    "%1$s [-o output] ftp://[user:password@]host[:port]/file[/] ...\n"
-	    "       %1$s [-o output] http://host[:port]/file ...\n"
-	    "       %1$s [-o output] file:file ...\n"
-	    "       %1$s [-o output] host:/file[/] ...\n",
+	    "ftp [-o output] "
+	    "ftp://[user:password@]host[:port]/file[/] ...\n"
+#ifndef NOSSL
+	    "       ftp [-o output] [-S ssl_options] [-w seconds] "
+	    "http[s]://[user:password@]host[:port]/file ...\n"
+#else
+	    "       ftp [-o output] [-w seconds] http://host[:port]/file ...\n"
+#endif /* NOSSL */
+	    "       ftp [-o output] file:file ...\n"
+	    "       ftp [-o output] host:/file[/] ...\n"
 #endif /* !SMALL */
-	    __progname);
+	    );
 	exit(1);
 }

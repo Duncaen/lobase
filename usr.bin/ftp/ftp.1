@@ -1,4 +1,4 @@
-.\"	$OpenBSD: ftp.1,v 1.101 2015/11/05 16:25:57 schwarze Exp $
+.\"	$OpenBSD: ftp.1,v 1.107 2017/01/25 07:21:18 jmc Exp $
 .\"	$NetBSD: ftp.1,v 1.22 1997/08/18 10:20:22 lukem Exp $
 .\"
 .\" Copyright (c) 1985, 1989, 1990, 1993
@@ -30,7 +30,7 @@
 .\"
 .\"	@(#)ftp.1	8.3 (Berkeley) 10/9/94
 .\"
-.Dd $Mdocdate: November 5 2015 $
+.Dd $Mdocdate: January 25 2017 $
 .Dt FTP 1
 .Os
 .Sh NAME
@@ -62,6 +62,7 @@
 .Op Fl S Ar ssl_options
 .Op Fl s Ar srcaddr
 .Op Fl U Ar useragent
+.Op Fl w Ar seconds
 .Sm off
 .Pf http Oo s Oc ://
 .Op Ar user : password No @
@@ -248,6 +249,10 @@ validation.
 Perform server certificate validation.
 .It Cm dont
 Don't perform server certificate validation.
+.It Cm muststaple
+Require the server to present a valid OCSP stapling in the TLS handshake.
+.It Cm noverifytime
+Disable validation of certificate times and OCSP validation.
 .El
 .Pp
 By default, server certificate validation is performed, and if it fails
@@ -284,6 +289,10 @@ Forces
 .Nm
 to show all responses from the remote server, as well
 as report on data transfer statistics.
+.It Fl w Ar seconds
+For URL format connections to HTTP/HTTPS servers, abort a
+slow connection after
+.Ar seconds .
 .El
 .Pp
 The host with which
@@ -1727,8 +1736,6 @@ Used by
 to display files.
 .It Ev SHELL
 For default shell.
-.It Ev TMPDIR
-Directory in which temporary files are stored.
 .It Ev ftp_proxy
 URL of FTP proxy to use when making FTP URL requests
 (if not defined, use the standard FTP protocol).

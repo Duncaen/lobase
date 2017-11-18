@@ -1,10 +1,10 @@
-/*	$OpenBSD: cmds.c,v 1.77 2016/05/25 15:36:01 krw Exp $	*/
+/*	$OpenBSD: cmds.c,v 1.79 2017/01/21 08:33:07 krw Exp $	*/
 /*	$NetBSD: cmds.c,v 1.27 1997/08/18 10:20:15 lukem Exp $	*/
 
 /*
  * Copyright (C) 1997 and 1998 WIDE Project.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -16,7 +16,7 @@
  * 3. Neither the name of the project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -146,7 +146,7 @@ reput(int argc, char *argv[])
 void
 put(int argc, char *argv[])
 {
- 
+
 	(void)putit(argc, argv, 0);
 }
 
@@ -1504,13 +1504,13 @@ cdup(int argc, char *argv[])
 void
 restart(int argc, char *argv[])
 {
-	quad_t nrestart_point;
+	off_t nrestart_point;
 	char *ep;
 
 	if (argc != 2)
 		fputs("restart: offset not specified.\n", ttyout);
 	else {
-		nrestart_point = strtoq(argv[1], &ep, 10);
+		nrestart_point = strtoll(argv[1], &ep, 10);
 		if (nrestart_point == LLONG_MAX || *ep != '\0')
 			fputs("restart: invalid offset.\n", ttyout);
 		else {
@@ -1522,7 +1522,7 @@ restart(int argc, char *argv[])
 	}
 }
 
-/* 
+/*
  * Show remote system type
  */
 /* ARGSUSED */
@@ -1655,7 +1655,8 @@ newer(int argc, char *argv[])
 void
 page(int argc, char *argv[])
 {
-	int orestart_point, ohash, overbose;
+	off_t orestart_point;
+	int ohash, overbose;
 	char *p, *pager, *oldargv1;
 
 	if ((argc < 2 && !another(&argc, &argv, "file")) || argc > 2) {

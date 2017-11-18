@@ -1,4 +1,4 @@
-/*	$OpenBSD: cookie.c,v 1.5 2009/05/05 19:35:30 martynas Exp $	*/
+/*	$OpenBSD: cookie.c,v 1.7 2017/01/21 08:33:07 krw Exp $	*/
 
 /*
  * Copyright (c) 2007 Pierre-Yves Ritschard <pyr@openbsd.org>
@@ -18,7 +18,7 @@
 
 #define _GNU_SOURCE	/* for asprintf */
 
-#ifndef SMALL
+#ifndef NOSSL
 
 #include <sys/types.h>
 #include <sys/queue.h>
@@ -51,7 +51,7 @@ TAILQ_HEAD(cookiejar, cookie);
 
 typedef enum {
 	DOMAIN = 0, TAILMATCH = 1, PATH = 2, SECURE = 3,
-	EXPIRES = 4, NAME = 5, VALUE = 6, DONE = 7 
+	EXPIRES = 4, NAME = 5, VALUE = 6, DONE = 7
 } field_t;
 
 static struct cookiejar jar;
@@ -173,7 +173,7 @@ cookie_load(void)
 			free(ck);
 		} else
 			TAILQ_INSERT_TAIL(&jar, ck, entry);
-	}	
+	}
 	free(lbuf);
 	fclose(fp);
 }

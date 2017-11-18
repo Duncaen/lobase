@@ -1,10 +1,10 @@
-/*	$OpenBSD: ftp_var.h,v 1.38 2015/02/09 08:24:21 tedu Exp $	*/
+/*	$OpenBSD: ftp_var.h,v 1.40 2017/01/21 08:33:07 krw Exp $	*/
 /*	$NetBSD: ftp_var.h,v 1.18 1997/08/18 10:20:25 lukem Exp $	*/
 
 /*
  * Copyright (C) 1997 and 1998 WIDE Project.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -16,7 +16,7 @@
  * 3. Neither the name of the project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -156,10 +156,11 @@ History  *hist;			/* editline(3) history structure */
 char	 *cursor_pos;		/* cursor position we're looking for */
 size_t	  cursor_argc;		/* location of cursor in margv */
 size_t	  cursor_argo;		/* offset of cursor in margv[cursor_argc] */
-char	 *cookiefile;		/* cookie jar to use */
 int	  resume;		/* continue transfer */
 char	 *srcaddr;		/* source address to bind to */
 #endif /* !SMALL */
+
+char	 *cookiefile;		/* cookie jar to use */
 
 off_t	bytes;			/* current # of bytes read */
 off_t	filesize;		/* size of file being transferred */
@@ -171,7 +172,7 @@ int	unix_proxy;		/* proxy is unix, can use binary for ascii */
 
 char *ftpport;			/* port number to use for ftp connections */
 char *httpport;			/* port number to use for http connections */
-#ifndef SMALL
+#ifndef NOSSL
 char *httpsport;		/* port number to use for https connections */
 #endif /* !SMALL */
 char *httpuseragent;		/* user agent for http(s) connections */
@@ -224,6 +225,6 @@ FILE	*ttyout;		/* stdout or stderr, depending on interactive */
 
 extern struct cmd cmdtab[];
 
-#ifndef SMALL
+#ifndef NOSSL
 extern struct tls_config *tls_config;
-#endif /* !SMALL */
+#endif /* !NOSSL */

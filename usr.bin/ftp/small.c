@@ -1,10 +1,10 @@
-/*	$OpenBSD: small.c,v 1.6 2016/05/25 15:36:01 krw Exp $	*/
+/*	$OpenBSD: small.c,v 1.9 2017/01/21 08:33:07 krw Exp $	*/
 /*	$NetBSD: cmds.c,v 1.27 1997/08/18 10:20:15 lukem Exp $	*/
 
 /*
  * Copyright (C) 1997 and 1998 WIDE Project.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -16,7 +16,7 @@
  * 3. Neither the name of the project nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -289,6 +289,7 @@ usage:
 	recvrequest("RETR", argv[2], argv[1], mode,
 	    argv[1] != oldargv1 || argv[2] != oldargv2 || !interactive, loc);
 	restart_point = 0;
+#ifndef SMALL
 freegetit:
 	if (oldargv2 != globargv2)	/* free up after globulize() */
 		free(globargv2);
@@ -326,13 +327,13 @@ mget(int argc, char *argv[])
 {
 	extern int optind, optreset;
 	sig_t oldintr;
-	int ch, xargc = 2;
+	int xargc = 2;
 	char *cp, localcwd[PATH_MAX], *xargv[] = { argv[0], NULL, NULL };
 	static int restartit = 0;
 #ifndef SMALL
 	extern char *optarg;
 	const char *errstr;
-	int i = 1;
+	int ch, i = 1;
 	char type = 0, *dummyargv[] = { argv[0], ".", NULL };
 	FILE *ftemp = NULL;
 	static int depth = 0, max_depth = 0;
@@ -641,7 +642,7 @@ LOOP:
 							cp2++;
 						}
 						else if (*cp2 == '$' &&
-   						        isdigit((unsigned char)*(cp2 + 1))) {
+						        isdigit((unsigned char)*(cp2 + 1))) {
 							if (*++cp2 == '0') {
 							   char *cp3 = name;
 

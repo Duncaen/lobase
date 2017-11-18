@@ -1,4 +1,4 @@
-/*	$OpenBSD: util.c,v 1.77 2016/03/16 15:41:11 krw Exp $	*/
+/*	$OpenBSD: util.c,v 1.85 2017/09/05 05:37:35 jca Exp $	*/
 /*	$NetBSD: util.c,v 1.12 1997/08/18 10:20:27 lukem Exp $	*/
 
 /*-
@@ -67,6 +67,7 @@
  * FTP User Program -- Misc support routines
  */
 #include <sys/ioctl.h>
+#include <sys/socket.h>
 #include <sys/time.h>
 #include <arpa/ftp.h>
 
@@ -76,6 +77,7 @@
 #include <fcntl.h>
 #include <libgen.h>
 #include <glob.h>
+#include <poll.h>
 #include <pwd.h>
 #include <signal.h>
 #include <stdio.h>
@@ -219,7 +221,7 @@ ftp_login(const char *host, char *user, char *pass)
 	struct passwd *pw;
 
 #ifndef SMALL
-	if (user == NULL) {
+	if (user == NULL && !anonftp) {
 		if (ruserpass(host, &user, &pass, &acctname) < 0) {
 			code = -1;
 			return (0);
@@ -390,8 +392,7 @@ remglob2(char *argv[], int doswitch, char **errbuf, FILE **ftemp, char *type)
 	if (*ftemp == NULL) {
 		int len;
 
-		if ((cp = getenv("TMPDIR")) == NULL || *cp == '\0')
-		    cp = _PATH_TMP;
+		cp = _PATH_TMP;
 		len = strlen(cp);
 		if (len + sizeof(TMPFILE) + (cp[len-1] != '/') > sizeof(temp)) {
 			warnx("unable to create temporary file: %s",
@@ -437,7 +438,9 @@ remglob2(char *argv[], int doswitch, char **errbuf, FILE **ftemp, char *type)
 			return (NULL);
 		}
 	}
+#ifndef SMALL
 again:
+#endif
 	if (fgets(buf, sizeof(buf), *ftemp) == NULL) {
 		(void)fclose(*ftemp);
 		*ftemp = NULL;
@@ -581,7 +584,7 @@ remotesize(const char *file, int noisy)
 		cp = strchr(reply_string, ' ');
 		if (cp != NULL) {
 			cp++;
-			size = strtoq(cp, &ep, 10);
+			size = strtoll(cp, &ep, 10);
 			if (*ep != '\0' && !isspace((unsigned char)*ep))
 				size = -1;
 		}
@@ -617,11 +620,11 @@ remotemodtime(const char *file, int noisy)
 	if (command("MDTM %s", file) == COMPLETE) {
 		struct tm timebuf;
 		int yy, mo, day, hour, min, sec;
- 		/*
- 		 * time-val = 14DIGIT [ "." 1*DIGIT ]
- 		 *		YYYYMMDDHHMMSS[.sss]
- 		 * mdtm-response = "213" SP time-val CRLF / error-response
- 		 */
+		/*
+		 * time-val = 14DIGIT [ "." 1*DIGIT ]
+		 *		YYYYMMDDHHMMSS[.sss]
+		 * mdtm-response = "213" SP time-val CRLF / error-response
+		 */
 		/* TODO: parse .sss as well, use timespecs. */
 		char *timestr = reply_string;
 
@@ -631,9 +634,9 @@ remotemodtime(const char *file, int noisy)
 		while (isspace((unsigned char)*timestr))
 			timestr++;
 		if (strncmp(timestr, "191", 3) == 0) {
- 			fprintf(ttyout,
- 	    "Y2K warning! Fixed incorrect time-val received from server.\n");
-	    		timestr[0] = ' ';
+			fprintf(ttyout,
+	    "Y2K warning! Fixed incorrect time-val received from server.\n");
+			timestr[0] = ' ';
 			timestr[1] = '2';
 			timestr[2] = '0';
 		}
@@ -681,7 +684,7 @@ fileindir(const char *file, const char *dir)
 	char	realdir[PATH_MAX];
 	size_t	dirlen;
 
-		 			/* determine parent directory of file */
+					/* determine parent directory of file */
 	(void)strlcpy(parentdirbuf, file, sizeof(parentdirbuf));
 	parentdir = dirname(parentdirbuf);
 	if (strcmp(parentdir, ".") == 0)
@@ -781,8 +784,10 @@ progressmeter(int flag, const char *filename)
 	ratio = MINIMUM(ratio, 100);
 	if (!verbose && flag == -1) {
 		filename = basename(filename);
-		if (filename != NULL)
+		if (filename != NULL) {
+			free(title);
 			title = strdup(filename);
+		}
 	}
 
 	buf[0] = 0;
@@ -825,7 +830,7 @@ progressmeter(int flag, const char *filename)
 	if (barlength > 0) {
 		i = barlength * ratio / 100;
 		snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-		    "|%.*s%*s|", i, 
+		    "|%.*s%*s|", i,
 		    "*******************************************************"
 		    "*******************************************************"
 		    "*******************************************************"
@@ -1069,3 +1074,26 @@ controlediting(void)
 }
 #endif /* !SMALL */
 
+/*
+ * Wait for an asynchronous connect(2) attempt to finish.
+ */
+int
+connect_wait(int s)
+{
+	struct pollfd pfd[1];
+	int error = 0;
+	socklen_t len = sizeof(error);
+
+	pfd[0].fd = s;
+	pfd[0].events = POLLOUT;
+
+	if (poll(pfd, 1, -1) == -1)
+		return -1;
+	if (getsockopt(s, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+		return -1;
+	if (error != 0) {
+		errno = error;
+		return -1;
+	}
+	return 0;
+}
