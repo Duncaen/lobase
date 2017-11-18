@@ -669,7 +669,7 @@ create_newfile(char *path, struct stat *sbp)
 {
 	char backup[PATH_MAX];
 
-#if 0
+#ifdef HAVE_CHFLAGS
 	/*
 	 * Unlink now... avoid ETXTBSY errors later.  Try and turn
 	 * off the append/immutable bits -- if we fail, go ahead,
