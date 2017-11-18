@@ -73,7 +73,7 @@ int sortkey = BY_NAME;
 int f_accesstime;		/* use time of last access */
 int f_column;			/* columnated format */
 int f_columnacross;		/* columnated format, sorted across */
-#if 0
+#if HAVE_CHFLAGS
 int f_flags;			/* show flags associated with a file */
 #endif
 int f_grouponly;		/* long listing format without owner */
@@ -222,7 +222,7 @@ ls_main(int argc, char *argv[])
 			blocksize = 1024;
 			kflag = 1;
 			break;
-#if 0
+#if HAVE_CHFLAGS
 		case 'o':
 			f_flags = 1;
 			break;
@@ -437,7 +437,7 @@ display(FTSENT *p, FTSENT *list)
 	int width;
 	char *user, *group, buf[21];	/* 64 bits == 20 digits */
 	char nuser[12], ngroup[12];
-#if 0
+#if HAVE_CHFLAGS
 	char *flags = NULL;
 #endif
 
@@ -511,7 +511,7 @@ display(FTSENT *p, FTSENT *list)
 					maxuser = ulen;
 				if ((glen = strlen(group)) > maxgroup)
 					maxgroup = glen;
-#if 0
+#if HAVE_CHFLAGS
 				if (f_flags) {
 					flags = fflagstostr(sp->st_flags);
 					if (*flags == '\0')
@@ -537,7 +537,7 @@ display(FTSENT *p, FTSENT *list)
 				    S_ISBLK(sp->st_mode))
 					bcfile = 1;
 
-#if 0
+#if HAVE_CHFLAGS
 				if (f_flags) {
 					np->flags = &np->data[ulen + 1 + glen + 1];
 					(void)strlcpy(np->flags, flags, flen + 1);

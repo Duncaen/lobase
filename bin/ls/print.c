@@ -106,7 +106,7 @@ printlong(DISPLAY *dp)
 		if (!f_grouponly)
 			(void)printf("%-*s  ", dp->s_user, np->user);
 		(void)printf("%-*s  ", dp->s_group, np->group);
-#if 0
+#if HAVE_CHFLAGS
 		if (f_flags)
 			(void)printf("%-*s ", dp->s_flags, np->flags);
 #endif
