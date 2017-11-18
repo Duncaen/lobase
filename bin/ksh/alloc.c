@@ -1,4 +1,4 @@
-/*	$OpenBSD: alloc.c,v 1.15 2016/06/01 10:29:20 espie Exp $	*/
+/*	$OpenBSD: alloc.c,v 1.18 2017/11/02 06:55:35 tb Exp $	*/
 
 /* Public domain, like most of the rest of ksh */
 
@@ -111,20 +111,12 @@ aresize(void *ptr, size_t size, Area *ap)
 void
 afree(void *ptr, Area *ap)
 {
-	struct link *l, *l2;
+	struct link *l;
 
 	if (!ptr)
 		return;
 
 	l = P2L(ptr);
-
-	for (l2 = ap->freelist; l2 != NULL; l2 = l2->next) {
-		if (l == l2)
-			break;
-	}
-	if (l2 == NULL)
-		internal_errorf(1, "afree: %p not present in area %p", ptr, ap);
-
 	if (l->prev)
 		l->prev->next = l->next;
 	else

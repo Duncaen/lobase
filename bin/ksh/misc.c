@@ -1,4 +1,4 @@
-/*	$OpenBSD: misc.c,v 1.55 2016/03/20 00:01:21 krw Exp $	*/
+/*	$OpenBSD: misc.c,v 1.60 2017/10/19 07:54:05 jca Exp $	*/
 
 /*
  * Miscellaneous functions
@@ -7,7 +7,6 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <grp.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -130,7 +129,6 @@ const struct option options[] = {
 	{ "csh-history",  0,		OF_ANY }, /* non-standard */
 #ifdef EMACS
 	{ "emacs",	  0,		OF_ANY },
-	{ "emacs-usemeta",  0,		OF_ANY }, /* non-standard */
 #endif
 	{ "errexit",	'e',		OF_ANY },
 #ifdef EMACS
@@ -227,7 +225,7 @@ printoptions(int verbose)
 		/* verbose version */
 		shprintf("Current option settings\n");
 
-		for (i = n = oi.opt_width = 0; i < NELEM(options); i++)
+		for (i = n = oi.opt_width = 0; i < NELEM(options); i++) {
 			if (options[i].name) {
 				len = strlen(options[i].name);
 				oi.opts[n].name = options[i].name;
@@ -235,16 +233,18 @@ printoptions(int verbose)
 				if (len > oi.opt_width)
 					oi.opt_width = len;
 			}
+		}
 		print_columns(shl_stdout, n, options_fmt_entry, &oi,
 		    oi.opt_width + 5, 1);
 	} else {
 		/* short version ala ksh93 */
 		shprintf("set");
-		for (i = 0; i < NELEM(options); i++)
+		for (i = 0; i < NELEM(options); i++) {
 			if (options[i].name)
 				shprintf(" %co %s",
 					 Flag(i) ? '-' : '+',
 					 options[i].name);
+		}
 		shprintf("\n");
 	}
 }
