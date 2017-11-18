@@ -68,7 +68,7 @@ hostname
 kill
 ksh
 ln
-ls
+ls		No support for file flags, -o
 md5
 mkdir
 mv
