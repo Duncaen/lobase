@@ -1,4 +1,4 @@
-/*	$OpenBSD: dd.c,v 1.23 2015/10/09 01:37:06 deraadt Exp $	*/
+/*	$OpenBSD: dd.c,v 1.24 2017/08/13 02:06:42 tedu Exp $	*/
 /*	$NetBSD: dd.c,v 1.6 1996/02/20 19:29:06 jtc Exp $	*/
 
 /*-
@@ -53,6 +53,10 @@
 #include "dd.h"
 #include "extern.h"
 
+#ifndef SIGINFO
+#define SIGINFO SIGPWR
+#endif
+
 static void dd_close(void);
 static void dd_in(void);
 static void getfdtype(IO *);
@@ -75,7 +79,7 @@ main(int argc, char *argv[])
 	jcl(argv);
 	setup();
 
-	(void)signal(SIGPWR, summaryx);
+	(void)signal(SIGINFO, summaryx);
 	(void)signal(SIGINT, terminate);
 
 	atexit(summary);
@@ -194,7 +198,7 @@ setup(void)
 	}
 
 	/* Statistics timestamp. */
-	(void)gettimeofday(&st.startv, (struct timezone *)NULL);
+	clock_gettime(CLOCK_MONOTONIC, &st.start);
 }
 
 static void
