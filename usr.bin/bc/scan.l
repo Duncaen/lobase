@@ -1,5 +1,5 @@
 %{
-/*      $OpenBSD: scan.l,v 1.28 2013/09/19 16:12:01 otto Exp $	*/
+/*      $OpenBSD: scan.l,v 1.30 2017/07/19 12:50:33 espie Exp $	*/
 
 /*
  * Copyright (c) 2003, Otto Moerbeek <otto@drijf.net>
@@ -25,7 +25,7 @@
 
 #include "extern.h"
 #include "pathnames.h"
-#include "y.tab.h"
+#include "bc.h"
 
 int		lineno;
 bool		interactive;
@@ -324,7 +324,7 @@ bc_yyinput(char *buf, int maxlen)
 
 	if (el != NULL)
 		el_get(el, EL_EDITMODE, &use_el);
-		
+
 	if (yyin == stdin && interactive && use_el) {
 		const char *bp;
 		sigset_t oset, nset;
