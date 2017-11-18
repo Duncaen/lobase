@@ -33,6 +33,8 @@
  * SUCH DAMAGE.
  */
 
+#define __NEED_OPENBSD_statfs
+
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -217,14 +219,16 @@ do_move(char *from, char *to)
 		return (0);
 	}
 
+#ifdef __OpenBSD__
 	if (errno != EXDEV) {
+#else
+	if (errno != EXDEV && errno != EBUSY) {
+#endif
 		warn("rename %s to %s", from, to);
 		return (1);
 	}
 
 	/* Disallow moving a mount point. */
-#if 0
-	/* XXX: PORT: needed? */
 	if (S_ISDIR(fsb.st_mode)) {
 		struct statfs sfs;
 		char path[PATH_MAX];
@@ -238,7 +242,6 @@ do_move(char *from, char *to)
 			return (1);
 		}
 	}
-#endif
 
 	/*
 	 * (4)	If the destination path exists, mv shall attempt to remove it.
