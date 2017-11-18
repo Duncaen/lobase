@@ -322,7 +322,7 @@ err:		if (unlink(to))
 	if (fchmod(to_fd, sbp->st_mode))
 		warn("%s: set mode", to);
 
-#if 0
+#if HAVE_CHFLAGS
 	/*
 	 * XXX
 	 * NFS doesn't support chflags; ignore errors unless there's reason
