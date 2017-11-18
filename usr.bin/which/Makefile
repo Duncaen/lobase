@@ -9,7 +9,7 @@ LINKS=	${BINDIR}/which ${BINDIR}/whereis
 # XXX: put the updated man page in the objdir?
 check_path_in_man:
 	@echo "Checking path expansion in whereis.1"; \
-	stdpath=`printf 'include paths.h\n_PATH_STDPATH\n' | \
+	stdpath=`printf '#include <paths.h>\n_PATH_STDPATH\n' | \
 	${CC} -E -P ${CPPFLAGS} - | \
 	sed -n 's/^[    ]*"\(.*\)".*/.D1 \1/p'` ; \
 	fgrep -xq "$$stdpath" ${.CURDIR}/whereis.1 && { touch $@; exit 0; }; \
