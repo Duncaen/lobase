@@ -450,11 +450,8 @@ main(int argc, char *argv[])
 		warnx("warning: recursive search of stdin");
 	if (Eflag)
 		cflags |= REG_EXTENDED;
-#if 0
-	/* XXX: PORT: test if this is really not needed */
 	if (Fflag)
 		cflags |= REG_NOSPEC;
-#endif
 #ifdef SMALL
 	/* Sorry, this won't work */
 	if (Fflag && wflag)
