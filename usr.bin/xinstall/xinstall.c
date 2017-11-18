@@ -1,4 +1,4 @@
-/*	$OpenBSD: xinstall.c,v 1.65 2016/05/13 17:51:15 jmc Exp $	*/
+/*	$OpenBSD: xinstall.c,v 1.66 2017/08/21 21:41:13 deraadt Exp $	*/
 /*	$NetBSD: xinstall.c,v 1.9 1995/12/20 10:25:17 jonathan Exp $	*/
 
 /*
@@ -52,6 +52,10 @@
 
 #include "pathnames.h"
 
+#ifndef EFTYPE
+#define EFTYPE	EBFONT
+#endif
+
 #define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 
 #define	DIRECTORY	0x01		/* Tell install it's a directory. */
@@ -59,8 +63,6 @@
 #define	USEFSYNC	0x04		/* Tell install to use fsync(2). */
 #define NOCHANGEBITS	(UF_IMMUTABLE | UF_APPEND | SF_IMMUTABLE | SF_APPEND)
 #define BACKUP_SUFFIX	".old"
-#define EFTYPE	ENOTSUP
-#define S_BLKSIZE	512
 
 struct passwd *pp;
 struct group *gp;
@@ -566,11 +568,12 @@ strip(char *to_name)
 {
 	int serrno, status;
 	char * volatile path_strip;
+	pid_t pid;
 
 	if (issetugid() || (path_strip = getenv("STRIP")) == NULL)
 		path_strip = _PATH_STRIP;
 
-	switch (vfork()) {
+	switch ((pid = vfork())) {
 	case -1:
 		serrno = errno;
 		(void)unlink(to_name);
@@ -580,7 +583,11 @@ strip(char *to_name)
 		warn("%s", path_strip);
 		_exit(1);
 	default:
-		if (wait(&status) == -1 || !WIFEXITED(status))
+		while (waitpid(pid, &status, 0) == -1) {
+			if (errno != EINTR)
+				break;
+		}
+		if (!WIFEXITED(status))
 			(void)unlink(to_name);
 	}
 }
