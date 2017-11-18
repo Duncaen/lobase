@@ -3,7 +3,7 @@
 .TOPDIR?=../..
 
 PROG=	chmod
-CFLAGS+=-DSUPPORT_DOT
+LDADD=	-lrt
 MAN=	chmod.1 chgrp.1 chown.8 chflags.1
 LINKS=	${BINDIR}/chmod ${BINDIR}/chgrp \
 	${BINDIR}/chmod ${BINDIR}/chown
