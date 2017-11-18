@@ -7,12 +7,6 @@ VPATH+=	${LIBCSRCDIR}/sys
 
 include ${.TOPDIR}/config.mk
 
-ifneq ($(HAVE_GETFSSTAT),1)
-SRCS+=	getfsstat.c
-SRCS+=	statfs.c
-endif
-
 ifneq ($(HAVE_GETDTABLECOUNT),1)
-SRCS+=	getdtablecount.c
 MAN+=	getdtablecount.2
 endif

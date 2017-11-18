@@ -8,10 +8,6 @@ MAN+=	getopt.3 getopt_long.3
 
 include ${.TOPDIR}/config.mk
 
-ifneq ($(HAVE_FREEZERO),1)
-SRCS+=	freezero.c
-endif
-
 ifneq ($(HAVE_REALLOCARRAY),1)
 SRCS+=	reallocarray.c
 MAN+=	malloc.3

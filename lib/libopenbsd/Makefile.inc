@@ -29,4 +29,6 @@ include ${LIBCSRCDIR}/stdlib/Makefile.inc
 include ${LIBCSRCDIR}/string/Makefile.inc
 include ${LIBCSRCDIR}/sys/Makefile.inc
 
+include ${LIBCSRCDIR}/compat/Makefile.inc
+
 ${OBJS} ${GOBJS} ${POBJS} ${SOBJS} ${DOBJS}: ${LIBCSRCDIR}/include/namespace.h
