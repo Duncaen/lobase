@@ -7,7 +7,6 @@ Installation
 ------------
 
 	$ autoreconf -fi
-
 	$ ./configure
 	$ make
 	# make install
@@ -22,11 +21,29 @@ Dependencies
 - ncurses (bc,ul)
 - zlib (grep)
 
+Not included
+------------
+
+Some projects already have portable versions and are not included in lobase.
+
+- acme-client	https://github.com/kristapsdz/acme-client-portable
+- cwm		https://github.com/chneukirchen/cwm
+- file		https://github.com/brynet/file
+- libressl	https://www.libressl.org/
+  - nc
+- sndio		http://www.sndio.org/
+  - aucat
+  - aucatctl
+- signify	https://github.com/chneukirchen/signify
+- smtpd		https://www.opensmtpd.org/
+- ssh		https://www.openssh.com/
+
 Broken
 ------
 
 - cu		should be simple to fix
-- file
+- ftp
+
 
 TODO
 ----
@@ -38,12 +55,10 @@ TODO
   - install headers
   - build shared libraries?
 
-- libopenbsd
-  - use the same directory structure as src/lib/libc to make diffs/merges simpler
-  - move compat implementations into compat directory
-
 - usr.bin/tail
   - import, rewrite -F or add a shim for kqueue?
+
+- libtool?
 
 lib
 ---
@@ -177,5 +192,5 @@ usr.sbin
 --------
 
 chroot
-mtree	No flags support
+mtree		No flags support
 rdate
