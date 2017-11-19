@@ -31,6 +31,9 @@ Some projects already have portable versions and are not included in lobase.
 - file		https://github.com/brynet/file
 - libressl	https://www.libressl.org/
   - nc
+- mandoc	http://mandoc.bsd.lv/
+  - man
+  - apropos
 - sndio		http://www.sndio.org/
   - aucat
   - aucatctl
