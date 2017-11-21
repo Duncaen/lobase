@@ -670,6 +670,7 @@ format1(const struct stat *st,
 			secs = st->__st_birthtimespec.tv_sec;
 			nsecs = st->__st_birthtimespec.tv_nsec;
 		}
+#endif
 		small = (sizeof(secs) == 4);
 		data = secs;
 		small = 1;
@@ -681,7 +682,6 @@ format1(const struct stat *st,
 		if (ofmt == 0)
 			ofmt = FMTF_DECIMAL;
 		break;
-#endif
 	case SHOW_st_size:
 		small = (sizeof(st->st_size) == 4);
 		data = st->st_size;
