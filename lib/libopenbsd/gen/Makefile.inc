@@ -4,7 +4,7 @@
 VPATH+=	${LIBCSRCDIR}/gen
 
 SRCS+=	basename.c devname.c dirname.c errc.c fts.c getmntinfo.c glob.c \
-	setmode.c unvis.c verrc.c vis.c vwarnc.c warnc.c
+	setmode.c unvis.c verrc.c vis.c vwarnc.c warnc.c getbsize.c
 
 include ${.TOPDIR}/config.mk
 
@@ -17,4 +17,4 @@ SRCS+=	siglist.c
 endif
 
 MAN+=	basename.3 devname.3 dirname.3 fts.3 getmntinfo.3 glob.3 setmode.3 \
-	unvis.3 vis.3
+	unvis.3 vis.3 getbsize.3
