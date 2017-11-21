@@ -3,14 +3,6 @@
 
 LIB=openbsd
 
-SRCS+=	closefrom.c \
-	heapsort.c merge.c pledge-noop.c progname.c \
-	qsort.c radixsort.c random.c readpassphrase.c \
-	setproctitle.c strtoimax.c strtonum.c strtoumax.c \
-	pwcache.c pw_dup.c \
-	strmode.c
-
-
 LIBCSRCDIR=${.CURDIR}
 include ${LIBCSRCDIR}/Makefile.inc
 

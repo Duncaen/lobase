@@ -3,8 +3,8 @@
 # string sources
 VPATH+=	${LIBCSRCDIR}/string
 
-SRCS+=	timingsafe_bcmp.c timingsafe_memcmp.c
-MAN+=	timingsafe_bcmp.3
+SRCS+=	timingsafe_bcmp.c timingsafe_memcmp.c strmode.c
+MAN+=	timingsafe_bcmp.3 strmode.3
 
 include ${.TOPDIR}/config.mk
 
