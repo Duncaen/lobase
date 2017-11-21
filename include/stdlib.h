@@ -38,6 +38,19 @@
 #include <sys/types.h>
 #include <stdint.h>
 
+char	*getbsize(int *, long *);
+char	*cgetcap(char *, const char *, int);
+int	 cgetclose(void);
+int	 cgetent(char **, char **, const char *);
+int	 cgetfirst(char **, char **);
+int	 cgetmatch(char *, const char *);
+int	 cgetnext(char **, char **);
+int	 cgetnum(char *, const char *, long *);
+int	 cgetset(const char *);
+int	 cgetusedb(int);
+int	 cgetstr(char *, const char *, char **);
+int	 cgetustr(char *, const char *, char **);
+
 uint32_t arc4random(void);
 uint32_t arc4random_uniform(uint32_t);
 void arc4random_buf(void *, size_t)
