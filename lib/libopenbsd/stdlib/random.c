@@ -30,11 +30,10 @@
 
 #include <fcntl.h>
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-/* #include "thread_private.h" */
+#include "thread_private.h"
 
 /*
  * random.c:
@@ -266,7 +265,7 @@ srandom_deterministic(unsigned int x)
  * Returns a pointer to the old state.
  */
 char *
-initstate(unsigned int seed, char *arg_state, size_t n)
+initstate(u_int seed, char *arg_state, size_t n)
 {
 	char *ostate = (char *)(&state[-1]);
 

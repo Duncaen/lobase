@@ -3,8 +3,7 @@
 # compat sources
 VPATH+=	${LIBCSRCDIR}/compat
 
-SRCS+=	fgetwln.c open.c setproctitle.c pledge-noop.c progname.c \
-	closefrom.c
+SRCS+=	fgetwln.c open.c setproctitle.c pledge-noop.c closefrom.c
 
 include ${.TOPDIR}/config.mk
 

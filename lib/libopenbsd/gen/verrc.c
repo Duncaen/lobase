@@ -37,7 +37,7 @@
 __dead void
 verrc(int eval, int code, const char *fmt, va_list ap)
 {
-	(void)fprintf(stderr, "%s: ", getprogname());
+	(void)fprintf(stderr, "%s: ", __progname);
 	if (fmt != NULL) {
 		(void)vfprintf(stderr, fmt, ap);
 		(void)fprintf(stderr, ": ");
