@@ -35,7 +35,7 @@
 #ifndef _MPOOL_H_ 
 #define _MPOOL_H_
 
-#include <openbsd-queue.h>
+#include <sys/queue.h>
 
 /*
  * The memory pool scheme is a simple one.  Each in-memory page is referenced

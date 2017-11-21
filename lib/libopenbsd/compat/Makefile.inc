@@ -3,7 +3,7 @@
 # compat sources
 VPATH+=	${LIBCSRCDIR}/compat
 
-SRCS+=	fgetwln.c
+SRCS+=	fgetwln.c open.c
 
 include ${.TOPDIR}/config.mk
 

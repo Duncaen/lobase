@@ -18,6 +18,7 @@ CFLAGS+=-Werror=deprecated-declarations
 # Include link-time warnings about unsafe API uses (ie. strcpy)
 CPPCFLAGS+=-DAPIWARN
 
+include ${LIBCSRCDIR}/db/Makefile.inc
 include ${LIBCSRCDIR}/gen/Makefile.inc
 include ${LIBCSRCDIR}/crypt/Makefile.inc
 include ${LIBCSRCDIR}/hash/Makefile.inc
