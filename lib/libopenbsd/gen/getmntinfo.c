@@ -28,6 +28,8 @@
  * SUCH DAMAGE.
  */
 
+#define __NEED_OPENBSD_statfs
+
 #include <sys/types.h>
 #include <sys/mount.h>
 #include <stdlib.h>
@@ -36,9 +38,9 @@
  * Return information about mounted filesystems.
  */
 int
-getmntinfo(struct openbsd_statfs **mntbufp, int flags)
+getmntinfo(struct statfs **mntbufp, int flags)
 {
-	static struct openbsd_statfs *mntbuf;
+	static struct statfs *mntbuf;
 	static int mntsize;
 	static size_t bufsize;
 
@@ -46,9 +48,9 @@ getmntinfo(struct openbsd_statfs **mntbufp, int flags)
 		return (0);
 	if (bufsize > 0 && (mntsize = getfsstat(mntbuf, bufsize, flags)) < 0)
 		return (0);
-	while (bufsize <= mntsize * sizeof(struct openbsd_statfs)) {
+	while (bufsize <= mntsize * sizeof(struct statfs)) {
 		free(mntbuf);
-		bufsize = (mntsize + 1) * sizeof(struct openbsd_statfs);
+		bufsize = (mntsize + 1) * sizeof(struct statfs);
 		if ((mntbuf = malloc(bufsize)) == 0) {
 			bufsize = 0;
 			return (0);
