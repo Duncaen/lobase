@@ -138,6 +138,11 @@ uintmax_t	strtoumax(const char *, char **, int);
 #define S_BLKSIZE 512
 #endif
 
+/**/
+#ifndef MAXNAMLEN
+#define	MAXNAMLEN	255
+#endif
+
 /* XXX: read dynamically? */
 #define UID_MAX 60000
 #define GID_MAX 60000
