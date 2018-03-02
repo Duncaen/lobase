@@ -6,7 +6,7 @@ VPATH+=	${LIBCSRCDIR}/stdlib
 SRCS+=	getopt_long.c strtoimax.c strtonum.c strtoumax.c random.c \
 	heapsort.c merge.c  qsort.c radixsort.c
 
-MAN+=	getopt.3 getopt_long.3 stdtod.3 strtonum.3 random.3
+MAN+=	getopt.3 getopt_long.3 strtod.3 strtonum.3 random.3
 
 include ${.TOPDIR}/config.mk
 
