@@ -329,19 +329,37 @@ printnumber(FILE *f, const struct number *b, u_int base)
 	stack_clear(&stack);
 	if (b->scale > 0) {
 		struct number	*num_base;
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && OPENSSL_VERSION_NUMBER < 0x20000000L
+		BIGNUM		*mult, *stop;
+#else
 		BIGNUM		mult, stop;
+#endif
 
 		putcharwrap(f, '.');
 		num_base = new_number();
 		bn_check(BN_set_word(num_base->number, base));
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && OPENSSL_VERSION_NUMBER < 0x20000000L
+		mult = BN_new();
+		stop = BN_new();
+		if (mult == NULL || stop == NULL)
+			err(1, NULL);
+		bn_check(BN_one(mult));
+		bn_check(BN_one(stop));
+		scale_number(stop, (int)b->scale);
+#else
 		BN_init(&mult);
 		bn_check(BN_one(&mult));
 		BN_init(&stop);
 		bn_check(BN_one(&stop));
 		scale_number(&stop, b->scale);
+#endif
 
 		i = 0;
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && OPENSSL_VERSION_NUMBER < 0x20000000L
+		while (BN_cmp(mult, stop) < 0) {
+#else
 		while (BN_cmp(&mult, &stop) < 0) {
+#endif
 			u_long	rem;
 
 			if (i && base > 16)
@@ -359,11 +377,20 @@ printnumber(FILE *f, const struct number *b, u_int base)
 			    int_part->number));
 			printwrap(f, p);
 			free(p);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && OPENSSL_VERSION_NUMBER < 0x20000000L
+			bn_check(BN_mul_word(mult, base));
+#else
 			bn_check(BN_mul_word(&mult, base));
+#endif
 		}
 		free_number(num_base);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && OPENSSL_VERSION_NUMBER < 0x20000000L
+		BN_free(mult);
+		BN_free(stop);
+#else
 		BN_free(&mult);
 		BN_free(&stop);
+#endif
 	}
 	flushwrap(f);
 	free_number(int_part);
