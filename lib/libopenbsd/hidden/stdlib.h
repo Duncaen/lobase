@@ -4,8 +4,8 @@
 #ifndef _LIBC_STDLIB_H_
 #define _LIBC_STDLIB_H_
 
-#include_next <stdlib.h>
-
 extern char *__progname;
 
 #endif /* _LIBC_STDLIB_H_ */
+
+#include_next <stdlib.h>
