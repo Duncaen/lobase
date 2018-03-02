@@ -14,12 +14,26 @@ Installation
 Dependencies
 ------------
 
+- autoconf
+- make (GNU Make)
+- cc (gcc, clang)
+- yacc (byacc, bison)
+- lex (flex)
+
 - libedit (bc)
 - libevent (cu)
 - libressl
   - libcrypto (bc,dc)
 - ncurses (bc,ul)
 - zlib (grep)
+
+Debian:
+
+	# apt-get install libedit-dev libevent-dev libssl-dev libz-dev
+
+Void Linux:
+
+	# xbps-install libedit-devel libevent-devel libressl-devel zlib-dev
 
 Not included
 ------------
