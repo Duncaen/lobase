@@ -2,7 +2,7 @@
 include ${.TOPDIR}/mk/bsd.own.mk
 
 CPPFLAGS+=	-I${.TOPDIR}/include -include compat.h
-CPPFLAGS+=	-I${.TOPDIR} -include config.h
+CPPFLAGS+=	-include ${.TOPDIR}/config.h
 
 ifdef MAKEOBJDIR
 LIBPATHS+=	${MAKEOBJDIR}/lib

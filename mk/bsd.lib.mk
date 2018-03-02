@@ -3,8 +3,8 @@ include ${.TOPDIR}/mk/bsd.own.mk
 
 STATICLIB = lib$(LIB).a
 
-CPPFLAGS+=	-I$(.TOPDIR)/include -include compat.h \
-		-I$(.TOPDIR) -include config.h
+CPPFLAGS+=	-I${.TOPDIR}/include -include compat.h \
+		-include ${.TOPDIR}/config.h
 
 LDFLAGS += $(LDADD)
 
