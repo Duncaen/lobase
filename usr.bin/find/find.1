@@ -1,0 +1,716 @@
+.\"	$OpenBSD: find.1,v 1.93 2017/01/03 22:19:31 jmc Exp $
+.\" Copyright (c) 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the Institute of Electrical and Electronics Engineers, Inc.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	from: @(#)find.1	8.1 (Berkeley) 6/6/93
+.\"
+.Dd $Mdocdate: January 3 2017 $
+.Dt FIND 1
+.Os
+.Sh NAME
+.Nm find
+.Nd walk a file hierarchy
+.Sh SYNOPSIS
+.Nm find
+.Op Fl dHhLXx
+.Op Fl f Ar path
+.Ar path ...
+.Op Ar expression
+.Sh DESCRIPTION
+.Nm
+recursively descends the directory tree for each
+.Ar path
+listed, evaluating an
+.Ar expression
+(composed of the
+.Dq primaries
+and
+.Dq operators
+listed below) in terms
+of each file in the tree.
+In the absence of an expression,
+.Ic -print
+is assumed.
+If an expression is given,
+but none of the primaries
+.Ic -exec ,
+.Ic -ls ,
+.Ic -ok ,
+.Ic -print ,
+or
+.Ic -print0
+are specified, the given expression is effectively replaced by
+.Cm \&( Ar given expression Cm \&)
+.Ic -print .
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl d
+Causes
+.Nm
+to visit directories in post-order
+i.e. all entries in a directory will be acted on before the directory itself.
+By default,
+.Nm
+visits directories in pre-order i.e. before their contents.
+.It Fl f Ar path
+Specifies a file hierarchy for
+.Nm
+to traverse.
+File hierarchies may be specified without the
+.Fl f
+option if they are given immediately after any other options.
+.It Fl H
+Causes the file information and file type (see
+.Xr stat 2 )
+returned for each symbolic link encountered on the command line to be
+those of the file referenced by the link, not the link itself.
+If the referenced file does not exist, the file information and type will
+be for the link itself.
+File information of all symbolic links not on
+the command line is that of the link itself.
+.It Fl h
+An alias for the
+.Fl L
+option.
+This option exists for backwards compatibility.
+.It Fl L
+Causes the file information and file type (see
+.Xr stat 2 )
+returned for each symbolic link to be those of the file referenced by the
+link, not the link itself.
+If the referenced file does not exist, the file information and type will
+be for the link itself.
+.It Fl X
+Permit
+.Nm
+to be safely used in conjunction with
+.Xr xargs 1 .
+If a file name contains any of the delimiting characters used by xargs,
+a diagnostic message is displayed on standard error, and the file
+is skipped.
+The delimiting characters include single
+.Pq Ql '
+and double
+.Pq Ql \&"
+quotes, backslash
+.Pq Ql \e ,
+space, tab, and newline
+.Pq Sq \en
+characters.
+Consider using
+.Fl print0
+instead.
+.It Fl x
+Prevents
+.Nm
+from descending into directories that have a device number different
+than that of the file from which the descent began.
+.El
+.Pp
+It is not an error to specify more than one of
+the mutually exclusive options
+.Fl H
+and
+.Fl L .
+Where more than one of these options is specified,
+the last option given overrides the others.
+.Sh PRIMARIES
+.Bl -tag -width Ds -compact
+.It Ic -amin Ar n
+True if the difference between the file last access time and the time
+.Nm
+was started, rounded up to the next full minute, is
+.Ar n
+minutes.
+.Pp
+.It Ic -anewer Ar file
+True if the current file has a more recent last access time than
+.Ar file .
+.Pp
+.It Ic -atime Ar n
+True if the difference between the file last access time and the time
+.Nm
+was started, rounded up to the next full 24-hour period, is
+.Ar n
+24-hour periods.
+.Pp
+.It Ic -cmin Ar n
+True if the difference between the time of last change of file status
+information and the time
+.Nm
+was started, rounded up to the next full minute, is
+.Ar n
+minutes.
+.Pp
+.It Ic -cnewer Ar file
+True if the current file has a more recent last change time than
+.Ar file .
+.Pp
+.It Ic -ctime Ar n
+True if the difference between the time of last change of file status
+information and the time
+.Nm
+was started, rounded up to the next full 24-hour period, is
+.Ar n
+24-hour periods.
+.Pp
+.It Ic -delete
+Delete found files and directories.
+Always returns true.
+This executes
+from the current working directory as
+.Nm
+recurses down the tree.
+It will not attempt to delete a filename with a
+.Sq Pa /
+character in its pathname relative to
+.Sq Pa \&.
+for security reasons.
+Depth-first traversal processing is implied by this option.
+The
+.Ic -delete
+primary will fail to delete a directory if it is not empty.
+Following symlinks is incompatible with this option.
+.Pp
+.It Ic -depth
+This primary always evaluates to true.
+The same as specifying the
+.Fl d
+option.
+.Pp
+.It Ic -empty
+True if the current file or directory is empty.
+.Pp
+.It Ic -exec Ar utility Oo Ar argument ... Oc \&;
+.It Ic -exec Ar utility Oo Ar argument ... Oc {} +
+Execute the specified
+.Ar utility .
+Optional arguments may be passed to the utility.
+The expression must be terminated by a semicolon
+.Pq Ql \&;
+or a plus sign
+.Pq Ql \&+ .
+.Pp
+If terminated by a semicolon, the
+.Ar utility
+is executed once per path.
+If the string
+.Qq {}
+appears anywhere in the utility name or the
+arguments it is replaced by the pathname of the current file.
+.Pp
+If terminated by a plus sign,
+the pathnames for which the
+primary is evaluated are aggregated into sets, and
+.Ar utility
+will be invoked once per set, similar to
+.Xr xargs 1 .
+If any invocation exits with a non-zero exit status, then
+.Nm
+will eventually do so as well, but this does not cause
+.Nm
+to exit early.
+The string
+.Qq {}
+must appear, and must appear last.
+Each set is limited to no more than 5,000 pathnames,
+and is also limited such that the invocation of
+.Ar utility
+does not exceed
+.Dv ARG_MAX .
+.Pp
+.It Ic -execdir Ar utility Oo Ar argument ... Oc \&;
+Identical to the first form of the
+.Ic -exec
+primary with the exception that
+.Ar utility
+will be executed from the directory that holds
+the current file.
+The filename substituted for the string
+.Qq {}
+is not qualified.
+.Pp
+.It Xo
+.Ic -flags
+.Oo - Oc Ns Ar flags
+.Xc
+The
+.Ar flags
+are comma-separated symbolic file flags (see
+.Xr chflags 1
+for a list of valid flag names).
+If the flags are preceded by a dash
+.Pq Sq - ,
+this primary evaluates to true if at least all specified
+.Ar flags
+are set in the file's flags.
+If the flags are not preceded by a dash, this primary evaluates to true if the
+flags specified exactly match those of the file.
+.Pp
+.It Ic -follow
+This primary always evaluates to true.
+The same as specifying the
+.Fl L
+option.
+.Pp
+.It Ic -fstype Ar type
+True if the file is contained in a file system of type
+.Ar type .
+Two special file system types are recognized:
+.Dq local
+and
+.Dq rdonly .
+These do not describe actual file system types;
+the former matches any file system physically mounted on the system where
+.Nm
+is being executed whereas the latter matches any file system which is
+mounted read-only.
+.Pp
+.It Ic -group Ar gname
+True if the file belongs to the group
+.Ar gname .
+If
+.Ar gname
+is numeric and there is no such group name, then
+.Ar gname
+is treated as a group ID.
+.Pp
+.It Ic -iname Ar pattern
+Identical to the
+.Ic -name
+primary except that the matching is done in a case insensitive manner.
+.Pp
+.It Ic -inum Ar n
+True if the file has inode number
+.Ar n .
+.Pp
+.It Ic -links Ar n
+True if the file has
+.Ar n
+links.
+.Pp
+.It Ic -ls
+This primary always evaluates to true.
+The following information for the current file is written to standard output:
+its inode number, size in 512-byte blocks, file permissions, number of hard
+links, owner, group, size in bytes, last modification time, and pathname.
+If the file is a block or character special file, the major and minor numbers
+will be displayed instead of the size in bytes.
+If the file is a symbolic link, the pathname of the linked-to file will be
+displayed preceded by
+.Dq -> .
+The format is identical to that produced by
+.Dq ls -dils .
+.Pp
+.It Ic -maxdepth Ar n
+True if the current search depth is less than or equal to what is specified in
+.Ar n .
+.Pp
+.It Ic -mindepth Ar n
+True if the current search depth is at least what is specified in
+.Ar n .
+.Pp
+.It Ic -mmin Ar n
+True if the difference between the file last modification time and the time
+.Nm
+was started, rounded up to the next full minute, is
+.Ar n
+minutes.
+.Pp
+.It Ic -mtime Ar n
+True if the difference between the file last modification time and the time
+.Nm
+was started, rounded up to the next full 24-hour period, is
+.Ar n
+24-hour periods.
+.Pp
+.It Ic -name Ar pattern
+True if the last component of the pathname being examined matches
+.Ar pattern ,
+which may use any of the special characters documented in
+.Xr glob 7 .
+.Pp
+.It Ic -newer Ar file
+True if the current file has a more recent last modification time than
+.Ar file .
+.Pp
+.It Ic -nogroup
+True if the file belongs to an unknown group.
+.Pp
+.It Ic -nouser
+True if the file belongs to an unknown user.
+.Pp
+.It Ic -ok Ar utility Oo Ar argument ... Oc \&;
+Identical to the
+.Ic -exec
+primary with the exception that
+.Nm
+requests user affirmation for the execution of
+.Ar utility
+by printing
+a message to the terminal and reading a response.
+If the response is other than
+.Sq y
+the command is not executed and the
+value of the
+.Ic ok
+expression is false.
+.Pp
+.It Ic -path Ar pattern
+True if the pathname being examined matches
+.Ar pattern ,
+which may use any of the special characters documented in
+.Xr glob 7 .
+Slashes
+.Pq Ql /
+are treated as normal characters and do not have to be
+matched explicitly.
+.Pp
+.It Xo
+.Ic -perm
+.Oo - Oc Ns Ar mode
+.Xc
+The
+.Ar mode
+may be either symbolic (see
+.Xr chmod 1 )
+or an octal number.
+If the mode is symbolic, a starting value of zero is assumed and the
+mode sets or clears permissions without regard to the process's file mode
+creation mask.
+If the mode is octal, only bits 07777
+.Pq Dv S_ISUID | S_ISGID | S_ISTXT | S_IRWXU | S_IRWXG | S_IRWXO
+of the file's mode bits participate
+in the comparison.
+If the mode is preceded by a dash
+.Pq Sq - ,
+this primary evaluates to true
+if at least all of the bits in the mode are set in the file's mode bits.
+If the mode is not preceded by a dash, this primary evaluates to
+true if the bits in the mode exactly match the file's mode bits.
+Note, the first character of a symbolic mode may not be a dash.
+.Pp
+.It Ic -print
+This primary always evaluates to true.
+It prints the pathname of the current file to standard output, followed
+by a newline
+.Pq Ql \en
+character.
+.Pp
+.It Ic -print0
+This primary always evaluates to true.
+It prints the pathname of the current file to standard output, followed
+by a null character, suitable for use with the
+.Fl 0
+option to
+.Xr xargs 1 .
+.Pp
+.It Ic -prune
+This primary always evaluates to true.
+It causes
+.Nm
+to not descend into the current file.
+Note, the
+.Ic -prune
+primary has no effect if the
+.Fl d
+option was specified.
+.Pp
+.It Ic -size Ar n Ns Op Cm c
+True if the file's size, rounded up, in 512-byte blocks is
+.Ar n .
+If
+.Ar n
+is followed by a
+.Sq c ,
+then the primary is true if the
+file's size is
+.Ar n
+bytes.
+.Pp
+.It Ic -type Ar t
+True if the file is of the specified type.
+Possible file types are as follows:
+.Pp
+.Bl -tag -width flag -offset indent -compact
+.It Cm b
+block special
+.It Cm c
+character special
+.It Cm d
+directory
+.It Cm f
+regular file
+.It Cm l
+symbolic link
+.It Cm p
+FIFO
+.It Cm s
+socket
+.El
+.Pp
+.It Ic -user Ar uname
+True if the file belongs to the user
+.Ar uname .
+If
+.Ar uname
+is numeric and there is no such user name, then
+.Ar uname
+is treated as a user ID.
+.Pp
+.It Ic -xdev
+This primary always evaluates to true.
+The same as specifying the
+.Fl x
+option.
+.El
+.Pp
+All primaries which take a numeric argument allow the number to be
+preceded by a plus sign
+.Pq Ql +
+or a minus sign
+.Pq Ql - .
+A preceding plus sign means
+.Dq more than n ,
+a preceding minus sign means
+.Dq less than n ,
+and neither means
+.Dq exactly n .
+Exceptions are the primaries
+.Ic mindepth
+and
+.Ic maxdepth .
+.Sh OPERATORS
+The primaries may be combined using the following operators.
+The operators are listed in order of decreasing precedence.
+.Pp
+.Bl -tag -width "(expression)" -compact
+.It Cm \&( Ar expression Cm \&)
+This evaluates to true if the parenthesized expression evaluates to
+true.
+.Pp
+.It Cm \&! Ar expression
+This is the unary
+.Tn NOT
+operator.
+It evaluates to true if the expression is false.
+.Pp
+.It Ar expression Cm -a Ar expression
+.It Ar expression Cm -and Ar expression
+.It Ar expression expression
+The logical AND operator.
+As it is implied by the juxtaposition of two expressions it does not
+have to be specified.
+The expression evaluates to true if both expressions are true.
+The second expression is not evaluated if the first expression is false.
+.Pp
+.It Ar expression Cm -o Ar expression
+.It Ar expression Cm -or Ar expression
+The logical OR operator.
+The expression evaluates to true if either the first or the second expression
+is true.
+The second expression is not evaluated if the first expression is true.
+.El
+.Pp
+Operators, primaries, and arguments to primaries must be separate
+arguments to
+.Nm find ,
+i.e. they should be separated by whitespace.
+.Sh EXIT STATUS
+The
+.Nm
+utility exits with a value of 0 on successful traversal of all path operands
+or with a value >0 if an error occurred.
+.Sh EXAMPLES
+Print out a list of all the files whose names end in
+.Dq \&.c :
+.Pp
+.Dl "$ find / -name '*.c'"
+.Pp
+Print out a list of all the files which are not both newer than
+.Dq ttt
+and owned by
+.Dq wnj :
+.Pp
+.Dl "$ find / \e! \e( -newer ttt -user wnj \e)"
+.Pp
+Print out a list of all core files on local file systems:
+.Pp
+.Dl "$ find / \e! -fstype local -prune -o -name '*.core'"
+.Pp
+Find all files in
+.Pa /usr/src
+ending in a dot and single digit, but skip directory
+.Pa /usr/src/gnu :
+.Pp
+.Dl "$ find /usr/src -path /usr/src/gnu -prune -o -name \e*.[0-9]"
+.Pp
+Find and remove all *.jpg and *.gif files under the current working
+directory:
+.Pp
+.Dl "$ find . \e( -name \e*.jpg -o -name \e*.gif \e) -exec rm {} \e;"
+or
+.Dl "$ find . \e( -name \e*.jpg -o -name \e*.gif \e) -print0 | xargs -0r rm"
+.Sh SEE ALSO
+.Xr chflags 1 ,
+.Xr chmod 1 ,
+.Xr locate 1 ,
+.Xr ls 1 ,
+.Xr whereis 1 ,
+.Xr which 1 ,
+.Xr xargs 1 ,
+.Xr stat 2 ,
+.Xr fts 3 ,
+.Xr glob 7 ,
+.Xr symlink 7
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification.
+.Pp
+The options
+.Op Fl dfhXx ,
+primaries
+.Ic -amin ,
+.Ic -anewer ,
+.Ic -cmin ,
+.Ic -cnewer ,
+.Ic -delete ,
+.Ic -empty ,
+.Ic -execdir ,
+.Ic -flags ,
+.Ic -follow ,
+.Ic -fstype ,
+.Ic -iname ,
+.Ic -inum ,
+.Ic -ls ,
+.Ic -maxdepth ,
+.Ic -mindepth ,
+.Ic -mmin ,
+and
+.Ic -print0 ,
+and operators
+.Fl or
+and
+.Fl and ,
+are extensions to that specification.
+.Pp
+Historically, the
+.Fl d ,
+.Fl L ,
+and
+.Fl x
+options were implemented using the primaries
+.Ic -depth ,
+.Ic -follow ,
+and
+.Ic -xdev .
+These primaries always evaluated to true.
+As they were really global variables that took effect before the traversal
+began, some legal expressions could have unexpected results.
+An example is the expression
+.Dq -print -o -depth .
+As
+.Cm -print
+always evaluates to true, the standard order of evaluation
+implies that
+.Cm -depth
+would never be evaluated.
+This is not the case.
+.Pp
+Historic implementations of the
+.Ic -exec
+and
+.Ic -ok
+primaries did not replace the string
+.Qq {}
+in the utility name or the
+utility arguments if it had preceding or following non-whitespace characters.
+This version replaces it no matter where in the utility name or arguments
+it appears.
+.Sh HISTORY
+A
+.Nm
+command appeared in
+.At v1 .
+.Sh CAVEATS
+The special characters used by
+.Nm
+are also special characters to many shell programs.
+In particular, the characters
+.Ql * ,
+.Ql \&[ ,
+.Ql \&] ,
+.Ql \&? ,
+.Ql \&( ,
+.Ql \&) ,
+.Ql \&! ,
+.Ql \e ,
+and
+.Ql \&;
+may have to be escaped from the shell.
+.Pp
+As file names may contain whitespace and shell metacharacters,
+passing the output of
+.Nm
+to other programs requires some care:
+.Pp
+.Dl "$ find . -name \e*.jpg | xargs rm"
+or
+.Dl "$ rm `find . -name \e*.jpg`"
+.Pp
+would, given files
+.Dq important\ .jpg
+and
+.Dq important ,
+remove
+.Dq important .
+Use the
+.Ic -print0
+or
+.Ic -exec
+primaries instead.
+.Pp
+As there is no delimiter separating options and file names or file
+names and the
+.Ar expression ,
+it is difficult to specify files named
+.Dq -xdev
+or
+.Sq \&! .
+These problems are handled by the
+.Fl f
+option and the
+.Xr getopt 3
+.Sq --
+construct.
