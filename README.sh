@@ -52,7 +52,6 @@ Some projects already have portable versions and are not included in lobase.
 - sndio		http://www.sndio.org/
   - aucat
   - aucatctl
-- signify	https://github.com/chneukirchen/signify
 - smtpd		https://www.opensmtpd.org/
 - ssh		https://www.openssh.com/
 
