@@ -1,0 +1,240 @@
+.\"	$OpenBSD: tftp.1,v 1.20 2012/05/01 04:23:21 gsoares Exp $
+.\"	$NetBSD: tftp.1,v 1.5 1995/08/18 14:45:44 pk Exp $
+.\"
+.\" Copyright (c) 1990, 1993, 1994
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)tftp.1	8.2 (Berkeley) 4/18/94
+.\"
+.Dd $Mdocdate: May 1 2012 $
+.Dt TFTP 1
+.Os
+.Sh NAME
+.Nm tftp
+.Nd trivial file transfer program
+.Sh SYNOPSIS
+.Nm tftp
+.Op Ar host Oo Ar port Oc
+.Sh DESCRIPTION
+.Nm
+is the user interface to the Internet
+.Tn TFTP
+(Trivial File Transfer Protocol),
+which allows users to transfer files to and from a remote machine.
+The remote
+.Ar host
+and
+.Ar port
+may be specified on the command line, in which case
+.Nm
+uses them as the default for future transfers (see the
+.Ic connect
+command below).
+.Sh COMMANDS
+Once
+.Nm
+is running, it issues the prompt
+.Ql tftp\*(Gt
+and recognizes the following commands:
+.Pp
+.Bl -tag -width verbose -compact
+.It Ic \&? Ar command-name ...
+Print help information.
+.Pp
+.It Ic ascii
+Shorthand for
+.Ic mode Ar ascii .
+.Pp
+.It Ic binary
+Shorthand for
+.Ic mode Ar binary .
+.Pp
+.It Ic blksize Ar block-size
+Set the block size in bytes for one packet.
+The default value is 512 bytes.
+Valid values are 8 bytes \(en 65464 bytes.
+.Pp
+.It Ic connect Ar host Op Ar port
+Set the
+.Ar host
+(and optionally
+.Ar port )
+for transfers.
+Note that the
+.Tn TFTP
+protocol, unlike the
+.Tn FTP
+protocol,
+does not maintain connections between transfers; thus, the
+.Ic connect
+command does not actually create a connection,
+but merely remembers what host is to be used for transfers.
+You do not have to use the
+.Ic connect
+command; the remote host can be specified as part of the
+.Ic get
+or
+.Ic put
+commands.
+.Pp
+.It Xo
+.Ic get Oo Ar host : Oc Ns
+.Ar file Op Ar localname
+.Xc
+.It Xo
+.Ic get Oo Ar host1 : Oc Ns
+.Ar file1
+.Oo Ar host2 : Oc Ns
+.Ar file2 ...
+.Oo Ar hostN : Oc Ns
+.Ar fileN
+.Xc
+Get a file or set of files from the remote host.
+When using the
+.Ar host
+argument, the
+.Ar host
+will be used as the default host for future transfers.
+IPv6 addresses can be specified by enclosing
+.Ar host
+in square brackets.
+If
+.Ar localname
+is specified,
+the file is stored locally as
+.Ar localname ,
+otherwise the original filename is used.
+.Pp
+Note that it is not possible to download two files at the same time;
+only one, three, or more than three files
+can be downloaded at the same time.
+.Pp
+.It Ic mode Ar transfer-mode
+Set the mode for transfers;
+.Ar transfer-mode
+may be one of
+.Ar ascii
+or
+.Ar binary .
+The default is
+.Ar ascii .
+.Pp
+.It Xo
+.Ic put Ar file
+.Oo Oo Ar host : Oc Ns
+.Ar remotename Oc
+.Xc
+.It Xo
+.Ic put Ar file1 file2 ... fileN
+.Oo Oo Ar host : Oc Ns
+.Ar remote-directory Oc
+.Xc
+Put a file or set of files to the remote host.
+When using the
+.Ar host
+argument, the
+.Ar host
+will be used as the default host for future transfers.
+IPv6 addresses can be specified by enclosing
+.Ar host
+in square brackets.
+If
+.Ar remotename
+is specified, the file is stored remotely as
+.Ar remotename ,
+otherwise the original filename is used.
+If the
+.Ar remote-directory
+argument is used, the remote host is assumed to be a
+.Ux
+machine.
+.Pp
+Note that files may only be written to if they already exist on the
+remote host and are publicly writable.
+See
+.Xr tftpd 8
+for further details.
+.Pp
+.It Ic quit
+Exit
+.Nm .
+An end-of-file also exits.
+.Pp
+.It Ic rexmt Ar retransmission-timeout
+Set the per-packet retransmission timeout, in seconds.
+The default value is 5 seconds.
+Valid values are 1 second \(en 255 seconds.
+.Pp
+.It Ic status
+Show current status.
+.Pp
+.It Ic timeout Ar total-transmission-timeout
+Set the total transmission timeout, in seconds.
+The default value is 25 seconds.
+Valid values are 1 second \(en 255 seconds.
+.Pp
+.It Ic tout
+Toggle the
+.Ic tout
+option.
+This option delivers the retransmission timeout,
+which is set by
+.Ic rexmt ,
+to the server,
+so the server uses the same retransmission timeout as the client.
+.Pp
+.It Ic tsize
+Toggle the
+.Ic tsize
+option.
+This option delivers the total size of the file to be transferred.
+With this value given, the client or server can decide
+whether they are able to accept the file.
+.Pp
+.It Ic trace
+Toggle packet tracing.
+.Pp
+.It Ic verbose
+Toggle verbose mode.
+.El
+.Sh SEE ALSO
+.Xr ftp 1 ,
+.Xr tftp-proxy 8 ,
+.Xr tftpd 8
+.Sh HISTORY
+The
+.Nm
+command appeared in
+.Bx 4.3 .
+.Sh BUGS
+Because there is no user login or validation within
+the
+.Tn TFTP
+protocol, the remote site will probably have some
+sort of file access restrictions in place.
+The exact methods are specific to each site and therefore
+difficult to document here.
