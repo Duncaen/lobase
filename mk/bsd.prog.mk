@@ -20,6 +20,9 @@ endif
 
 LDFLAGS+=	-L$(dir $(LIBC)) $(LDADD) -lopenbsd
 
+CFLAGS+=	${COPTS}
+CXXFLAGS+=	${CXXOPTS}
+
 CFILES = $(filter %.c,$(SRCS))
 YFILES = $(filter %.y,$(SRCS))
 LFILES = $(filter %.l,$(SRCS))
@@ -44,6 +47,9 @@ y.tab.c y.tab.h: $(YFILES)
 
 $(YFILES:.y=.c): y.tab.c
 	@cp -f y.tab.c $@
+
+$(YFILES:.y=.h): y.tab.h
+	@cp -f y.tab.h $@
 
 %.c: %.l
 	@echo "$(LEX) -t $(LFLAGS) $(<F) > $(@F)"
@@ -73,9 +79,9 @@ ifdef CLEANFILES
 	rm -f $(CLEANFILES)
 endif
 
-install: proginstall install_links
+install: realinstall install_links
 
-proginstall:
+realinstall:
 ifneq (,$(PROG))
 	test -d "$(DESTDIR)$(BINDIR)" || \
 		$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
@@ -96,7 +102,7 @@ ifneq (,$(LINKS))
 
 endif
 
-.PHONY: all clean install proginstall
+.PHONY: all clean install realinstall
 
 ifndef NOMAN
 include ${.TOPDIR}/mk/bsd.man.mk
