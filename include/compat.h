@@ -44,6 +44,12 @@
 	 ((struct sockaddr*)(X))->sa_family == AF_INET6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr))
 #endif
 
+#ifndef SS_LEN
+#define SS_LEN(X) \
+	(((struct sockaddr_storage*)(X))->ss_family == AF_INET ? sizeof(struct sockaddr_in) : \
+	 ((struct sockaddr_storage*)(X))->ss_family == AF_INET6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr))
+#endif
+
 #define	_PW_BUF_LEN	1024
 #define	_GR_BUF_LEN	1024
 
@@ -176,4 +182,6 @@ void setproctitle(const char *, ...);
 struct passwd *pw_dup(const struct passwd *);
 
 int issetugid(void);
+
+#define	OPEN_MAX	64	/* max open files per process */
 #endif
