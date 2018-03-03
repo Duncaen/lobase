@@ -21,8 +21,9 @@ for x; do
 	else
 		mkdir -p "${x%%/*}"
 		cp -r "$tmp/src/$x" "$x"
-		sed -i 's|.\(include\) <\(.*\)>|\1 \2|' "$x/Makefile"
+		# sed -i 's|.\(include\) <\(.*\)>|\1 \2|' "$x/Makefile"
 		sed -i 's|.PATH:|VPATH+=|g' "$x/Makefile"
+		sed -i 's|.include <bsd.prog.mk>|include ${.TOPDIR}/mk/bsd.prog.mk|g' "$x/Makefile"
 	fi
 done
 
