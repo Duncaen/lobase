@@ -5,9 +5,9 @@
 PROG=	xinstall
 MAN=	install.1
 
-#realinstall:
-#	${INSTALL} ${INSTALL_COPY} -S ${INSTALL_STRIP} \
-#	    -o ${BINOWN} -g ${BINGRP} \
-#	    -m ${BINMODE} ${PROG} ${DESTDIR}${BINDIR}/install
-
 include ${.TOPDIR}/mk/bsd.prog.mk
+
+realinstall:
+	test -d "$(DESTDIR)$(BINDIR)" || \
+		$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
+	$(INSTALL) $(PROG) $(DESTDIR)$(BINDIR)/install
