@@ -1,3 +1,4 @@
+cat <<!
 lobase
 ======
 
@@ -82,155 +83,49 @@ lib
 
 liboutil	Parts of OpenBSDs libutil
 libopenbsd	Parts of OpenBSDs libc
+!
+
+mklist() {
+	(
+	cd $1
+	for f in */; do
+		printf '%s' "${f%*/}"
+		[ -f "$f/PORT_NOTES" ] && cat "$f/PORT_NOTES"|sed 's/^/	/' || printf '\n'
+	done
+	) | expand -t 16
+}
+
+cat <<!
 
 bin
 ---
 
-cat
-chmod           Some small differences because OpenBSD support permissions for symlinks
-cp
-date
-dd              No SIGINFO support, use SIGUSR1 instead
-df              No support for raw devices on linux
-domainname
-echo
-ed
-expr
-hostname
-kill
-ksh
-ln
-ls              No support for file flags (-o)
-md5
-mkdir
-mv
-pax
-pwd
-rm
-rmdir
-sleep
-stty
-sync
-test
+!
+
+mklist bin
+
+cat <<!
 
 sbin
 ----
-mknod
-nologin
+!
+
+mklist sbin
+
+cat <<!
 
 usr.bin
 -------
 
-apply
-awk
-banner
-basename
-bc
-biff
-cal
-calendar
-cap_mkdb
-cmp
-col
-colrm
-column
-comm
-compress
-csplit
-ctags
-cu
-cut
-dc
-deroff
-diff
-diff3
-dirname
-du
-encrypt
-env
-expand
-false
-file
-find
-fmt
-fold
-from
-ftp
-getconf
-getent
-getopt
-grep
-head
-hexdump
-htpasswd
-id              Does not support -R to show the current processes routing table
-indent
-join
-jot
-lam
-leave
-lndir
-logger
-logname
-look
-lorder
-mail
-mkdep
-mktemp
-newsyslog
-nice
-nl
-nohup
-paste
-patch
-pkg-config
-pr
-printenv
-printf
-readlink
-renice
-rev
-rs
-sdiff
-sed
-shar
-signify
-sort
-spell
-split
-stat            Does not support file flags, generations and birthtime on linux
-tee
-telnet
-tftp
-time
-touch
-tr
-true
-tsort
-tty
-ul
-uname
-unexpand
-unifdef
-uniq
-units
-unvis
-uudecode
-uuencode
-vacation
-vis
-wc
-what
-which
-whois
-xargs
-xinstall        Does not support file flags (-f)
-yes
+!
+
+mklist usr.bin
+
+cat <<!
 
 usr.sbin
 --------
 
-chroot
-dev_mkdb
-mtree           No file flags support
-rdate
+!
+
+mklist usr.sbin

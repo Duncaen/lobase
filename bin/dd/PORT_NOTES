@@ -1,0 +1,1 @@
+No SIGINFO support, use SIGUSR1 instead
