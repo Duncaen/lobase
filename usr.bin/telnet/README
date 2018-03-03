@@ -1,0 +1,59 @@
+	$OpenBSD: README,v 1.5 2014/07/19 23:50:38 guenther Exp $
+
+
+The following TELNET options are supported:
+	
+	LINEMODE:
+		The LINEMODE option is supported as per RFC1116.  The
+		FORWARDMASK option is not currently supported.
+
+	BINARY: The client has the ability to turn on/off the BINARY
+		option in each direction.  Turning on BINARY from
+		server to client causes the LITOUT bit to get set in
+		the terminal driver on both ends,  turning on BINARY
+		from the client to the server causes the PASS8 bit
+		to get set in the terminal driver on both ends.
+
+	TERMINAL-TYPE:
+		This is supported as per RFC1091.  On the server side,
+		when a terminal type is received, termcap/terminfo
+		is consulted to determine if it is a known terminal
+		type.  It keeps requesting terminal types until it
+		gets one that it recongnizes, or hits the end of the
+		list.  The server side looks up the entry in the
+		termcap/terminfo data base, and generates a list of
+		names which it then passes one at a time to each
+		request for a terminal type, duplicating the last
+		entry in the list before cycling back to the beginning.
+
+	NAWS:	The Negotiate about Window Size, as per RFC 1073.
+
+	TERMINAL-SPEED:
+		Implemented as per RFC 1079
+
+	TOGGLE-FLOW-CONTROL:
+		Implemented as per RFC 1080
+
+	TIMING-MARK:
+		As per RFC 860
+
+	SGA:	As per RFC 858
+
+	ECHO:	As per RFC 857
+
+	LOGOUT: As per RFC 727
+
+	STATUS:
+		The server will send its current status upon
+		request.  It does not ask for the clients status.
+		The client will request the servers current status
+		from the "send getstatus" command.
+
+	ENVIRON:
+		This option is currently being defined by the IETF
+		Telnet Working Group, and an RFC has not yet been
+		issued, but should be in the near future...
+
+	X-DISPLAY-LOCATION:
+		This functionality can be done through the ENVIRON
+		option, it is added here for completeness.
