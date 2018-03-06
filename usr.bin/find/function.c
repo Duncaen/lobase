@@ -59,6 +59,12 @@
 #include "find.h"
 #include "extern.h"
 
+/* XXX: random glibc headers undefining ARG_MAX... */
+#if !defined(ARG_MAX) && defined(__GLIBC__) && \
+    defined(_SC_ARG_MAX)
+# define ARG_MAX sysconf(_SC_ARG_MAX)
+#endif
+
 #define	COMPARE(a, b) {							\
 	switch (plan->flags) {						\
 	case F_EQUAL:							\
