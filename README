@@ -71,9 +71,6 @@ TODO
   - install headers
   - build shared libraries?
 
-- usr.bin/tail
-  - import, rewrite -F or add a shim for kqueue?
-
 - libtool?
 
 lib
@@ -104,6 +101,7 @@ md5
 mkdir
 mv
 pax
+ps
 pwd
 rm
 rmdir
@@ -198,10 +196,14 @@ sort
 spell
 split
 stat            Does not support file flags, generations and birthtime on linux
+tail            There are small differences in how -f handles file truncations,
+                kqueue provides events for file truncations, inotify just notifies
+                about a file modification.
 tee
 telnet
 tftp
 time
+top
 touch
 tr
 true
@@ -218,6 +220,7 @@ uudecode
 uuencode
 vacation
 vis
+w
 wc
 what
 which

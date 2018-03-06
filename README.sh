@@ -72,9 +72,6 @@ TODO
   - install headers
   - build shared libraries?
 
-- usr.bin/tail
-  - import, rewrite -F or add a shim for kqueue?
-
 - libtool?
 
 lib
