@@ -7,7 +7,8 @@ MAN=	lorder.1
 SCRIPT=	lorder.sh
 
 realinstall:
-	${INSTALL} ${INSTALL_COPY} -S -o ${BINOWN} -g ${BINGRP} -m ${BINMODE} \
-	    ${.CURDIR}/${SCRIPT} ${DESTDIR}${BINDIR}/lorder
+	test -d "$(DESTDIR)$(BINDIR)" || \
+		$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
+	$(INSTALL) ${.CURDIR}/${SCRIPT} $(DESTDIR)$(BINDIR)/lorder
 
 include ${.TOPDIR}/mk/bsd.prog.mk
