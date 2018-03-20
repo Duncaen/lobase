@@ -2,6 +2,7 @@
 *.o
 *.so
 *.so.*
+/obj
 config.mk
 /config.h
 config.log
