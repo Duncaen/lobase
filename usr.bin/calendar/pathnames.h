@@ -33,7 +33,11 @@
 
 #include <paths.h>
 
+#ifndef _PATH_CPP
 #define	_PATH_CPP	"/usr/libexec/tradcpp"
+#endif
 
+#ifndef _PATH_INCLUDE
 			/* XXX -- fix when cpp parses arguments rationally */
 #define	_PATH_INCLUDE	"-I/usr/share/calendar"
+#endif
