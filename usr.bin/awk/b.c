@@ -27,6 +27,7 @@ THIS SOFTWARE.
 
 #define	DEBUG
 
+#define _GNU_SOURCE /* for reallocarray */
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>

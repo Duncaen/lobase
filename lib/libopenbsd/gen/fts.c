@@ -29,6 +29,7 @@
  * SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE /* for reallocarray */
 #include <sys/param.h>	/* ALIGN */
 #include <sys/stat.h>
 

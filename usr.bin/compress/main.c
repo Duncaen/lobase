@@ -30,6 +30,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE /* for reallocarray */
 #include <sys/time.h>
 #include <sys/stat.h>
 

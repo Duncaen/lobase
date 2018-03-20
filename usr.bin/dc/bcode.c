@@ -16,6 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#define _GNU_SOURCE /* for reallocarray */
 #include <err.h>
 #include <limits.h>
 #include <signal.h>

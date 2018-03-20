@@ -33,6 +33,7 @@
  * SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE /* for reallocarray */
 #include <ctype.h>
 #include <err.h>
 #include <string.h>
