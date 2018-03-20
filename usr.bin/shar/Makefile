@@ -4,8 +4,9 @@
 
 MAN=	shar.1
 
-#beforeinstall:
-#	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${BINMODE} \
-#	    ${.CURDIR}/shar.sh ${DESTDIR}/usr/bin/shar
+beforeinstall:
+	${INSTALL} -d -m 755 ${DESTDIR}${BINDIR}
+	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${BINMODE} \
+	    ${.CURDIR}/shar.sh ${DESTDIR}${BINDIR}/shar
 
 include ${.TOPDIR}/mk/bsd.prog.mk
