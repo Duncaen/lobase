@@ -3,7 +3,8 @@
 MAN=	mkdep.1
 
 beforeinstall:
+	${INSTALL} -d -m 755 ${DESTDIR}${BINDIR}
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${BINMODE} \
-	    ${.CURDIR}/mkdep.gcc.sh ${DESTDIR}/usr/bin/mkdep
+	    ${.CURDIR}/mkdep.gcc.sh ${DESTDIR}${BINDIR}/mkdep
 
 include ${.TOPDIR}/mk/bsd.prog.mk
