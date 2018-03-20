@@ -4,6 +4,19 @@ lobase
 
 lobase is a port of the OpenBSD userland to Linux.
 
+Caution
+-------
+
+There are subtle differences in GNU coreutils and the OpenBSD userland,
+replacing coreutils on Linux system without caution will result in
+issues with varying impact.
+
+If you build your own linux system from the ground up and you know that
+your scripts are all portable you can use lobase as main coreutils.
+
+Otherwise I suggest to use a prefixed installation and adding lobase to
+your users shell \`PATH\`.
+
 Installation
 ------------
 
