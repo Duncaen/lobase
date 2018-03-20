@@ -25,7 +25,9 @@
 #include <unistd.h>
 #include <err.h>
 
+#ifndef UNITSFILE
 #define UNITSFILE "/usr/share/misc/units.lib"
+#endif
 
 #define VERSION "1.0"
 
