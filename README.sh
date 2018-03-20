@@ -18,6 +18,28 @@ To speed up the compilation use multiple make jobs:
 	$ make -j"\$MAKE_JOBS"
 	# make -j"\$MAKE_JOBS" install
 
+
+Prefix Installation
+-------------------
+
+You can install lobase into its own prefix and then use the \`PATH\`
+environment variable to prefer lobases binaries over the default
+coreutils for your users shell.
+
+	$ ./configure --prefix=/usr/local/lobase
+
+Build and install lobase and then add lobases bin and sbin directories
+to your path.
+To make this permanent, set \`PATH\` in your shell profile.
+
+	$ PATH=/usr/local/lobase/bin:/usr/local/lobase/sbin:\$PATH
+
+Simple test to verify that lobase is used:
+
+	$ which which
+	/usr/local/lobase/bin/which
+
+
 Dependencies
 ------------
 
