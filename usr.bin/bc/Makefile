@@ -5,6 +5,8 @@
 PROG=		bc
 SRCS=		bc.y scan.l tty.c dc.c bcode.c inout.c mem.c stack.c
 CPPFLAGS+=	-I. -I${.CURDIR}
+CPPFLAGS+=	-D'_PATH_LIBB="${SHAREDIR}/midc/bc.library"'
+CPPFLAGS+=	-D'_PATH_DC="${bindir}/dc"'
 CFLAGS+=	-Wall -Wno-unused
 YFLAGS+=
 LDADD+=		-ledit -lcurses -lcrypto
@@ -19,8 +21,9 @@ bc.c bc.h: bc.y
 scan.o: bc.h
 
 beforeinstall:
-	install -c -o ${BINOWN} -g ${BINGRP} -m 444 ${.CURDIR}/bc.library \
-	    ${DESTDIR}/usr/share/misc
+	${INSTALL} -d -m 755 ${DESTDIR}${SHAREDIR}/misc
+	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m 444 \
+		${.CURDIR}/bc.library ${DESTDIR}${SHAREDIR}/misc
 
 # XXX: replace with make depends
 scan.o : y.tab.h
