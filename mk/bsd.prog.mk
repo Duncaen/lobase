@@ -79,7 +79,11 @@ ifdef CLEANFILES
 	rm -f $(CLEANFILES)
 endif
 
-install: realinstall install_links
+install: beforeinstall realinstall install_links afterinstall
+
+beforeinstall:
+
+afterinstall:
 
 realinstall:
 ifneq (,$(PROG))

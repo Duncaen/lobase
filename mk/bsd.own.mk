@@ -42,3 +42,8 @@ LIBDIR?=	${libdir}
 LIBOWN?=	$(BINOWN)
 LIBGRP?=	$(BINGRP)
 LIBMODE?=	${NONBINMODE}
+
+INSTALL_COPY?=	-c
+ifndef DEBUG
+INSTALL_STRIP?=	-s
+endif
