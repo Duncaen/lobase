@@ -32,4 +32,6 @@
  *	@(#)pathnames.h	8.1 (Berkeley) 6/9/93
  */
 
+#ifndef _PATH_WORDS
 #define	_PATH_WORDS	"/usr/share/dict/words"
+#endif

@@ -3,5 +3,6 @@
 .TOPDIR?=../..
 
 PROG=	look
+CPPFLAGS+=	-D'_PATH_WORDS="${SHAREDIR}/dict/words"'
 
 include ${.TOPDIR}/mk/bsd.prog.mk
