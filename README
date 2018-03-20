@@ -11,6 +11,12 @@ Installation
 	$ make
 	# make install
 
+To speed up the compilation use multiple make jobs:
+
+	$ MAKE_JOBS=       4
+	$ make -j""
+	# make -j"" install
+
 Dependencies
 ------------
 
@@ -101,7 +107,6 @@ md5
 mkdir
 mv
 pax
-ps
 pwd
 rm
 rmdir
@@ -203,7 +208,6 @@ tee
 telnet
 tftp
 time
-top
 touch
 tr
 true
@@ -220,7 +224,6 @@ uudecode
 uuencode
 vacation
 vis
-w
 wc
 what
 which

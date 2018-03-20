@@ -12,6 +12,12 @@ Installation
 	$ make
 	# make install
 
+To speed up the compilation use multiple make jobs:
+
+	$ MAKE_JOBS=$(cat /proc/cpuinfo|grep processor|wc -l)
+	$ make -j"$MAKE_JOBS"
+	# make -j"$MAKE_JOBS" install
+
 Dependencies
 ------------
 
