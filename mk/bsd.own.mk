@@ -28,17 +28,17 @@ BINMODE?=	555
 NONBINMODE?=	444
 DIRMODE?=	755
 
-SHAREDIR?=	/usr/share
+SHAREDIR?=	${datarootdir}
 SHAREGRP?=	root
 SHAREOWN?=	root
 SHAREMODE?=	${NONBINMODE}
 
-MANDIR?=	/usr/share/man/man
+MANDIR?=	${mandir}/man
 MANGRP?=	root
 MANOWN?=	root
 MANMODE?=	${NONBINMODE}
 
-LIBDIR?=	/usr/lib
+LIBDIR?=	${libdir}
 LIBOWN?=	$(BINOWN)
 LIBGRP?=	$(BINGRP)
 LIBMODE?=	${NONBINMODE}

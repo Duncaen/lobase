@@ -1,4 +1,4 @@
--include ../Makefile.inc
+-include ${.CURDIR}/../Makefile.inc
 include ${.TOPDIR}/mk/bsd.own.mk
 
 CPPFLAGS+=	-I${.TOPDIR}/include -include compat.h
@@ -83,8 +83,8 @@ install: realinstall install_links
 
 realinstall:
 ifneq (,$(PROG))
-	test -d "$(DESTDIR)$(BINDIR)" || \
-		$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
+	test -d "$(DESTDIR)${BINDIR}" || \
+		$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)/
 	$(INSTALL) $(PROG) $(DESTDIR)$(BINDIR)/$(PROG_NAME)
 endif
 

@@ -1,1 +1,1 @@
-BINDIR?=>       /sbin
+BINDIR?=	${sbindir}

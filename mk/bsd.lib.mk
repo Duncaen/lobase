@@ -60,7 +60,7 @@ beforeinstall:
 
 realinstall:
 	test -d "$(DESTDIR)$(LIBDIR)" || \
-		$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)
+		$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)/
 	$(INSTALL) -m 600 $(STATICLIB) \
 		$(DESTDIR)$(LIBDIR)
 

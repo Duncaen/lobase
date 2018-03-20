@@ -1,1 +1,1 @@
-BINDIR?=>       /usr/bin
+BINDIR?=	${bindir}
