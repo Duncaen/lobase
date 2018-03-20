@@ -4,10 +4,19 @@
 
 PROG=	diff3prog
 MAN=	diff3.1
-BINDIR=	/usr/libexec
+BINDIR=	${libexecdir}
+
+all: diff3
+
+diff3: diff3.ksh
+	sed \
+		-e "s;/bin/ksh;${bindir}/ksh;g" \
+		-e "s;/usr/libexec;${libexecdir};g" \
+		$< >$@
 
 beforeinstall:
-	install ${INSTALL_COPY}c -o ${BINOWN} -g ${BINGRP} -m ${BINMODE} \
-	    ${.CURDIR}/diff3.ksh ${DESTDIR}/usr/bin/diff3
+	test -d "$(DESTDIR)$(bindir)" || \
+		$(INSTALL) -d -m 755 $(DESTDIR)$(bindir)/
+	$(INSTALL) diff3 $(DESTDIR)$(bindir)/diff3
 
 include ${.TOPDIR}/mk/bsd.prog.mk
