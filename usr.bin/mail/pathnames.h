@@ -43,7 +43,11 @@
 
 /* directories & files */
 #define _PATH_MAILDIR	"/var/mail"
+#ifndef _PATH_HELP
 #define _PATH_HELP	"/usr/share/misc/mail.help"
+#endif
+#ifndef _PATH_TILDE
 #define _PATH_TILDE	"/usr/share/misc/mail.tildehelp"
+#endif
 #define _PATH_MASTER_RC	"/etc/mail.rc"
 #define _PATH_LOCTMP	"/tmp/local.XXXXXXXXXX"
