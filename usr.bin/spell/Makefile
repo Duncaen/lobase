@@ -5,20 +5,30 @@
 PROG=	spellprog
 MAN=	spell.1
 SRCS=	spellprog.c look.c
-BINDIR=	/usr/libexec
+BINDIR=	${libexec}
+
+all: spell
+
+spell: spell.ksh
+	sed \
+		-e "s;/bin/ksh;${bindir}/ksh;g" \
+		-e "s;/usr/libexec;${libexecdir};g" \
+		-e "s;/usr/share;${datadir};g" \
+		$< >$@
 
 afterinstall:
+	${INSTALL} -d ${DESTDIR}${datadir}/dict/special
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${BINMODE} \
-		${.CURDIR}/spell.ksh ${DESTDIR}/usr/bin/spell
+		spell ${DESTDIR}${bindir}/spell
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${NONBINMODE} \
-		${.CURDIR}/stop ${DESTDIR}/usr/share/dict
+		${.CURDIR}/stop ${DESTDIR}${datadir}/dict
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${NONBINMODE} \
-		${.CURDIR}/american ${DESTDIR}/usr/share/dict
+		${.CURDIR}/american ${DESTDIR}${datadir}/dict
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${NONBINMODE} \
-		${.CURDIR}/british ${DESTDIR}/usr/share/dict
+		${.CURDIR}/british ${DESTDIR}${datadir}/dict
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${NONBINMODE} \
-		${.CURDIR}/special.4bsd  ${DESTDIR}/usr/share/dict/special/4bsd
+		${.CURDIR}/special.4bsd  ${DESTDIR}${datadir}/dict/special/4bsd
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${NONBINMODE} \
-		${.CURDIR}/special.math ${DESTDIR}/usr/share/dict/special/math
+		${.CURDIR}/special.math ${DESTDIR}${datadir}/dict/special/math
 
 include ${.TOPDIR}/mk/bsd.prog.mk
