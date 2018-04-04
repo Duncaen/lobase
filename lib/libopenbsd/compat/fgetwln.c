@@ -24,7 +24,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE /* for reallocarry */
 #include <stdlib.h>
 #include <stdio.h>
 #include <wchar.h>

@@ -30,8 +30,6 @@
  * SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE
-
 #include <sys/types.h>
 
 #include <err.h>

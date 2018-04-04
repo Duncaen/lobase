@@ -71,7 +71,6 @@
  *
  */
 
-#define _GNU_SOURCE
 
 #define CONF "/etc/newsyslog.conf"
 #define PIDFILE "/var/run/syslog.pid"

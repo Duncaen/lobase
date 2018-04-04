@@ -24,8 +24,6 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE /* for memrchr */
-
 #include <sys/param.h>	/* MAXBSIZE */
 #include <sys/stat.h>
 

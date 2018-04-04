@@ -29,7 +29,6 @@
  * SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE /* for asprintf */
 
 #include <sys/types.h>
 #include <sys/socket.h>

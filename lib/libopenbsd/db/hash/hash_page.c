@@ -48,8 +48,6 @@
  *	open_temp
  */
 
-#define _GNU_SOURCE /* for mkostemp */
-
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>

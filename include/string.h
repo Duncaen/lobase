@@ -48,6 +48,9 @@ void	 strmode(int, char *);
 int	timingsafe_bcmp(const void *, const void *, size_t);
 int	timingsafe_memcmp(const void *, const void *, size_t);
 
+char *strcasestr(const char *, const char *);
+void *memrchr(const void *, int, size_t);
+
 #endif /* _COMPAT_STRING_H_ */
 
 #include_next <string.h>

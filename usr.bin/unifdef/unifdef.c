@@ -42,7 +42,6 @@
  *   These require better buffer handling, which would also make
  *   it possible to handle all "dodgy" directives correctly.
  */
-#define _GNU_SOURCE /* for asprintf */
 
 #include <sys/stat.h>
 

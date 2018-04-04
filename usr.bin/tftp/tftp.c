@@ -36,7 +36,6 @@
  * This version includes many modifications by Jim Guyton <guyton@rand-unix>
  */
 
-#define _GNU_SOURCE /* for asprintf */
 
 #include <sys/types.h>
 #include <sys/socket.h>

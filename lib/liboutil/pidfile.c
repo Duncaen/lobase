@@ -30,8 +30,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE
-
 #include <sys/types.h>
 #include <errno.h>
 #include <paths.h>

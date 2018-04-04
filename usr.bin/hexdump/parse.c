@@ -30,10 +30,6 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif /* _GNU_SOURCE */
-
 #include <sys/types.h>
 #include <sys/file.h>
 

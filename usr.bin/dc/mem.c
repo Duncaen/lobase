@@ -16,7 +16,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define _GNU_SOURCE /* for reallocarray */
 #include <openssl/err.h>
 
 #include <err.h>

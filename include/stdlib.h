@@ -57,9 +57,7 @@ void arc4random_buf(void *, size_t)
 	__attribute__((__bounded__ (__string__,1,2)));
 char *devname(dev_t, mode_t);
 void freezero(void *, size_t);
-#ifndef HAVE_REALLOCARRAY
 void *reallocarray(void *, size_t, size_t);
-#endif
 void *recallocarray(void *, size_t, size_t, size_t);
 int heapsort(void *, size_t, size_t, int (*)(const void *, const void *));
 int mergesort(void *, size_t, size_t, int (*)(const void *, const void *));
@@ -78,6 +76,8 @@ char *setstate(char *);
 
 /* void srand_deterministic(unsigned int); */
 #define	srand_deterministic(x)	srand((x))
+
+int mkostemp(char *, int);
 
 #endif /* _COMPAT_STDLIB_H_ */
 

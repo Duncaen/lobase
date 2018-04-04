@@ -16,7 +16,6 @@
  * David MacKenzie <djm@ai.mit.edu>. Some algorithms adapted from GNU Emacs.
  */
 
-#define _GNU_SOURCE
 
 #include <ctype.h>
 #include <dirent.h>

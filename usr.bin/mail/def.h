@@ -42,7 +42,6 @@
 #ifndef MAIL_DEF_H
 #define MAIL_DEF_H
 
-#define _GNU_SOURCE /* for strcasestr */
 
 #include <sys/stat.h>
 

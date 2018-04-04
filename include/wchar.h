@@ -7,4 +7,6 @@
 
 wchar_t *fgetwln(FILE *__restrict, size_t *__restrict);
 
+int wcwidth(wchar_t);
+
 #endif /* !_COMPAT_WCHAR_H_ */

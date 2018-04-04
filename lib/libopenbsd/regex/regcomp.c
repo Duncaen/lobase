@@ -34,7 +34,6 @@
  *	@(#)regcomp.c	8.5 (Berkeley) 3/20/94
  */
 
-#define _GNU_SOURCE /* for reallocarray */
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>

@@ -59,7 +59,6 @@
  * SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE	/* for asprintf */
 
 #ifndef SMALL
 

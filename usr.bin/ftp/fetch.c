@@ -34,7 +34,6 @@
  * FTP User Program -- Command line file retrieval
  */
 
-#define _GNU_SOURCE	/* for asprintf, vasprintf */
 
 #include <sys/types.h>
 #include <sys/socket.h>

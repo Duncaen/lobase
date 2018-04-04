@@ -4,7 +4,6 @@
  * Written by Raymond Lai <ray@cyth.net>.
  * Public domain.
  */
-#define _GNU_SOURCE /* for asprintf */
 
 #include <sys/queue.h>
 #include <sys/stat.h>

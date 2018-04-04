@@ -28,7 +28,6 @@
  * SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE /* for reallocarray */
 #include <regex.h>
 #include <signal.h>
 #include <stdio.h>

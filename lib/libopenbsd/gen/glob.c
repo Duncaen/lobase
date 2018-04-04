@@ -56,7 +56,6 @@
  *	Number of matches in the current invocation of glob.
  */
 
-#define _GNU_SOURCE /* for reallocarray */
 #include <sys/stat.h>
 
 #include <ctype.h>

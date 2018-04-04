@@ -7,4 +7,7 @@
 
 char	*fgetln(FILE *, size_t *);
 
+int asprintf(char **, const char *, ...);
+int vasprintf(char **, const char *, va_list);
+
 #endif /* _COMPAT STDIO_H_ */

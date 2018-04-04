@@ -16,7 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define _GNU_SOURCE
+#define _GNU_SOURCE /* for iov */
 
 #include <sys/types.h>
 #include <sys/queue.h>

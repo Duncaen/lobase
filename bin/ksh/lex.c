@@ -4,7 +4,6 @@
  * lexical analysis and source input
  */
 
-#define _GNU_SOURCE
 
 #include <sys/time.h>
 

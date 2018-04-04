@@ -24,7 +24,6 @@ THIS SOFTWARE.
 ****************************************************************/
 
 #define DEBUG
-#define _GNU_SOURCE /* for reallocarray */
 #include <stdio.h>
 #include <ctype.h>
 #include <setjmp.h>

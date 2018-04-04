@@ -29,7 +29,6 @@
  * SUCH DAMAGE.
  */
 
-#define _GNU_SOURCE /* for reallocarray */
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 

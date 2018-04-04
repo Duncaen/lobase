@@ -41,7 +41,6 @@
  */
 
 #define __NEED_OPENBSD_open
-#define _GNU_SOURCE /* for mkostemp */
 
 #include <sys/stat.h>
 
