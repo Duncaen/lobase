@@ -8,6 +8,14 @@ CPPFLAGS+=	-I${.TOPDIR}/include -include compat.h \
 
 LDFLAGS += $(LDADD)
 
+ifeq ($(WARNINGS),yes)
+CFLAGS+=	${CDIAGFLAGS}
+CXXFLAGS+=	${CXXDIAGFLAGS}
+endif
+
+CFLAGS+=	${COPTS}
+CXXFLAGS+=	${CXXOPTS}
+
 CFILES = $(filter %.c,$(SRCS))
 YFILES = $(filter %.y,$(SRCS))
 LFILES = $(filter %.l,$(SRCS))

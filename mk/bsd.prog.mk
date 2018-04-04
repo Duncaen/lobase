@@ -20,6 +20,11 @@ endif
 
 LDFLAGS+=	-L$(dir $(LIBC)) $(LDADD) -lopenbsd
 
+ifeq ($(WARNINGS),yes)
+CFLAGS+=	${CDIAGFLAGS}
+CXXFLAGS+=	${CXXDIAGFLAGS}
+endif
+
 CFLAGS+=	${COPTS}
 CXXFLAGS+=	${CXXOPTS}
 

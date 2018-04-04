@@ -43,6 +43,12 @@ LIBOWN?=	$(BINOWN)
 LIBGRP?=	$(BINGRP)
 LIBMODE?=	${NONBINMODE}
 
+ifndef CDIAGFLAGS
+CDIAGFLAGS=	-Wall -Wpointer-arith -Wuninitialized -Wstrict-prototypes
+CDIAGFLAGS+=	-Wmissing-prototypes -Wunused -Wsign-compare
+CDIAGFLAGS+=	-Wshadow
+endif
+
 INSTALL_COPY?=	-c
 ifndef DEBUG
 INSTALL_STRIP?=	-s
