@@ -10,7 +10,7 @@ AC_PROG_INSTALL
 AC_PROG_YACC
 AC_PROG_LEX
 
-if test "x$LEX" == "x" || test "x$LEX" == "x:"; then
+if test "x$LEX" = "x" || test "x$LEX" = "x:"; then
 	AC_MSG_ERROR([lex is required, but was not found])
 fi
 

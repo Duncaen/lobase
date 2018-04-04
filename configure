@@ -3423,7 +3423,7 @@ rm -f conftest.l $LEX_OUTPUT_ROOT.c
 
 fi
 
-if test "x$LEX" == "x" || test "x$LEX" == "x:"; then
+if test "x$LEX" = "x" || test "x$LEX" = "x:"; then
 	as_fn_error $? "lex is required, but was not found" "$LINENO" 5
 fi
 
