@@ -1,4 +1,4 @@
-#	$OpenBSD: Makefile.inc,v 1.29 2016/03/30 06:38:41 jmc Exp $
+#	$OpenBSD: Makefile.inc,v 1.78 2018/01/12 04:36:12 deraadt Exp $
 
 # stdio sources
 VPATH+=	${LIBCSRCDIR}/gen

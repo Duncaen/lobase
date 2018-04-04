@@ -22,3 +22,12 @@ endif
 ifneq ($(HAVE_GETFSSTAT),1)
 SRCS+=	getfsstat.c statfs.c
 endif
+
+ifneq ($(HAVE_GETENTROPY),1)
+SRCS+=	getentropy_linux.c
+endif
+
+ifneq ($(HAVE_ISSETUGID),1)
+SRCS+=	issetugid.c
+endif
+

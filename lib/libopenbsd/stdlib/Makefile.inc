@@ -1,4 +1,4 @@
-#	$OpenBSD: Makefile.inc,v 1.61 2016/08/14 23:18:03 guenther Exp $
+#	$OpenBSD: Makefile.inc,v 1.64 2017/12/16 20:06:55 guenther Exp $
 
 # stdlib sources
 VPATH+=	${LIBCSRCDIR}/stdlib
