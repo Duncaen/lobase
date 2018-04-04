@@ -1,0 +1,162 @@
+.\"	$OpenBSD: co.1,v 1.29 2010/09/03 11:09:29 jmc Exp $
+.\"
+.\" Copyright (c) 2005 Xavier Santolaria <xsa@openbsd.org>
+.\" All rights reserved.
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.Dd $Mdocdate: September 3 2010 $
+.Dt CO 1
+.Os
+.Sh NAME
+.Nm co
+.Nd check out RCS revisions
+.Sh SYNOPSIS
+.Nm
+.Bk -words
+.Op Fl TV
+.Op Fl d Ns Ar date
+.Op Fl f Ns Op Ar rev
+.Op Fl I Ns Op Ar rev
+.Op Fl k Ns Ar mode
+.Op Fl l Ns Op Ar rev
+.Op Fl M Ns Op Ar rev
+.Op Fl p Ns Op Ar rev
+.Op Fl q Ns Op Ar rev
+.Op Fl r Ns Op Ar rev
+.Op Fl s Ns Ar state
+.Op Fl u Ns Op Ar rev
+.Op Fl w Ns Op Ar user
+.Op Fl x Ns Ar suffixes
+.Op Fl z Ns Ar tz
+.Ar
+.Ek
+.Sh DESCRIPTION
+The
+.Nm
+program is used to check out revisions from RCS files.
+.Pp
+When a file is checked out,
+a copy is taken from the RCS repository,
+minus its RCS information,
+and placed in the current working directory.
+Files may be checked out as the most recent revision
+or according to a specific revision,
+using the
+.Fl r
+option.
+.Pp
+Files are checked out in one of two possible modes:
+unlocked (the default) or locked (using the
+.Fl l
+option).
+In unlocked mode, any user may check out the file for reading.
+If changes are to be made to a file though,
+it will have to be locked using the
+.Fl l
+option.
+During this time,
+no other users may check out the file whilst it is locked.
+.Pp
+.Nm
+also supports
+keyword substitution \(en
+see the
+.Xr rcs 1
+man page for more information.
+.Pp
+The following options are supported:
+.Bl -tag -width Ds
+.It Fl d Ns Ar date
+Retrieve revision as of the latest revision no later than
+.Ar date .
+.It Fl f Ns Op Ar rev
+Force the overwriting of the working file.
+.It Fl I Ns Op Ar rev
+Interactive mode.
+.It Fl k Ns Ar mode
+Specify the keyword substitution mode.
+.It Fl l Ns Op Ar rev
+The same as
+.Fl r ,
+but also locks the revision.
+.It Fl M Ns Op Ar rev
+Set the modification time of the file to the date of the
+retrieved revision.
+.It Fl p Ns Op Ar rev
+Print the latest revision no later than
+.Ar rev
+to standard output.
+.It Fl q Ns Op Ar rev
+Be quiet about reporting.
+.It Fl r Ns Op Ar rev
+Retrieve the latest revision no later than
+.Ar rev .
+.It Fl s Ns Ar state
+Retrieve revision of the specified
+.Ar state
+only.
+.It Fl T
+Preserve the modification time of RCS files.
+.It Fl u Ns Op Ar rev
+The same as
+.Fl r ,
+but also unlocks the retrieved revision if it was locked.
+.It Fl V
+Print RCS's version number.
+.It Fl w Ns Op Ar user
+Retrieve the latest revision which was checked in by the specified
+.Ar user .
+If the
+.Ar user
+argument is omitted, the login of the user issuing the command
+is assumed.
+.It Fl x Ns Ar suffixes
+Specifies the suffixes for RCS files.
+Suffixes should be separated by the
+.Sq /
+character.
+.It Fl z Ns Ar tz
+Specify the date output format in keyword substitution, and the
+default time zone for
+.Ar date
+used in the
+.Fl d
+option.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width RCSINIT
+.It Ev RCSINIT
+If set, this variable should contain a list of space-delimited options that
+are prepended to the argument list.
+.El
+.Sh EXIT STATUS
+.Ex -std co
+.Sh EXAMPLES
+Retrieve the latest revision of file
+.Pa foo.c
+and lock it for further editing:
+.Pp
+.Dl $ co -l foo.c
+.Pp
+Retrieve revision 1.5 of file
+.Pa foo.c :
+.Pp
+.Dl $ co -r1.5 foo.c
+.Sh SEE ALSO
+.Xr ci 1 ,
+.Xr ident 1 ,
+.Xr rcs 1 ,
+.Xr rcsclean 1 ,
+.Xr rcsdiff 1 ,
+.Xr rcsmerge 1 ,
+.Xr rlog 1

@@ -1,0 +1,147 @@
+.\"	$OpenBSD: rcsdiff.1,v 1.30 2010/09/03 11:09:29 jmc Exp $
+.\"
+.\" Copyright (c) 2005 Joris Vink <joris@openbsd.org>
+.\" All rights reserved.
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.Dd $Mdocdate: September 3 2010 $
+.Dt RCSDIFF 1
+.Os
+.Sh NAME
+.Nm rcsdiff
+.Nd compare RCS revisions
+.Sh SYNOPSIS
+.Nm
+.Op Fl cnquV
+.Op Fl k Ns Ar mode
+.Op Fl r Ns Ar rev
+.Op Fl x Ns Ar suffixes
+.Op Fl z Ns Ar tz
+.Op Ar diff_options
+.Ar
+.Sh DESCRIPTION
+The
+.Nm
+program is used to compare revisions of RCS files,
+in much the same way as the
+.Xr diff 1
+utility.
+Differences between two specific revisions can be requested,
+as well as differences between the current working file and
+the latest revision of the default branch.
+.Pp
+It is not possible to display differences between entire directories,
+or differences between more than two files.
+All diffs produced are in the standard diff format,
+unless the
+.Fl u
+option is specified,
+which produces unified diffs.
+.Pp
+.Nm
+also supports
+keyword substitution \(en
+see the
+.Xr rcs 1
+man page for more information.
+.Pp
+The following options are supported:
+.Bl -tag -width Ds
+.It Fl c
+Produces a diff with three lines of context.
+See
+.Xr diff 1
+for more information.
+.It Fl k Ns Ar mode
+Specify the keyword substitution mode.
+.It Fl n
+Produces a diff in the same format that is used in the RCS files.
+.It Fl q
+Be quiet about reporting.
+.It Fl r Ns Ar rev
+Produces a diff with respect to revision
+.Ar rev .
+This option should be specified twice to generate a diff
+between two specific revisions.
+If only one revision is specified,
+diffing is done between that revision and
+the current working file.
+.It Fl u
+Produces a unified diff with three lines of context.
+See
+.Xr diff 1
+for more information.
+.It Fl V
+Print RCS's version number.
+.It Fl x Ns Ar suffixes
+Specifies the suffixes for RCS files.
+Suffixes should be separated by the
+.Sq /
+character.
+.It Fl z Ns Ar tz
+Specify the date output format.
+.It Ar diff_options
+Most of the options documented in
+.Xr diff 1
+may also be specified.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width RCSINIT
+.It Ev RCSINIT
+If set, this variable should contain a list of space-delimited options that
+are prepended to the argument list.
+.It Ev TMPDIR
+When set, this variable specifies the directory where temporary files
+are to be created.
+The default is set to
+.Pa /tmp .
+.El
+.Sh EXIT STATUS
+The
+.Nm
+utility exits with one of the following values:
+.Pp
+.Bl -tag -width Ds -offset indent -compact
+.It 0
+No differences were found.
+.It 1
+Differences were found.
+.It 2
+An error occurred.
+.El
+.Sh EXAMPLES
+Compare the latest revision of the default branch with the content of
+working file
+.Pa foo.c :
+.Pp
+.Dl $ rcsdiff foo.c
+.Pp
+Compare revision 1.7 and 1.8 of file
+.Pa foo.c
+and ignore differences in keyword values:
+.Pp
+.Dl $ rcsdiff -kk -r1.7 -r1.8 foo.c
+.Sh SEE ALSO
+.Xr ci 1 ,
+.Xr co 1 ,
+.Xr diff 1 ,
+.Xr ident 1 ,
+.Xr rcs 1 ,
+.Xr rcsclean 1 ,
+.Xr rcsmerge 1 ,
+.Xr rlog 1
+.Sh STANDARDS
+The flag
+.Op Fl T
+has no effect and is provided
+for compatibility only.

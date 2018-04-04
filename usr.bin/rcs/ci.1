@@ -1,0 +1,202 @@
+.\"	$OpenBSD: ci.1,v 1.38 2013/08/12 14:19:53 jmc Exp $
+.\"
+.\" Copyright (c) 2005 Niall O'Higgins <niallo@openbsd.org>
+.\" All rights reserved.
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.Dd $Mdocdate: August 12 2013 $
+.Dt CI 1
+.Os
+.Sh NAME
+.Nm ci
+.Nd check in RCS revisions
+.Sh SYNOPSIS
+.Nm
+.Bk -words
+.Op Fl qV
+.Op Fl d Ns Op Ar date
+.Op Fl f Ns Op Ar rev
+.Op Fl I Ns Op Ar rev
+.Op Fl i Ns Op Ar rev
+.Op Fl j Ns Op Ar rev
+.Op Fl k Ns Op Ar rev
+.Op Fl l Ns Op Ar rev
+.Op Fl M Ns Op Ar rev
+.Op Fl m Ns Ar msg
+.Op Fl N Ns Ar symbol
+.Op Fl n Ns Ar symbol
+.Op Fl r Ns Op Ar rev
+.Op Fl s Ns Ar state
+.Op Fl t Ns Op Ar str
+.Op Fl u Ns Op Ar rev
+.Op Fl w Ns Ar username
+.Op Fl x Ns Ar suffixes
+.Op Fl z Ns Ar tz
+.Ar
+.Ek
+.Sh DESCRIPTION
+The
+.Nm
+program is used to check in new revisions to RCS files.
+.Pp
+When a file is checked in,
+it is stored in the RCS directory with a specific revision number,
+and the original file itself is deleted.
+The RCS file is stored with the same name, but with
+.Sq ,v
+appended.
+.Nm
+will prompt for a check-in message,
+to be stored with the file,
+which can be displayed using
+.Xr rlog 1 .
+.Pp
+Revision numbering starts at 1.1
+and increases logically.
+Numbering can be altered using the
+.Fl k
+option, however.
+The
+.Sq ,v
+suffix can also be altered,
+using the
+.Fl x
+option.
+.Pp
+.Nm
+also supports
+keyword substitution \(en
+see the
+.Xr rcs 1
+man page for more information.
+.Pp
+The following options are supported:
+.Bl -tag -width Ds
+.It Fl d Ns Op Ar date
+Uses
+.Ar date
+for check-in date and time.
+If
+.Ar date
+is not specified, use the working file's last modification time.
+.It Fl f Ns Op Ar rev
+Force check-in
+\(en even if no changes have been made to the working file.
+.It Fl I Ns Op Ar rev
+Interactive mode.
+.It Fl i Ns Op Ar rev
+Only do initial check-in.
+Print error and refuse to do check-in if the RCS file already exists.
+.It Fl j Ns Op Ar rev
+Only do update check-in.
+Print error and refuse to do check-in if the RCS file does not already exist.
+.It Fl k Ns Op Ar rev
+Search the working file for keywords and set the revision number,
+creation date, state and author to the values found in these keywords
+instead of computing them.
+.It Fl l Ns Op Ar rev
+The same as
+.Fl r ,
+but also immediately checks out the deposited revision and locks it.
+This is useful if you wish to continue to edit the working file after check-in.
+.It Fl M Ns Op Ar rev
+Set the modification time of the file to the date of the
+retrieved revision.
+.It Fl m Ns Ar msg
+Specify a log message.
+A line beginning with a hash character
+.Pq Sq #
+is considered a comment and ignored.
+.It Fl N Ns Ar symbol
+Assign the symbolic name
+.Ar symbol
+to the checked in revision, overwriting any previous assignment of
+.Ar symbol .
+.It Fl n Ns Ar symbol
+The same as
+.Fl N
+except it does not overwrite previous symbols.
+.It Fl q
+Be quiet about reporting.
+.It Fl r Ns Op Ar rev
+Check in revision
+.Ar rev .
+However, if
+.Ar rev
+is not specified the meaning is completely different \(en override any
+.Fl l
+or
+.Fl u
+options, ensuring the default behaviour of releasing a lock and removing the
+working file.
+.It Fl s Ns Ar state
+Sets the state of the deposited revision to the identifier
+.Ar state .
+The specified value may not contain a space character.
+.It Fl t Ns Op Ar str
+Change the descriptive text.
+The argument
+.Ar str
+is interpreted as the name of a file containing
+the descriptive text or,
+if prefixed with a
+.Sq - ,
+the actual descriptive text itself.
+If no argument is given,
+this option is ignored
+(for compatibility reasons).
+.It Fl u Ns Op Ar rev
+The same as
+.Fl r ,
+but also immediately checks out the deposited revision read-only.
+Useful if you wish to read the working file after check-in.
+.It Fl V
+Print RCS's version number.
+.It Fl w Ns Ar username
+Uses
+.Ar username
+as the author field of the deposited revision.
+.It Fl x Ns Ar suffixes
+Specifies the suffixes for RCS files.
+Suffixes should be separated by the
+.Sq /
+character.
+.It Fl z Ns Ar tz
+Specify the date output format in keyword substitution, and the
+default time zone for
+.Ar date
+used in the
+.Fl d
+option.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width RCSINIT
+.It Ev RCSINIT
+If set, this variable should contain a list of space-delimited options that
+are prepended to the argument list.
+.It Ev TMPDIR
+When set, this variable specifies the directory where temporary files
+are to be created.
+The default is set to
+.Pa /tmp .
+.El
+.Sh EXIT STATUS
+.Ex -std ci
+.Sh SEE ALSO
+.Xr co 1 ,
+.Xr ident 1 ,
+.Xr rcs 1 ,
+.Xr rcsclean 1 ,
+.Xr rcsdiff 1 ,
+.Xr rcsmerge 1 ,
+.Xr rlog 1

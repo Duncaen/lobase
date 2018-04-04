@@ -1,0 +1,121 @@
+.\"	$OpenBSD: rcsmerge.1,v 1.15 2010/09/03 11:09:29 jmc Exp $
+.\"
+.\" Copyright (c) 2005 Xavier Santolaria <xsa@openbsd.org>
+.\" All rights reserved.
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.Dd $Mdocdate: September 3 2010 $
+.Dt RCSMERGE 1
+.Os
+.Sh NAME
+.Nm rcsmerge
+.Nd merge RCS revisions
+.Sh SYNOPSIS
+.Nm
+.Op Fl EV
+.Op Fl k Ns Ar mode
+.Op Fl p Ns Op Ar rev
+.Op Fl q Ns Op Ar rev
+.Op Fl x Ns Ar suffixes
+.Op Fl z Ns Ar tz
+.Fl r Ns Ar rev
+.Ar
+.Sh DESCRIPTION
+The
+.Nm
+program merges changes between two revisions of an RCS file into
+the corresponding working file.
+.Pp
+.Nm
+also supports
+keyword substitution \(en
+see the
+.Xr rcs 1
+man page for more information.
+.Pp
+The following options are supported:
+.Bl -tag -width Ds
+.It Fl E
+Default merge:
+see
+.Xr diff3 1
+for details.
+.It Fl k Ns Ar mode
+Specify the keyword substitution mode.
+.It Fl p Ns Op Ar rev
+Print result to standard output.
+.It Fl q Ns Op Ar rev
+Be quiet about reporting.
+.It Fl r Ns Ar rev
+Merge with respect to revision
+.Ar rev .
+This option should be specified twice to merge changes
+between two specific revisions.
+If only one revision is specified,
+merging is done between that revision and
+the latest revision of the default branch.
+.It Fl V
+Print RCS's version number.
+.It Fl x Ns Ar suffixes
+Specify the suffixes for RCS files.
+Suffixes should be separated by the
+.Sq /
+character.
+.It Fl z Ns Ar tz
+Specify the time zone for keyword substitution.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width RCSINIT
+.It Ev RCSINIT
+If set, this variable should contain a list of space-delimited options that
+are prepended to the argument list.
+.El
+.Sh EXIT STATUS
+The
+.Nm
+utility exits with one of the following values:
+.Pp
+.Bl -tag -width Ds -offset indent -compact
+.It 0
+No overlaps.
+.It 1
+Overlaps were found.
+.It 2
+An error occurred.
+.El
+.Sh EXAMPLES
+Merge differences between revision 1.4 and 1.8 of
+.Pa foo.c
+and print the result to standard output:
+.Pp
+.Dl $ rcsmerge -p -r1.4 -r1.8 foo.c
+.Pp
+Undo changes between revision 2.4 and 2.8 of
+.Pa foo.c ,
+overwriting the working copy:
+.Pp
+.Dl $ rcsmerge -r2.8 -r2.4 foo.c
+.Sh SEE ALSO
+.Xr ci 1 ,
+.Xr co 1 ,
+.Xr ident 1 ,
+.Xr merge 1 ,
+.Xr rcs 1 ,
+.Xr rcsclean 1 ,
+.Xr rcsdiff 1 ,
+.Xr rlog 1
+.Sh STANDARDS
+The flags
+.Op Fl AeT
+have no effect and are provided
+for compatibility only.

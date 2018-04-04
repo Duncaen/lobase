@@ -1,0 +1,110 @@
+.\"	$OpenBSD: rcsclean.1,v 1.22 2010/09/03 11:09:29 jmc Exp $
+.\"
+.\" Copyright (c) 2005 Joris Vink <joris@openbsd.org>
+.\" All rights reserved.
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.Dd $Mdocdate: September 3 2010 $
+.Dt RCSCLEAN 1
+.Os
+.Sh NAME
+.Nm rcsclean
+.Nd clean up working files
+.Sh SYNOPSIS
+.Nm
+.Op Fl TV
+.Op Fl k Ns Ar mode
+.Op Fl n Ns Op Ar rev
+.Op Fl q Ns Op Ar rev
+.Op Fl r Ns Op Ar rev
+.Op Fl u Ns Op Ar rev
+.Op Fl x Ns Ar suffixes
+.Op Fl z Ns Ar tz
+.Op Ar
+.Sh DESCRIPTION
+The
+.Nm
+program is used to clean up (remove) files that are not being worked on.
+Only checked out files from the current working directory are removed \(en
+.Nm
+does not remove files from the RCS repository.
+.Pp
+If no
+.Ar file
+operand is specified,
+.Nm
+cleans up all working files in the current directory.
+.Pp
+.Nm
+also supports
+keyword substitution \(en
+see the
+.Xr rcs 1
+man page for more information.
+.Pp
+The following options are supported:
+.Bl -tag -width Ds
+.It Fl k Ns Ar mode
+Specify the keyword substitution mode.
+.It Fl n Ns Op Ar rev
+Dry-run mode.
+When this option is specified,
+.Nm
+will show you what it would normally do without doing it.
+.It Fl q Ns Op Ar rev
+Be quiet about reporting.
+.It Fl r Ns Op Ar rev
+Remove revision
+.Ar rev .
+If
+.Ar rev
+does not match the revision of the currently checked out file,
+.Nm
+will do nothing.
+.It Fl T
+Preserve the modification time of RCS files.
+.It Fl u Ns Op Ar rev
+Unlock the revision if it's currently locked.
+This is only possible if no changes have been made to the file
+since it was checked out.
+.It Fl V
+Print RCS's version number.
+.It Fl x Ns Ar suffixes
+Specify the suffixes for RCS files.
+Suffixes should be separated by the
+.Sq /
+character.
+.It Fl z Ns Ar tz
+Specify the time zone for keyword substitution.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width RCSINIT
+.It Ev RCSINIT
+If set, this variable should contain a list of space-delimited options that
+are prepended to the argument list.
+.El
+.Sh EXIT STATUS
+.Ex -std rcsclean
+.Sh EXAMPLES
+Remove all working files (locked or not) in the current directory that were
+not changed since last checkout:
+.Pp
+.Dl $ rcsclean -u
+.Sh SEE ALSO
+.Xr ci 1 ,
+.Xr co 1 ,
+.Xr ident 1 ,
+.Xr rcs 1 ,
+.Xr rcsdiff 1 ,
+.Xr rcsmerge 1 ,
+.Xr rlog 1
