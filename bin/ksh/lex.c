@@ -1,4 +1,4 @@
-/*	$OpenBSD: lex.c,v 1.71 2017/07/04 11:46:15 anton Exp $	*/
+/*	$OpenBSD: lex.c,v 1.78 2018/01/15 14:58:05 jca Exp $	*/
 
 /*
  * lexical analysis and source input
@@ -102,9 +102,9 @@ YYSTYPE	yylval;		/* result from yylex */
 struct ioword *heres[HERES], **herep;
 char	ident[IDENT+1];
 
-char  **history;	/* saved commands */
-char  **histptr;	/* last history item */
-int	histsize;	/* history size */
+char   **history;	/* saved commands */
+char   **histptr;	/* last history item */
+uint32_t histsize;	/* history size */
 
 /* optimized getsc_bn() */
 #define getsc()		(*source->str != '\0' && *source->str != '\\' \
@@ -1090,14 +1090,13 @@ getsc_line(Source *s)
 		ksh_tmout_state = TMOUT_READING;
 		alarm(ksh_tmout);
 	}
-#ifdef EDIT
 	if (have_tty && (0
-# ifdef VI
+#ifdef VI
 	    || Flag(FVI)
-# endif /* VI */
-# ifdef EMACS
+#endif /* VI */
+#ifdef EMACS
 	    || Flag(FEMACS) || Flag(FGMACS)
-# endif /* EMACS */
+#endif /* EMACS */
 	    )) {
 		int nread;
 
@@ -1106,10 +1105,7 @@ getsc_line(Source *s)
 			nread = 0;
 		xp[nread] = '\0';
 		xp += nread;
-	}
-	else
-#endif /* EDIT */
-	{
+	} else {
 		if (interactive) {
 			pprompt(prompt, 0);
 		} else
@@ -1157,7 +1153,6 @@ getsc_line(Source *s)
 			shf_fdclose(s->u.shf);
 		s->str = NULL;
 	} else if (interactive) {
-#ifdef HISTORY
 		char *p = Xstring(s->xs, xp);
 		if (cur_prompt == PS1)
 			while (*p && ctype(*p, C_IFS) && ctype(*p, C_IFSWS))
@@ -1166,10 +1161,9 @@ getsc_line(Source *s)
 			s->line++;
 			histsave(s->line, s->str, 1);
 		}
-#endif /* HISTORY */
 	}
 	if (interactive)
-		set_prompt(PS2, NULL);
+		set_prompt(PS2);
 }
 
 static char *
@@ -1184,7 +1178,7 @@ special_prompt_expand(char *str)
 }
 
 void
-set_prompt(int to, Source *s)
+set_prompt(int to)
 {
 	char *ps1;
 	Area *saved_atemp;
@@ -1250,7 +1244,8 @@ dopprompt(const char *sp, int ntruncate, const char **spp, int doprint)
 			cp++;
 			if (!*cp)
 				break;
-			if (Flag(FSH))
+			/* Expand \h and \$ for both, sh(1) and ksh(1) */
+			if (Flag(FSH) && !(*cp == 'h' || *cp == 'p'))
 				snprintf(strbuf, sizeof strbuf, "\\%c", *cp);
 			else switch (*cp) {
 			case 'a':	/* '\' 'a' bell */
@@ -1449,8 +1444,6 @@ dopprompt(const char *sp, int ntruncate, const char **spp, int doprint)
 		else if (*++cp == '!')
 			c = *cp++;
 		else {
-			char *p;
-
 			shf_snprintf(p = nbuf, sizeof(nbuf), "%d",
 			    source->line + 1);
 			len = strlen(nbuf);
