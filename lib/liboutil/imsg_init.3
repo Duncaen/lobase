@@ -1,4 +1,4 @@
-.\" $OpenBSD: imsg_init.3,v 1.15 2015/12/29 18:05:23 benno Exp $
+.\" $OpenBSD: imsg_init.3,v 1.21 2018/02/16 07:42:07 nicm Exp $
 .\"
 .\" Copyright (c) 2010 Nicholas Marriott <nicm@openbsd.org>
 .\"
@@ -14,7 +14,7 @@
 .\" IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
 .\" OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.Dd $Mdocdate: December 29 2015 $
+.Dd $Mdocdate: February 16 2018 $
 .Dt IMSG_INIT 3
 .Os
 .Sh NAME
@@ -48,6 +48,7 @@
 .In sys/types.h
 .In sys/queue.h
 .In sys/uio.h
+.In stdint.h
 .In imsg.h
 .Ft void
 .Fn imsg_init "struct imsgbuf *ibuf" "int fd"
@@ -56,16 +57,16 @@
 .Ft ssize_t
 .Fn imsg_get "struct imsgbuf *ibuf" "struct imsg *imsg"
 .Ft int
-.Fn imsg_compose "struct imsgbuf *ibuf" "u_int32_t type" "uint32_t peerid" \
-    "pid_t pid" "int fd" "const void *data" "u_int16_t datalen"
+.Fn imsg_compose "struct imsgbuf *ibuf" "uint32_t type" "uint32_t peerid" \
+    "pid_t pid" "int fd" "const void *data" "uint16_t datalen"
 .Ft int
-.Fn imsg_composev "struct imsgbuf *ibuf" "u_int32_t type" "u_int32_t peerid" \
+.Fn imsg_composev "struct imsgbuf *ibuf" "uint32_t type" "uint32_t peerid" \
     "pid_t pid" "int fd" "const struct iovec *iov" "int iovcnt"
 .Ft "struct ibuf *"
-.Fn imsg_create "struct imsgbuf *ibuf" "u_int32_t type" "u_int32_t peerid" \
-    "pid_t pid" "u_int16_t datalen"
+.Fn imsg_create "struct imsgbuf *ibuf" "uint32_t type" "uint32_t peerid" \
+    "pid_t pid" "uint16_t datalen"
 .Ft int
-.Fn imsg_add "struct ibuf *buf" "const void *data" "u_int16_t datalen"
+.Fn imsg_add "struct ibuf *msg" "const void *data" "uint16_t datalen"
 .Ft void
 .Fn imsg_close "struct imsgbuf *ibuf" "struct ibuf *msg"
 .Ft void
@@ -175,31 +176,24 @@ In addition to this common imsg header,
 bytes of space may be reserved for attaching to this imsg.
 This space is populated using
 .Fn imsg_add .
-Additionally, the file descriptor
-.Fa fd
-may be passed over the socket to the other process.
-If
-.Fa fd
-is given, it is closed in the sending program after the message is sent.
-A value of \-1 indicates no file descriptor should be passed.
 .Fn imsg_create
 returns a pointer to a new message if it succeeds, NULL otherwise.
 .Pp
 .Fn imsg_add
 appends to
-.Fa imsg
-.Fa len
+.Fa msg
+.Fa datalen
 bytes of ancillary data pointed to by
-.Fa buf .
+.Fa data .
 It returns
 .Fa len
 if it succeeds, \-1 otherwise.
 .Pp
 .Fn imsg_close
 completes creation of
-.Fa imsg
+.Fa msg
 by adding it to
-.Fa imsgbuf
+.Fa ibuf
 output buffer.
 .Pp
 .Fn imsg_compose
@@ -211,6 +205,13 @@ and
 .Fn imsg_close
 routines,
 except that only one ancillary data buffer can be provided.
+Additionally, the file descriptor
+.Fa fd
+may be passed over the socket to the other process.
+If
+.Fa fd
+is given, it is closed in the sending program after the message is sent.
+A value of \-1 indicates no file descriptor should be passed.
 This routine returns 1 if it succeeds, \-1 otherwise.
 .Pp
 .Fn imsg_composev
@@ -262,11 +263,11 @@ struct imsg {
 };
 
 struct imsg_hdr {
-	u_int32_t	 type;
-	u_int16_t	 len;
-	u_int16_t	 flags;
-	u_int32_t	 peerid;
-	u_int32_t	 pid;
+	uint32_t	 type;
+	uint16_t	 len;
+	uint16_t	 flags;
+	uint32_t	 peerid;
+	uint32_t	 pid;
 };
 .Ed
 .Pp
@@ -329,7 +330,7 @@ struct ibuf {
 
 struct msgbuf {
 	TAILQ_HEAD(, ibuf)	 bufs;
-	u_int32_t		 queued;
+	uint32_t		 queued;
 	int			 fd;
 };
 .Ed
@@ -390,7 +391,7 @@ ready to be sent.
 The
 .Fn ibuf_write
 routine transmits as many pending buffers as possible from
-.Fn msgbuf
+.Fa msgbuf
 using
 .Xr writev 2 .
 It returns 1 if it succeeds, \-1 on error and 0 when no buffers were
@@ -488,7 +489,7 @@ child_main(struct imsgbuf *ibuf)
 	...
 	idata = 42;
 	imsg_compose(ibuf, IMSG_A_MESSAGE,
-		0, 0, -1, &idata, sizeof idata);
+	    0, 0, -1, &idata, sizeof idata);
 	...
 }
 .Ed
@@ -501,8 +502,11 @@ library is used to monitor the socket file descriptor.
 When the socket is ready for writing, queued messages are transmitted with
 .Fn msgbuf_write :
 .Bd -literal -offset indent
-	if (msgbuf_write(&ibuf-\*(Gtw) \*(Lt= 0 && errno != EAGAIN) {
+	if ((n = msgbuf_write(&ibuf-\*(Gtw)) == -1 && errno != EAGAIN) {
 		/* handle write failure */
+	}
+	if (n == 0) {
+		/* handle closed connection */
 	}
 .Ed
 .Pp
@@ -518,8 +522,11 @@ dispatch_imsg(struct imsgbuf *ibuf)
 	ssize_t         n, datalen;
 	int		idata;
 
-	if (((n = imsg_read(ibuf)) == -1 && errno != EAGAIN) || n == 0) {
-		/* handle socket error */
+	if ((n = imsg_read(ibuf)) == -1 && errno != EAGAIN) {
+		/* handle read error */
+	}
+	if (n == 0) {
+		/* handle closed connection */
 	}
 
 	for (;;) {
