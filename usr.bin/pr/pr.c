@@ -1,4 +1,4 @@
-/*	$OpenBSD: pr.c,v 1.39 2015/11/11 02:52:46 deraadt Exp $	*/
+/*	$OpenBSD: pr.c,v 1.41 2017/12/23 20:53:07 cheloha Exp $	*/
 
 /*-
  * Copyright (c) 1991 Keith Muller.
@@ -35,7 +35,6 @@
 #define _GNU_SOURCE /* for vasprintf */
 
 #include <sys/types.h>
-#include <sys/time.h>
 #include <sys/stat.h>
 
 #include <ctype.h>
@@ -46,6 +45,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "pr.h"
@@ -125,7 +125,6 @@ char	schar;		/* text column separation character */
 int	sflag;		/* -s option for multiple columns */
 int	nohead;		/* do not write head and trailer */
 int	pgwd;		/* page width with multiple col output */
-char	*timefrmt;	/* time conversion string */
 
 /*
  * misc globals
@@ -1444,7 +1443,6 @@ FILE *
 nxtfile(int argc, char *argv[], char **fname, char *buf, int dt)
 {
     FILE *inf = NULL;
-    struct timeval tv;
     struct tm *timeptr = NULL;
     struct stat statbuf;
     time_t curtime;
@@ -1465,14 +1463,7 @@ nxtfile(int argc, char *argv[], char **fname, char *buf, int dt)
 	    *fname = FNAME;
 	if (nohead)
 	    return(inf);
-	if (gettimeofday(&tv, NULL) < 0) {
-	    ++errcnt;
-	    ferrout("pr: cannot get time of day, %s\n",
-		strerror(errno));
-	    eoptind = argc - 1;
-	    return(NULL);
-	}
-	curtime = tv.tv_sec;
+	curtime = time(NULL);;
 	timeptr = localtime(&curtime);
     }
     for (; eoptind < argc; ++eoptind) {
@@ -1489,13 +1480,7 @@ nxtfile(int argc, char *argv[], char **fname, char *buf, int dt)
 	    ++eoptind;
 	    if (nohead || (dt && twice))
 		return(inf);
-	    if (gettimeofday(&tv, NULL) < 0) {
-		++errcnt;
-		ferrout("pr: cannot get time of day, %s\n",
-		    strerror(errno));
-		return(NULL);
-	    }
-	    curtime = tv.tv_sec;
+	    curtime = time(NULL);
 	    timeptr = localtime(&curtime);
 	} else {
 	    /*
@@ -1520,13 +1505,7 @@ nxtfile(int argc, char *argv[], char **fname, char *buf, int dt)
 		return(inf);
 
 	    if (dt) {
-		if (gettimeofday(&tv, NULL) < 0) {
-		    ++errcnt;
-		    ferrout("pr: cannot get time of day, %s\n",
-			 strerror(errno));
-		    return(NULL);
-		}
-		curtime = tv.tv_sec;
+		curtime = time(NULL);
 		timeptr = localtime(&curtime);
 	    } else {
 		if (fstat(fileno(inf), &statbuf) < 0) {
@@ -1547,7 +1526,7 @@ nxtfile(int argc, char *argv[], char **fname, char *buf, int dt)
     /*
      * set up time field used in header
      */
-    if (strftime(buf, HDBUF, timefrmt, timeptr) == 0) {
+    if (strftime(buf, HDBUF, TIMEFMT, timeptr) == 0) {
 	++errcnt;
 	if (inf != stdin)
 	    (void)fclose(inf);
@@ -2007,7 +1986,5 @@ setup(int argc, char *argv[])
 	}
     }
 
-    if ((timefrmt = getenv("LC_TIME")) == NULL)
-	timefrmt = TIMEFMT;
     return(0);
 }
