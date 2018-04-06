@@ -106,8 +106,8 @@ install_links:
 ifneq (,$(LINKS))
 	@set -- $(LINKS); \
 	while test $$# -ge 2; do \
-		l=$(DESTDIR)$$1; shift; \
-		t=$(DESTDIR)$$1; shift; \
+		l=$$1; shift; \
+		t=$$1; shift; \
 		echo "$$t -> $$l"; \
 		mkdir -p $$(dirname $$t); \
 		rm -f $$t; \
