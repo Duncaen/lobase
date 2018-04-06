@@ -28,6 +28,11 @@ endif
 CFLAGS+=	${COPTS}
 CXXFLAGS+=	${CXXOPTS}
 
+ifdef PROG
+SRCS ?= ${PROG}.c
+MAN ?= ${PROG}.1
+endif
+
 CFILES = $(filter %.c,$(SRCS))
 YFILES = $(filter %.y,$(SRCS))
 LFILES = $(filter %.l,$(SRCS))
