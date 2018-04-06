@@ -9,7 +9,7 @@ CPPFLAGS+=	-D'_PATH_CPP="${libexecdir}/tradcpp"'
 CPPFLAGS+=	-D'_PATH_INCLUDE="-I${SHAREDIR}/calendar"'
 
 beforeinstall:
-	${INSTALL} -d ${SHAREDIR}/calendar
+	${INSTALL} -d ${DESTDIR}${SHAREDIR}/calendar
 	${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m 444 \
 	    ${.CURDIR}/calendars/calendar.* ${DESTDIR}${SHAREDIR}/calendar
 	for lang in ${INTER}; do \
